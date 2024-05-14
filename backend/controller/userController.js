@@ -23,7 +23,7 @@ const postRegisterUser = async (req,res)=>{
     }
 
     const hashedPassword = await bcrypt.hash(password,10)
-    const newUser = await new User({
+    const newUser = new User({
         username,
         email,
         phone,
@@ -39,7 +39,7 @@ const postRegisterUser = async (req,res)=>{
     
 }
 
-const getLoginUser= ()=>{
+const getLoginUser= (req,res)=>{
 
 }
 const postLoginUser=  async(req,res)=>{
@@ -49,17 +49,23 @@ const postLoginUser=  async(req,res)=>{
     if(!user){
        return res.status(400).json({message:"no user found with this email"})
     }
-    console.log("password :",user.password)
     const passwordMatch = await bcrypt.compare(password,user.password)
     if(!passwordMatch){
         return res.status(400).json({message:"invalid credential"})
     }
     //jwt token 
-    const token_expire =  Date.now() + (1000 * 60 * 60 * 24 * 30)
+    const expire_in =  Date.now() + (1000 * 60 * 60 * 24 * 30)
 
-    const token =  jwt.sign({sub:user._id,exp:token_expire},process.env.JWT_SECRET)
-    
-      res.status(200).json({token,user:user,message:"login successful"})
+    const token =  jwt.sign({sub:user._id,exp:expire_in},process.env.JWT_SECRET_USER)
+
+    res.cookie("jwtUser",token,{
+        expires:new Date(expire_in),
+        httpOnly:true,
+        sameSite:'lax'
+    })
+
+    res.status(200).json({message:"login successful"})
+
     } catch (error) {
        res.status(500).json({message:"server error"}) 
     }
@@ -73,10 +79,15 @@ const userHome=(req,res) =>{
         res.status(400).json({message:"server error"})
     }
 }
-const logoutUser=()=>{
-
+const logoutUser=(req,res)=>{
+    res.clearCookie('jwtUser')
+    res.status(200).json({message:"loggedout successfully"})
 }
 
+const checkAuthUser = async (req,res)=>{
+    
+    res.sendStatus(200)
+}
 
 module.exports={
     getRegisterUser,
@@ -84,7 +95,8 @@ module.exports={
     postLoginUser,
     logoutUser,
     getLoginUser,
-    userHome
+    userHome,
+    checkAuthUser,
     
 
 }

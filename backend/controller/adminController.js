@@ -14,6 +14,7 @@ const adminLogin = async(req,res)=>{
         }else{
             res.status(400).json({message:"invalid credentials"})
         }
+        
 
     } catch (error) {
         res.status(400).json({message:"server error"})

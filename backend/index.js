@@ -5,11 +5,13 @@ const Admin = require('./model/adminModel')
 const userRoute = require('./routes/userRoutes')
 const adminRoute = require('./routes/adminRoute')
 const trainerRoute = require('./routes/trainerRoute')
+const cookieParser = require('cookie-parser')
 if (process.env.NODE_ENV != "production") {
     require('dotenv').config()
 }
 
 app.use(express.json());
+app.use(cookieParser())
 app.use(express.urlencoded({extended:true}))
 
 app.use('/users', userRoute);
