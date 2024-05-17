@@ -68,9 +68,13 @@ const logoutTrainer = async(req,res)=>{
     res.status(200).json({message:"logged out trainer"})
 }
 
+const checkAuthTrainer= async(req,res)=>{
+        res.status(200).json({message:"authorization successful"})
+}
 
 module.exports = {
     registerTrainer,
     loginTrainer,
-    logoutTrainer
+    logoutTrainer,
+    checkAuthTrainer
 }

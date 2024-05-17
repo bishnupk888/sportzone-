@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const trainerController = require('../controller/trainerController')
-
+const requireAuth = require('../middlewares/requireAuthTrainer')
 router.get(['/', '/home'],(req,res)=>{
     res.send('home trainer')
 })
@@ -17,7 +17,7 @@ router.get('/register',(req,res)=>{
 router.post('/register',trainerController.registerTrainer)
 
 router.get('/logout',trainerController.logoutTrainer)
-
+router.get('/check-auth',requireAuth,trainerController.checkAuthTrainer)
 
 
 module.exports = router
