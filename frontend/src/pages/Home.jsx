@@ -12,7 +12,7 @@ const Home = () => {
             <div className='w-full lg:w-auto'>
               <div className='w-full lg:w-[800px] p-[30px] lg:px-[50px] lg:py-[100px]'>
                 <h1 className='text-[40px] leading-[46px] text-textColor font-[800] md:text-[50px] md:leading-[60px] lg:text-[60px] lg:leading-[70px]'>
-                  "Elevate Your Game, Dominate the Field!"
+                “ Elevate Your Game, Dominate the Field! ”
                 </h1>
                 <p className='text_para lg:w-[600px] mt-[20px]'>
                   Calling all sports enthusiasts and professionals! Register with us to connect, learn, and grow.
@@ -33,7 +33,7 @@ const Home = () => {
       <div className='container bg-black mx-auto px-4   overflow-hidden h-[90%] items-center justify-between'>
           <div className='flex flex-col lg:flex-row  items-center justify-between' >
             {/* _______hero image _____*/}
-         <div className='relative max-h-[500px] h-auto lg:h-[500px] w-auto md:h-[450px] md:mt-[50px] sm:h-[450px] sm:mt-[20px] flex items-center justify-center mt-[150px]'>
+         <div className='relative max-h-[500px]  h-auto lg:h-[500px] w-auto md:h-[450px] md:mt-[50px] sm:h-[450px] sm:mt-[20px] flex items-center justify-center mt-[150px]'>
           <div className="absolute inset-0 bg-black opacity-25"></div>
                <img src={hero2Img} alt="" className='w-full h-full object-cover lg:w-auto lg:h-full blend-overlay' />
           </div>

@@ -23,7 +23,7 @@ const Login = () => {
                 name='email'
                 value={formData.email}
                 onChange={handleInputChange}
-                className='w-full px-4 py-3 border border-solid border-redBorder focus:outline-none text-xl md:text-2xl leading-7 text-white bg-transparent rounded-md'
+                className='w-full px-4 py-3 border border-solid border-redBorder focus:outline-none text-xl md:text-2xl leading-7 text-white bg-transparent rounded-md text-center '
               />
             </div>
 
@@ -34,11 +34,11 @@ const Login = () => {
                 name='password'
                 value={formData.password}
                 onChange={handleInputChange}
-                className='w-full px-4 py-3 border border-solid border-redBorder focus:outline-none text-xl md:text-2xl leading-7 text-white bg-transparent rounded-md'
+                className='w-full px-4 py-3 border border-solid border-redBorder focus:outline-none text-xl md:text-2xl leading-7 text-white bg-transparent rounded-md text-center'
               />
             </div>
 
-            <div className='border-2 border-redBorder rounded-lg'>
+            <div className='border-2 border-redBorder rounded-lg mt-[30px] ml-[40px] max-w-[300px] '>
               <button type='submit' className='w-full bg-buttonBgColor text-white text-lg md:text-xl leading-[30px] rounded-lg px-4 py-3'>
                 Submit
               </button>
