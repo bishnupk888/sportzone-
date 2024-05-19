@@ -1,18 +1,19 @@
 import React from 'react'
-import Header from '../components/Header/Header'
+import AdminHeader from '../components/Header/AdminHeader'
 import Footer from '../components/Footer/Footer'
-import Routers from '../routes/Routers'
+import AdminRouters from '../routes/AdminRouters'
 
 
 const Layout = () => {
   return (
     <>
-    <Header/>
+    <AdminHeader/>
     <main>
-        <Routers/>
+        <AdminRouters/>
     </main>
+
     <Footer/>
-    
+
     </>
   )
 }

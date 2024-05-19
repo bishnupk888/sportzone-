@@ -1,23 +1,11 @@
 const express = require('express')
-const router = express.Router()
+const trainerRouter = express.Router()
 const trainerController = require('../controller/trainerController')
-const requireAuth = require('../middlewares/requireAuthTrainer')
-router.get(['/', '/home'],(req,res)=>{
-    res.send('home trainer')
-})
+const authUser = require('../middlewares/authUser')
 
-router.get('/login',(req,res)=>{
-    res.send('login trainer')
-})
-router.post('/login', trainerController.loginTrainer)
-
-router.get('/register',(req,res)=>{
-    res.send('register trainer')
-})
-router.post('/register',trainerController.registerTrainer)
-
-router.get('/logout',trainerController.logoutTrainer)
-router.get('/check-auth',requireAuth,trainerController.checkAuthTrainer)
+trainerRouter.get('/',authUser,trainerController.getAllTrainers)
+trainerRouter.get('/:id', trainerController.getTrainer)
+trainerRouter.put('/:id', trainerController.updateTrainer)
 
 
-module.exports = router
+ module.exports =  trainerRouter

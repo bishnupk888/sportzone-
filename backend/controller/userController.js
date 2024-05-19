@@ -1,102 +1,44 @@
 const User = require('../model/userModel')
-const jwt  = require('jsonwebtoken')
-const bcrypt = require('bcrypt')
 
 
-const getRegisterUser = async (req,res)=>{
-    res.send("register")
-}
-
-const postRegisterUser = async (req,res)=>{
-   try {
-    const {username,email,phone,password,confirmPassword} = req.body
-    if(!username || !email || !phone || ! password || !confirmPassword){
-       return res.status(400).json({message:"all fields are required"})
-    }
-    if(password != confirmPassword){
-       return res.status(400).json({message:"passwords do not match"})
-    }
-
-    const existingUser = await User.findOne({email})
-    if(existingUser){
-        return res.status(400).json({message:"user already exists"})
-    }
-
-    const hashedPassword = await bcrypt.hash(password,10)
-    const newUser = new User({
-        username,
-        email,
-        phone,
-        password:hashedPassword
-    })
-
-    const savedUser = await newUser.save()
-    res.status(200).json({user:savedUser,message:"successfully registered"})
-    
-   } catch (error) {
-     res.status(400).json({message:"error!! registration failed"})
-   }
-    
-}
-
-const getLoginUser= (req,res)=>{
-
-}
-const postLoginUser=  async(req,res)=>{
+const updateUser = async (req,res)=>{
+    const {id} =req.params
     try {
-    const {email,password} = req.body
-    const user = await User.findOne({email:email})
-    if(!user){
-       return res.status(400).json({message:"no user found with this email"})
-    }
-    const passwordMatch = await bcrypt.compare(password,user.password)
-    if(!passwordMatch){
-        return res.status(400).json({message:"invalid credential"})
-    }
-    //jwt token 
-    const expire_in =  Date.now() + (1000 * 60 * 60 * 24 * 30)
-
-    const token =  jwt.sign({sub:user._id,exp:expire_in},process.env.JWT_SECRET_USER)
-
-    res.cookie("jwtUser",token,{
-        expires:new Date(expire_in),
-        httpOnly:true,
-        sameSite:'lax'
-    })
-
-    res.status(200).json({message:"login successful"})
+    const updatedUser = await User.findByIdAndUpdate(id,{$set:req.body},{new:true}) 
+    res.status(200).json({data:updatedUser, message:"successfully updated"})
 
     } catch (error) {
-       res.status(500).json({message:"server error"}) 
+        res.status(400).json({message:"failed to update"})
     }
-}
-const userHome=(req,res) =>{
-    const {id}= req.query
-    try {
-        const user = User.findById(id)
-        res.status(200).json({user})
-    } catch (error) {
-        res.status(400).json({message:"server error"})
-    }
-}
-const logoutUser=(req,res)=>{
-    res.clearCookie('jwtUser')
-    res.status(200).json({message:"loggedout successfully"})
 }
 
-const checkAuthUser = async (req,res)=>{
-    
-    res.sendStatus(200)
+const getUser = async (req,res)=>{
+    const {id} =req.params
+    try {
+        
+    const user = await User.findById(id).select('-password')
+    res.status(200).json({data:user, message:" user found"})
+
+    } catch (error) {
+        res.status(400).json({message:"user not found"})
+    }
 }
+
+const getAllUsers = async (req,res)=>{
+    try {
+        
+    const users = await User.find({}).select('-password')
+    res.status(200).json({data:users, message:"users found"})
+
+    } catch (error) {
+        res.status(400).json({message:"users not found"})
+    }
+}
+
+
 
 module.exports={
-    getRegisterUser,
-    postRegisterUser,
-    postLoginUser,
-    logoutUser,
-    getLoginUser,
-    userHome,
-    checkAuthUser,
-    
-
+    updateUser,
+    getUser,
+    getAllUsers,
 }

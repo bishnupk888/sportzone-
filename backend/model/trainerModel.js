@@ -17,9 +17,12 @@ const trainerSchema = new mongoose.Schema({
         type:String,
         required:true
     },
+    role:{
+        type:String,
+        default:'trainer'
+    },
     department: {
         type:String,
-
     },
     gender:{
         type:String,
@@ -50,8 +53,9 @@ const trainerSchema = new mongoose.Schema({
         }
     }],
     isVerified:{
-        type:Boolean,
-        default:false
+        type:String,
+        enum:['verified','pending','rejected'],
+        default:'pending'
     },
     isBlocked:{
         type:Boolean,
