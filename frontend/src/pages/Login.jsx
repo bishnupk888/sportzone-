@@ -1,17 +1,37 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import axiosInstance from '../axiosInstance/axiosInstance';
+import { setUserData } from '../Redux/features/userSlice';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
 const Login = ({role}) => {
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    role:role
+    role:role,
+    
   });
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-  const onSubmit =(e)=>{
+  const handleLogin = (e)=>{
     e.preventDefault()
+    axiosInstance.post('/api/auth/login', formData).then((response)=>{
+      console.log('data = ',response.data.data)
+      dispatch(setUserData(response.data.data))
+      toast.success("succefully logged in")
+      navigate('/home')
+      
+    }).catch((err)=>{console.log(err)
+
+    toast.error(String('failed to login'))
+    navigate(`/${role}/login`)
+    } 
+  )
     
   }
   return (
@@ -43,7 +63,7 @@ const Login = ({role}) => {
             </div>
 
             <div className='border-2 border-redBorder rounded-lg'>
-              <button type='submit' className='w-full bg-buttonBgColor text-white text-lg md:text-xl leading-[30px] rounded-lg px-4 py-3' onClick={(e)=>onSubmit(e)}>
+              <button type='submit' className='w-full bg-buttonBgColor text-white text-lg md:text-xl leading-[30px] rounded-lg px-4 py-3' onClick={(e)=>handleLogin(e)}>
                 Submit
               </button>
             </div>

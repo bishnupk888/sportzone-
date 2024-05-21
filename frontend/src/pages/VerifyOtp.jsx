@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import axiosInstance from '../axiosInstance/axiosInstance'
+import { toast } from 'react-toastify';
+
 
 const VerifyOtp = () => {
+  const navigate = useNavigate()
   const [otp, setOtp] = useState('');
   const [timer, setTimer] = useState(30);
   const [showResend, setShowResend] = useState(false);
@@ -15,7 +19,7 @@ const VerifyOtp = () => {
     } else {
       setShowResend(true);
     }
-  }, [timer]);
+  }, [timer]); 
 
   const handleInputChange = (e) => {
     setOtp(e.target.value);
@@ -23,8 +27,16 @@ const VerifyOtp = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Add your OTP verification logic here
-  };
+    axiosInstance.post('/api/auth/verify-otp', { otp: otp }).then((response) => {
+        const role = response?.data?.data?.role
+        toast.success("succesfully verified otp ")
+        navigate(`/${role}/login`);
+    }).catch((error) => {
+        
+        navigate('/register');
+        console.error("Error while verifying OTP:", error);
+    });
+}
 
   const handleResend = () => {
     // Add your resend OTP logic here

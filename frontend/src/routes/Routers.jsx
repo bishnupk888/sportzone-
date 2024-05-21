@@ -1,5 +1,5 @@
 import React from 'react'
-import {Routes, Route} from 'react-router-dom'
+import { BrowserRouter as Router,Routes, Route} from 'react-router-dom'
 
 import Home from '../pages/Home'
 import Login from '../pages/Login'
@@ -14,7 +14,8 @@ import Profile from '../pages/users/Profile'
 
 const Routers = () => {
   return (
-    <Routes>
+  // <Router>
+<Routes>
         <Route path='/' element={<Home/>} />
         <Route path='/home' element={<Home/>} />
         <Route path='/trainers' element={<Trainers/>} />
@@ -25,13 +26,11 @@ const Routers = () => {
         <Route path='/contact' element={<Contact/>} />
         <Route path='/services' element={<Services/>} />
         <Route path='/verify-otp' element={<VerifyOtp/>}/>
-        <Route path='/profile' element={<Profile/>}/>
-
-
-
-        
+        <Route path='/profile' element={<Profile/>}/> 
 
     </Routes>
+  // </Router>
+    
   )
 }
 

@@ -39,7 +39,7 @@ const trainerSchema = new mongoose.Schema({
     },
     profileImage:{
         type:String,
-        default:'default_profile.jpg'
+        default:''
     },
     experience: [{
         institution: {
@@ -56,6 +56,10 @@ const trainerSchema = new mongoose.Schema({
         type:String,
         enum:['verified','pending','rejected'],
         default:'pending'
+    },
+    isOtpVerified:{
+        type:Boolean,
+        default:false
     },
     isBlocked:{
         type:Boolean,

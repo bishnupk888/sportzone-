@@ -1,25 +1,52 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axiosInstance from '../axiosInstance/axiosInstance';
+import { toast } from 'react-toastify';
+
 
 const Signup = () => {
+
+   const navigate = useNavigate()
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
     password: '',
     confirmPassword: '',
-    role: 'user' // default value
-  });
+    role: ''
+  });     
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+
   };
+  
+  const handleSignup = (e) => {
+    e.preventDefault();
+  
+    if (formData.password === formData.confirmPassword) {
+      console.log("matching password");
+      axiosInstance.post('/api/auth/register', formData)
+        .then((response) => {
+            console.log(response);
+            toast.success("otp send to your email")
+            navigate('/verify-otp');
+        })
+        .catch((err) => {
+          toast.error("registration failed try again")
+          console.error("Error during signup request", err);
+        });
+    }
+  };
+  
 
   return (
     <>
       <section className='px-5 lg:px-0 bg-black min-h-screen overflow-auto'>
         <div className='text-center w-full max-w-[570px] mx-auto rounded-[30px] shadow-md md:p-10 bg-buttonBgColor border border-redBorder'>
           <h1 className='text-textColor text-4xl md:text-5xl leading-9 font-bold py-[25px]'>SIGN UP</h1>
-          <form className='py-4 px-4 '>
+          <form className='py-4 px-4 ' onSubmit={handleSignup}>
             <div className='mb-5'>
               <input
                 type="text"
@@ -99,7 +126,7 @@ const Signup = () => {
             </div>
 
             <div className='border-2 border-redBorder rounded-lg'>
-              <button type='submit' className='w-full bg-buttonBgColor text-white text-lg md:text-xl leading-[30px] rounded-lg px-4 py-3 hover:text-[22px]'>
+              <button type='submit'  className='w-full bg-buttonBgColor text-white text-lg md:text-xl leading-[30px] rounded-lg px-4 py-3 hover:text-[22px]'>
                 SUBMIT
               </button>
             </div>

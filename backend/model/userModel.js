@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema({
     },
     profileImage:{
         type:String,
-        default:'default_profile.jpg'
+        default:''
     },
     age:{
         type:Number,
@@ -36,6 +36,10 @@ const userSchema = new mongoose.Schema({
     gender:{
         type:String,
         enum:['male','female','other'] 
+    },
+    isOtpVerified:{
+        type:Boolean,
+        default:false
     },
     isBlocked:{
         type:Boolean,

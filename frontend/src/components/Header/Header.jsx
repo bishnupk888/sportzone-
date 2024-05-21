@@ -1,10 +1,14 @@
 import { useRef, useEffect } from 'react';
 import Logo from '../../assets/images/logo/logo.png';
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { BiMenu } from 'react-icons/bi';
 import LoginDropdown from './LoginDropdown';
 import { useSelector, useDispatch } from 'react-redux';
-// import { logoutUser } from ''; // Import your logout action
+import { clearUserData } from '../../Redux/features/userSlice'; 
+import axiosInstance from '../../axiosInstance/axiosInstance';
+import {toast} from 'react-toastify'
+import defaultImage from '../../assets/images/userImage.jpg'
+
 
 const navLinks = [
   { path: '/home', display: 'Home' },
@@ -17,7 +21,10 @@ const Header = () => {
   const dispatch = useDispatch();
   const userRole = useSelector((state) => state.user.userRole);
   const userImage = useSelector((state) => state.user.userImage);
-  const isLoggedIn = false; // Assuming you have a field to check if user is logged in
+  const userName = useSelector((state) => state.user.userName);
+ 
+  
+
 
   const headerRef = useRef(null);
   const menuRef = useRef(null);
@@ -29,7 +36,7 @@ const Header = () => {
       headerRef.current.classList.remove('sticky_header');
     }
   };
-
+  const navigate = useNavigate()
   useEffect(() => {
     window.addEventListener('scroll', handleStickyHeader);
     return () => window.removeEventListener('scroll', handleStickyHeader);
@@ -40,7 +47,15 @@ const Header = () => {
   };
 
   const handleLogout = () => {
-    dispatch(logoutUser());
+    axiosInstance.post('/api/auth/logout').then((response)=>{
+      console.log(response.data)
+      toast.success("successfully logged out")
+      
+    }).catch((err)=>{
+      console.log(err)
+      toast.error("failed to logout")})
+    
+    dispatch(clearUserData());
   };
 
   return (
@@ -72,12 +87,12 @@ const Header = () => {
               </ul>
             </div>
             <div className="flex items-center gap-4">
-              {userRole !== '' && userImage && (
+              {userRole !== '' && (
                 <div>
-                  <Link to="/">
+                  <Link to="/profile">
                     <figure className="w-[30px] h-[30px] sm:w-[35px] sm:h-[35px] md:w-[40px] md:h-[40px]">
                       <img
-                        src={userImage}
+                        src={userImage ? userImage : defaultImage}
                         alt="User"
                         className="w-full rounded-full cursor-pointer"
                       />
@@ -85,7 +100,7 @@ const Header = () => {
                   </Link>
                 </div>
               )}
-              {isLoggedIn ? (
+              {userRole !== '' ?(
                 <button
                   onClick={handleLogout}
                   className="bg-black border-redBorder border-[2px] py-1 px-4 sm:py-2 sm:px-5 md:py-2 md:px-6 text-white font-[600] h-[36px] sm:h-[40px] md:h-[44px] flex items-center rounded-[10px]"
