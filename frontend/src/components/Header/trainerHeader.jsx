@@ -12,9 +12,9 @@ import defaultImage from '../../assets/images/userImage.jpg'
 
 const navLinks = [
   { path: '/home', display: 'Home' },
-  { path: '/trainers', display: 'Find A Trainer' },
-  { path: '/services', display: 'Services' },
-  { path: '/contact', display: 'Contact' },
+  { path: '/bookings', display: 'Bookings' },
+  { path: '/experience', display: 'Experience' },
+  { path: '/slots', display: 'Slots' },
 ];
 
 const Header = () => {
@@ -24,8 +24,6 @@ const Header = () => {
   const userName = useSelector((state) => state.user.userName);
  
   
-
-
   const headerRef = useRef(null);
   const menuRef = useRef(null);
 
@@ -90,12 +88,12 @@ const Header = () => {
             <div className="flex items-center gap-4">
             {userRole !== '' && (
                 <div className="hidden lg:block md:hidden">
-                    <h3 className='text-white text-[14px] md:text-[16px] leading-7 font-[600] border-b-2 border-redBorder'>Welcome, <span>{userName?userName:'user'}</span></h3>
+                    <h3 className='text-white text-[14px] md:text-[16px] leading-7 font-[600] border-b-2 border-redBorder'>Welcome, <span>{userName?userName:'Trainer'}</span></h3>
                 </div>
             )}
               {userRole !== '' && (
                 <div>
-                  <Link to="/profile">
+                  <Link to="/trainer-profile">
                     <figure className="w-[30px] h-[30px] sm:w-[35px] sm:h-[35px] md:w-[40px] md:h-[40px]">
                       <img
                         src={userImage ? userImage : defaultImage}

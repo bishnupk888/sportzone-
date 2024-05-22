@@ -4,6 +4,7 @@ const adminRouter = express.Router()
 
 
 adminRouter.post('/login',adminController.adminLogin)
+adminRouter.post('/logout',adminController.logout)
 
 
 

@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 const VerifyOtp = () => {
   const navigate = useNavigate()
   const [otp, setOtp] = useState('');
-  const [timer, setTimer] = useState(30);
+  const [timer, setTimer] = useState(60);
   const [showResend, setShowResend] = useState(false);
 
   useEffect(() => {

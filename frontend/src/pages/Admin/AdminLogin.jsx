@@ -1,14 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
+import axiosInstance from '../../axiosInstance/axiosInstance';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+
+
+
+
 
 const AdminLogin = () => {
+  const userRole = localStorage.getItem('adminData')
+  const navigate = useNavigate()
+  useEffect(()=>{
+    if(userRole){
+      navigate('/admin/dashboard')
+    }
+  },[])
+  
   const [formData, setFormData] = useState({
     email: '',
-    password: ''
+    password: '',
+    role:'admin'
   });
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+  const haldleAdminLogin = (e)=>{
+    e.preventDefault()
+    console.log("handleAdminlogin");
+    axiosInstance.post('/api/admin/login', formData).then((response)=>{
+      const adminData = response.data.data
+      localStorage.setItem('adminData', JSON.stringify(adminData));
+      toast.success("succefully logged in")
+      navigate('/admin/dashboard')
+    }).catch((err)=>{console.log(err)
+    toast.error('failed to login')})
+  }
 
   return (
     <>
@@ -39,7 +66,7 @@ const AdminLogin = () => {
             </div>
 
             <div className='border-2 border-redBorder rounded-lg'>
-              <button type='submit' className='w-full bg-buttonBgColor text-white text-lg md:text-xl leading-[30px] rounded-lg px-4 py-3'>
+              <button type='submit' onClick={haldleAdminLogin} className='w-full bg-buttonBgColor text-white text-lg md:text-xl leading-[30px] rounded-lg px-4 py-3'>
                 Submit
               </button>
             </div>

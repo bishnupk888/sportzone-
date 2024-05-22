@@ -11,9 +11,11 @@ const updateTrainer = async (req, res) => {
 }
 
 const getTrainer = async (req, res) => {
+    console.log("in getTrainer ");
     const { id } = req.params
     try {
         const trainer = await Trainer.findById(id).select('-password')
+        console.log("trainer:",trainer);
         if(trainer){
           return  res.status(200).json({ data: trainer, message: "trainer found", success: true })
         }else{

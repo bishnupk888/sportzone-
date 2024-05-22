@@ -12,6 +12,7 @@ const getUserDataFromLocalStorage = () => {
         userName:userData.userName || ''
       };
     }
+    
   } catch (error) {
     console.error('Failed to parse user data from localStorage:', error);
   }

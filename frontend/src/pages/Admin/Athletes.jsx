@@ -1,12 +1,17 @@
-import React, { useState } from 'react';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import axiosInstance from '../../axiosInstance/axiosInstance';
 
 const Athletes = () => {
   // Sample data for athletes
-  const [athletes, setAthletes] = useState([
-    { id: 1, name: 'John Doe', email: 'john@example.com', phone: '123-456-7890' },
-    { id: 2, name: 'Jane Smith', email: 'jane@example.com', phone: '987-654-3210' },
-    // Add more athletes as needed
-  ]);
+  const [athletes, setAthletes] = useState([])
+
+  useEffect(()=>{
+    axiosInstance.get('/api/users').then((response)=>{
+        console.log(response.data);
+    })
+  })
+
 
   return (
     <div className="container mx-auto p-4">

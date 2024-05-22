@@ -16,7 +16,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <ToastContainer autoClose={3000} theme="dark" closeOnClick/>
         <App />
       </BrowserRouter>
-
     </Provider>
   </React.StrictMode>,
 )

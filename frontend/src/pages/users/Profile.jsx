@@ -27,7 +27,7 @@ const Profile = () => {
     return (
         <section className='px-5 lg:px-0 bg-black min-h-screen overflow-auto'>
             <div className='text-center w-full max-w-[80%] mx-auto rounded-[30px] shadow-md md:p-20 bg-bgColorComponennt border border-redBorder'>
-                <h1 className='text-textColor text-4xl md:text-5xl leading-9 font-bold pt-[40px] lg:py-[30px] md:py-[30px]'>{userData.username ?? 'User'}'s Profile</h1>
+                <h1 className='text-textColor text-4xl md:text-5xl leading-9 font-bold pt-[40px] lg:py-[30px] md:py-[30px]'>{userData.userName ?? 'User'}'s Profile</h1>
                 <div className='py-4 px-4'>
                     <div className='flex flex-col md:flex-row items-start'>
                         {/* Current Profile Image */}
@@ -80,7 +80,7 @@ const Profile = () => {
                     </div>
                     {/* Edit Profile Button */}
                     <div className='flex justify-end mt-4'>
-                        <Link to='/edit-profile'>
+                        <Link to='/trainer-profile'>
                             <button className='max-w-[300px] bg-buttonBgColor text-white text-lg md:text-xl leading-[30px] rounded-lg px-4 py-3 border-2 border-redBorder'>
                                 Edit Profile
                             </button>

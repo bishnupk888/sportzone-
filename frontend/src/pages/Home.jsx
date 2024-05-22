@@ -2,7 +2,6 @@ import React from 'react';
 import hero2Img from '../assets/images/messi.png';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-
 const Home = () => {
   const userRole = useSelector((state)=>state.user.userRole)
   

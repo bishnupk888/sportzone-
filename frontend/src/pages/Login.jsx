@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axiosInstance from '../axiosInstance/axiosInstance';
 import { setUserData } from '../Redux/features/userSlice';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch,useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
+
 const Login = ({role}) => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -12,9 +13,15 @@ const Login = ({role}) => {
     email: '',
     password: '',
     role:role,
-    
   });
-
+   
+  const userRole = useSelector((state)=>state.user.userRole)
+  
+  useEffect(()=>{
+    if(userRole){
+      navigate('/home')
+    }
+  },[])
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -28,7 +35,7 @@ const Login = ({role}) => {
       
     }).catch((err)=>{console.log(err)
 
-    toast.error(String('failed to login'))
+    toast.error(err?.response?.data?.message)
     navigate(`/${role}/login`)
     } 
   )
