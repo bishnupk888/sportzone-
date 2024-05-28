@@ -1,47 +1,137 @@
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import axiosInstance from '../../axiosInstance/axiosInstance';
+import { toast } from 'react-toastify';
+import { FaSearch } from 'react-icons/fa';
 
 const Athletes = () => {
-  // Sample data for athletes
-  const [athletes, setAthletes] = useState([])
+  const [athletesData, setAthletesData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState('');
+  const athletesPerPage = 5;
 
-  useEffect(()=>{
-    axiosInstance.get('/api/users').then((response)=>{
-        console.log(response.data);
-    })
-  })
+  useEffect(() => {
+    axiosInstance.get('/api/users')
+      .then(response => {
+        setAthletesData(response.data.data); // Set the athletes data fetched from the API
+      })
+      .catch(error => {
+        console.error('Error fetching athletes:', error);
+      });
+  }, []);
 
+  const handleBlock = (id) => {
+    axiosInstance.post(`/api/admin/block-user/${id}`)
+      .then(response => {
+        setAthletesData(prevAthletesData => {
+          return prevAthletesData.map((athlete) => {
+            if (id === athlete._id) {
+              console.log(`Toggling isBlocked for athlete id ${id}`);
+              toast.success(`${athlete.isBlocked ? 'Unblocked' : 'Blocked'} ${athlete.username} successfully!`);
+              return { ...athlete, isBlocked: !athlete.isBlocked };
+            }
+            return athlete;
+          });
+        });
+      })
+      .catch(err => {
+        console.error("Failed to handle block:", err);
+      });
+  };
+
+  const indexOfLastAthlete = currentPage * athletesPerPage;
+  const indexOfFirstAthlete = indexOfLastAthlete - athletesPerPage;
+
+  const filteredAthletes = athletesData.filter(athlete => 
+    athlete.username.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+  const currentAthletes = filteredAthletes.slice(indexOfFirstAthlete, indexOfLastAthlete);
+
+  const renderAthletes = () => {
+    return currentAthletes.map((athlete, index) => (
+      <tr key={athlete._id} className="border dark:border-redBorder bg-transparent text-textColor">
+        <td className="p-3 border border-redBorder">
+          <p>{indexOfFirstAthlete + index + 1}</p> {/* sl.no */}
+        </td>
+        <td className="p-3 border border-redBorder">
+          <p>{athlete.username}</p> {/* athlete name */}
+        </td>
+        <td className="p-3 border border-redBorder">
+          <p>{athlete.email}</p> {/* email */}
+        </td>
+        <td className="p-3 border border-redBorder">
+          <p>{athlete.phone}</p> {/* phone */}
+        </td>
+        <td className="p-3 border border-redBorder text-right">
+          <button
+            onClick={() => handleBlock(athlete._id)}
+            className={`mr-2 px-3 py-1 rounded transition-transform duration-200 hover:scale-110 ${athlete.isBlocked ? 'text-white border border-green-500  bg-green-900 ' : 'text-white border border-red-500 bg-red-900'}`}>
+            {athlete.isBlocked ? 'Unblock' : 'Block'}
+          </button>
+        </td>
+      </tr>
+    ));
+  };
+
+  const totalPages = Math.ceil(filteredAthletes.length / athletesPerPage);
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Athletes</h1>
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-black text-white border border-red-500">
+    <div className='bg-black w-auto h-[100%]'>
+      <div className="overflow-x-auto m-4 p-4 border border-redBorder bg-black text-textColor rounded-md mx-[100px] md:mx-[30px]">
+        <div className="flex justify-between items-center mb-4">
+          <div></div>
+          <div className="relative">
+            <input 
+              type="text" 
+              placeholder="Search athletes..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="px-3 py-2 border border-redBorder rounded bg-black text-textColor pl-10"
+            />
+            <FaSearch className="absolute left-3 top-2.5 text-textColor" />
+          </div>
+        </div>
+        <table className="min-w-full bg-white dark:bg-black">
           <thead>
-            <tr>
-              <th className="px-4 py-2 border-b border-red-500">SL. No</th>
-              <th className="px-4 py-2 border-b border-red-500">Name</th>
-              <th className="px-4 py-2 border-b border-red-500">Email</th>
-              <th className="px-4 py-2 border-b border-red-500">Phone</th>
-              <th className="px-4 py-2 border-b border-red-500">Options</th>
+            <tr className="border dark:border-redBorder bg-transparent text-textColor">
+              <th className="p-3 border border-redBorder">sl.no</th>
+              <th className="p-3 border border-redBorder">Athlete Name</th>
+              <th className="p-3 border border-redBorder">Email</th>
+              <th className="p-3 border border-redBorder">Phone</th>
+              <th className="p-3 border border-redBorder">Options</th>
             </tr>
           </thead>
           <tbody>
-            {athletes.map((athlete, index) => (
-              <tr key={athlete.id} className={index % 2 === 0 ? 'bg-gray-800' : 'bg-gray-900'}>
-                <td className="px-4 py-2 border-b border-red-500 text-center">{index + 1}</td>
-                <td className="px-4 py-2 border-b border-red-500">{athlete.name}</td>
-                <td className="px-4 py-2 border-b border-red-500">{athlete.email}</td>
-                <td className="px-4 py-2 border-b border-red-500">{athlete.phone}</td>
-                <td className="px-4 py-2 border-b border-red-500 text-center">
-                  <button className="text-blue-500 hover:underline">Edit</button>
-                  <button className="text-red-500 hover:underline ml-2">Delete</button>
+            {currentAthletes.length > 0 ? (
+              renderAthletes()
+            ) : (
+              <tr>
+                <td colSpan="5" className="text-center py-4">
+                  No athletes found
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
+
+        <div className="flex justify-between items-center mt-4">
+          <button
+            onClick={() => setCurrentPage(prevPage => Math.max(prevPage - 1, 1))}
+            disabled={currentPage === 1}
+            className="px-4 py-2 text-sm font-semibold text-textColor border border-redBorder rounded disabled:opacity-50 dark:bg-black"
+          >
+            Previous
+          </button>
+          <span className="font-semibold text-textColor">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={() => setCurrentPage(prevPage => Math.min(prevPage + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            className="px-4 py-2 text-sm font-semibold text-textColor border border-redBorder rounded disabled:opacity-50 dark:bg-black"
+          >
+            Next
+          </button>
+        </div>
       </div>
     </div>
   );

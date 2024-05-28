@@ -1,6 +1,8 @@
 
 const Admin = require('../model/adminModel')
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
+const User = require('../model/userModel');
+const Trainer = require('../model/trainerModel');
 
 
 const generateToken = (admin) => {
@@ -58,9 +60,69 @@ const logout = async (req, res) => {
     res.status(200).json({ message: 'Logout successful' });
   }
 
+const handleblockUser = async (req,res)=>{
+    const {id} = req.params
+   try {
+    const user = await User.findByIdAndUpdate(id)
+    console.log("block user",user);
+    user.isBlocked = (!user.isBlocked)
+    user.save().then((response)=>{
+      return res.status(200).json({message:"success"})
+    }).catch((err)=>{
+      console.log("failed to handle block");
+    })
+   } catch (error) {
+    res.status(400).json({message:"server error"})
+   }
+
+}
+
+const handleblockTrainer = async (req,res)=>{
+  const {id} = req.params
+ try {
+  const user = await Trainer.findByIdAndUpdate(id)
+  console.log("block user",user);
+  user.isBlocked = (!user.isBlocked)
+  user.save().then((response)=>{
+    return res.status(200).json({message:"success"})
+  }).catch((err)=>{
+    console.log("failed to handle block");
+  })
+ } catch (error) {
+  res.status(400).json({message:"server error"})
+ }
+
+}
+
+const handleApprovalTrainer= async (req,res)=>{
+  console.log("in handle approval");
+  const {id} = req.params
+  try {
+    const user = await Trainer.findById(id)
+    if(user){
+      console.log("user found");
+      user.isVerified = !user.isVerified
+      user.save().then((data)=>{
+        console.log("data",data);
+        res.status(200).json({message:"success"})
+      }).catch((err)=>{
+        console.log("failed to save update");
+      })
+    }
+    else{
+      console.log("user not found");
+      res.status(404).json({message:"user not found"})
+    }
+  } catch (error) {
+    res.status(400).json({message:"failed to handle approval"})
+  }
+}
 
 module.exports ={
     adminLogin,
-    logout
+    logout,
+    handleblockUser,
+    handleblockTrainer,
+    handleApprovalTrainer
 }
 

@@ -2,28 +2,43 @@ import React from 'react';
 import hero2Img from '../assets/images/messi.png';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+// import'../'
 const Home = () => {
-  const userRole = useSelector((state)=>state.user.userRole)
+  const userRole = useSelector((state) => state.user.userRole)
   
   return (
     <>
+  <style jsx>{`
+  @keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    20%, 80% { transform: scale(1.02); }
+    
+  }
+
+  .heartbeat-effect {
+    display: inline-block;
+    animation: heartbeat 1.0s ease-in-out infinite;
+  }
+`}</style>
+      
       <section className='hero_section pt-[60px] xl:h-[800px]'>
         <div className='container mx-auto px-4'>
           <div className='flex flex-col lg:flex-row gap-[30px] lg:gap-[90px] items-center justify-between'>
             {/* _______hero contents _____*/}
             <div className='w-full lg:w-auto'>
-              <div className='w-full lg:w-[800px] p-[30px] lg:px-[50px] lg:py-[100px]'>
-                <h1 className='text-[40px] leading-[46px] text-textColor font-[800] md:text-[50px] md:leading-[60px] lg:text-[60px] lg:leading-[70px]'>
-                  “ Elevate Your Game, Dominate the Field! ”
+              <div className='w-full lg:w-[900px] p-[30px] lg:px-[50px] lg:py-[10px]'>
+                <h1 className='text-[40px] leading-[56px] text-textColor font-[800] md:text-[50px] md:leading-[60px] lg:text-[80px] lg:leading-[110px]'>
+                  “Elevate Your Game, <span className=' heartbeat-effect lg:text-[100px] text-redBorder '> Dominate </span> the Field!”
                 </h1>
-                <p className='text_para lg:w-[600px] mt-[20px]'>
-                  Calling all sports enthusiasts and professionals! Register with us to connect, learn, and grow.
+                <p className='text_para  lg:w-[800px] lg:leading-[50px] mt-[55px] text-[26px]'>
+                  Calling all sports enthusiasts and professionals! Register with us to <span className='text-bold text-white'>connect, learn, and grow</span>.
                 </p>
                 {userRole === '' && (
                   <Link to='/register'>
-                    <button className='btn text-textColor mt-[20px] lg:ml-[450px] border-redBorder border-[2px] rounded-[10px]'>
-                      Join now
+                    <button className='btn text-textColor mt-[30px] lg:ml-[400px] lg:mt-[40px] border-redBorder border-[2px] rounded-[10px] bg-transparent hover:shadow-[0_0_20px_rgba(255,0,0,0.6)] hover:scale-105 text-lg'>
+                      <span className=''>JOIN NOW</span>
                     </button>
+
                   </Link>
                 )}
               </div>
@@ -46,8 +61,8 @@ const Home = () => {
             {/* _______hero contents _____*/}
             <div className='w-full lg:w-auto'>
               <div className='w-full lg:w-[800px] p-[30px] lg:px-[50px] lg:py-[100px]'>
-                <h1 className='text-[40px] leading-[46px] text-textColor font-[800] md:text-[50px] md:leading-[60px] lg:text-[60px] lg:leading-[70px]'>
-                  “Be the greatest of your game”
+                <h1 className='mt-[50px] text-[40px] leading-[46px] text-textColor font-[800] md:text-[50px] md:leading-[60px] lg:text-[70px] lg:leading-[110px]'>
+                  “Be The <span className=' text-redBorder'>Greatest</span> Of Your Game”
                 </h1>
                 {/* <div className='border-redBorder border-[2px] text-white'>
                   <h1>expert trainers</h1>

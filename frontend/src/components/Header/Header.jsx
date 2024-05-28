@@ -61,6 +61,21 @@ const Header = () => {
 
   return (
     <>
+
+<style>
+        {`
+          .glow {
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.4);
+            transition: box-shadow 0.3s ease;
+          }
+
+          .hover-glow:hover {
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.4);
+            color: white;
+            transition: box-shadow 0.3s ease, color 0.3s ease;
+          }
+        `}
+      </style>
       <header className="header flex items-center" ref={headerRef}>
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between">
@@ -109,7 +124,7 @@ const Header = () => {
               {userRole !== '' ?(
                 <button
                   onClick={handleLogout}
-                  className="bg-black border-redBorder border-[2px] py-1 px-4 sm:py-2 sm:px-5 md:py-2 md:px-6 text-white font-[600] h-[36px] sm:h-[40px] md:h-[44px] flex items-center rounded-[10px]"
+                  className="bg-black border-redBorder border-[2px] py-1 px-4 sm:py-2 sm:px-5 md:py-2 md:px-6 text-white font-[600] h-[36px] sm:h-[40px] md:h-[44px] flex items-center rounded-[10px] hover-glow"
                 >
                   Logout
                 </button>

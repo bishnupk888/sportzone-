@@ -30,8 +30,8 @@ const getTrainer = async (req, res) => {
 
 
 const getAllTrainers = async (req, res) => {
+    console.log("in get trainer ");
     try {
-
         const trainers = await Trainer.find({}).select('-password')
         if (trainers.length>0) {
             return res.status(200).json({ data: trainers, message: "trainer found", success: true })

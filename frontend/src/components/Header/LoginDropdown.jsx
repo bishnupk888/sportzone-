@@ -8,9 +8,22 @@ const LoginDropdown = () => {
   };
 
   return (
+    <>
+    <style>
+        {`
+          .glow {
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.5);
+            transform: scale(1.05);
+            font-size: 1.25rem; /* Adjust as needed */
+            transition: box-shadow 0.3s ease, transform 0.3s ease, font-size 0.3s ease;
+          }
+          
+
+        `}
+      </style>
     <div className="relative inline-block text-left">
       <button 
-        className="bg-black border-redBorder border-[2px] py-1 px-4 sm:py-2 sm:px-5 md:py-2 md:px-6 text-white font-[600] h-[36px] sm:h-[40px] md:h-[44px] flex items-center rounded-[10px]"
+        className="bg-black border-redBorder border-[2px] py-1 px-4 sm:py-2 sm:px-5 md:py-2 md:px-6 text-white font-[600] h-[36px] sm:h-[40px] md:h-[44px] flex items-center rounded-[10px] hover-glow"
         onClick={toggleDropdown}
       >
         Login
@@ -39,6 +52,7 @@ const LoginDropdown = () => {
         </div>
       )}
     </div>
+    </>
   );
 };
 

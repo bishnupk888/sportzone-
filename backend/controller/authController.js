@@ -6,7 +6,6 @@ const bcrypt = require('bcrypt')
 const crypto = require('crypto')
 const userHelper = require('../helpers/userHelpers')
 const otpHelper = require('../helpers/otpHelper')
-const nodemailer = require('nodemailer')
 const OTP = require('../model/otpSchema')
 
 
@@ -16,42 +15,6 @@ const generateToken = (user) => {
     expiresIn: Date.now() + (1000 * 60 * 60 * 24 * 30)
   })
 }
-
-const generateOtp = () => {
-  return crypto.randomBytes(6).toString('hex');
-};
-
-const sendOtp = async (email, otp) => {
-
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.SENDER_EMAIL,
-      pass: process.env.SENDER_EMAIL_PASS,
-
-    },
-  });
-
-
-  const mailOptions = {
-    from: process.env.SENDER_MAIL,
-    to: email,
-    subject: 'Your OTP',
-    text: `Your OTP for Sportzone is : ${otp}`,
-  };
-
-  try {
-    const info = await transporter.sendMail(mailOptions);
-    
-
-    return { message: 'OTP sent to your email' };
-  } catch (error) {
-    console.error("Error sending email:", error);
-    return new Error({ message: 'Failed to send OTP' })
-  }
-};
-
-
 
 const register = async (req, res) => {
   const { name, email, password, phone, role } = req.body;
@@ -71,15 +34,9 @@ const register = async (req, res) => {
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    const otp = generateOtp();
-    const otpDocument = new OTP({
-      otp,
-      email,
-    });
-    otpDocument.save().then((data) => { console.log("otp Stored", data); })
-      .catch((err) => console.log("error saving otp"))
-
-    await sendOtp(email, otp); //sends email with otp
+    const otp = await otpHelper.generateOtp(email)
+    console.log(" in authcontroller returned otp",otp);
+    await otpHelper.sendOtp(email, otp); //sends email with otp
     if (role === 'user') {
       user = new User({
         username: name,
@@ -97,7 +54,6 @@ const register = async (req, res) => {
         role
       });
     }
-
     user.save().then(() => {
       res.cookie('email', email, { httpOnly: true });
       res.cookie('role', role, { httpOnly: true });
@@ -113,48 +69,6 @@ const register = async (req, res) => {
 }
 
 
-const verifyOtp = async (req, res) => {
-
-  console.log('In verifyotp');
-  const { otp } = req.body;
-  const email = req.cookies.email;
-  const role = req.cookies.role
-
-  let user = null;
-  if (role === 'user') {
-    user = await User.findOne({ email })
-    console.log("role is user :", user);
-
-  } else if (role === 'trainer') {
-    user = await Trainer.findOne({ email })
-    console.log("role is trainer :", user);
-  }
-  const otpDocument = await OTP.findOne({ email })
-  console.log(otpDocument);
-  if (!otpDocument) {
-    return res.status(400).json({ message: "OTP has expired or is invalid" });
-  }
-  if (otpDocument.otp === otp) {
-    user.isOtpVerified = true;
-    console.log(otpDocument);
-
-    // Save the user document with the updated flag
-    user.save().then(data => {
-      res.clearCookie('email')
-      res.clearCookie('role')
-      console.log("save");
-      return res.status(200).json({ message: "OTP verified successfully", data });
-    })
-      .catch(error => {
-        console.error("Error updating user document:", error);
-        return res.status(500).json({ message: "Server error, OTP verification failed" });
-      });
-  } else {
-    res.status(400).json({ message: "Invalid OTP" });
-  }
-};
-
-
 const login = async (req, res) => {
   console.log("in login");
   const { email, password, role } = req.body
@@ -168,7 +82,6 @@ const login = async (req, res) => {
   console.log("Role is trainer:", role);
   user = await Trainer.findOne({ email });
 } 
-console.log("no user:",user);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -192,6 +105,15 @@ console.log("no user:",user);
     res.status(400).json({ message: " server error Login failed " });
   }
 } 
+
+const resetPassword = (req,res)=>{
+  
+
+  res.status(200).json({message:"reset password"})
+  console.log("reset password");
+}
+
+
 const logout = async (req, res) => {
   res.clearCookie('jwtUser', {
     httpOnly: true,
@@ -204,5 +126,6 @@ module.exports = {
   register,
   login,
   logout,
-  verifyOtp
+  resetPassword
+  
 }

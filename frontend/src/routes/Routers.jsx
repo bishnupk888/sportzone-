@@ -17,6 +17,8 @@ import Bookings from '../pages/Trainers/Bookings'
 import Experience from '../pages/Trainers/Experience'
 import Slots from '../pages/Trainers/Slots'
 import TrainerProfile from '../pages/Trainers/TrainerProfile';
+import EditUserProfile from '../pages/users/EditUserProfile';
+import ResetPassword from '../pages/ResetPassword';
 
 
 // Admin imports
@@ -42,15 +44,14 @@ const Routers = () => {
       <Route path='/contact' element={<Contact userRole={userRole}/>} />
       <Route path='/services' element={<Services />} />
       <Route path='/verify-otp' element={<VerifyOtp />} />
+      <Route path='/reset-password' element={<ResetPassword />} />
       <Route path='/profile' element={<Profile />} />
       <Route path='/bookings' element={<Bookings />} />
       <Route path='/experience' element={<Experience />} />
       <Route path='/slots' element={<Slots />} />
       <Route path='/trainer-profile' element={<TrainerProfile />} />
-
-
-
-
+      <Route path='/edit-userprofile' element={<EditUserProfile />} />
+      <Route path='/slots' element={<Slots />} />
 
 
 

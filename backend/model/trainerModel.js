@@ -53,9 +53,8 @@ const trainerSchema = new mongoose.Schema({
         }
     }],
     isVerified:{
-        type:String,
-        enum:['verified','pending','rejected'],
-        default:'pending'
+        type:Boolean,
+        default:false
     },
     isOtpVerified:{
         type:Boolean,

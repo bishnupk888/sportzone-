@@ -60,7 +60,7 @@ const Header = () => {
             <header className="header flex items-center" ref={headerRef}>
                 <div className="container mx-auto px-4">
                     <div className="flex items-center justify-between">
-                        <Link to="/">
+                        <Link to="/admin/dashboard">
                             <div className="flex justify-center items-center ml-[10px] sm:ml-[20px] md:ml-[50px]">
                                 <img src={Logo} alt="logo" className="logo h-12 w-auto md:h-16" />
                             </div>
