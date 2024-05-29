@@ -2,12 +2,27 @@ import React, { useEffect, useState } from 'react';
 import axiosInstance from '../../axiosInstance/axiosInstance';
 import { FaSearch } from 'react-icons/fa';
 import { toast } from 'react-toastify';
+import CustomModal from '../../components/popupComponents/imageViewerModal';
+import { useNavigate } from 'react-router-dom';
 
 const Trainers = () => {
   const [trainersData, setTrainersData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
+  const [modalImageUrl, setModalImageUrl] = useState('');
+  const [isOpen, setIsOpen] = useState(false);
   const trainersPerPage = 5;
+
+
+  const userRole = localStorage.getItem('adminData');
+
+  const navigate = useNavigate()
+    useEffect(()=>{
+      if(!userRole){
+        navigate('/admin/login')
+        toast.info("please login for more")       
+      }
+    },[])
 
   useEffect(() => {
     axiosInstance.get('/api/trainers')
@@ -22,23 +37,16 @@ const Trainers = () => {
   const handleApprove = (id) => {
     axiosInstance.post(`/api/admin/trainer-approval/${id}`)
       .then((response) => {
-        setTrainersData((prevTrainersData) => {
-          return prevTrainersData.map((trainer) => {
-            if (id === trainer._id) {
-              if (!trainer.certificate.trim().length) {
-                toast.error(`Certificate is not added for Trainer ${trainer.username}`);
-              } else {
-                console.log(`Toggling isVerified for trainer id ${id}`);
-                toast.success(`${trainer.isVerified ? 'Unapproved' : 'Approved'} Trainer ${trainer.username} successfully!`);
-              }
-              return { ...trainer, isVerified: !trainer.isVerified };
-            }
-            return trainer;
-          });
+        setTrainersData(prevTrainersData => {
+          return prevTrainersData.map(trainer =>
+            trainer._id === id ? { ...trainer, isVerified: !trainer.isVerified } : trainer
+          );
         });
+        toast.success(`Trainer ${trainersData.find(trainer => trainer._id === id).isVerified ? 'Unapproved' : 'Approved'} successfully!`);
       })
       .catch((err) => {
-        console.log("failed to handle approval", err);
+        console.error("Failed to handle approval", err);
+        toast.error(`Failed to ${trainersData.find(trainer => trainer._id === id).isVerified ? 'Approve' : 'Unapprove'} trainer ${id}`);
       });
   };
 
@@ -46,18 +54,26 @@ const Trainers = () => {
     axiosInstance.post(`/api/admin/block-trainer/${id}`)
       .then(response => {
         setTrainersData(prevTrainersData => {
-          return prevTrainersData.map((trainer) => {
-            if (id === trainer._id) {
-              console.log(`Toggling isBlocked for trainer id ${id}`);
-              return { ...trainer, isBlocked: !trainer.isBlocked };
-            }
-            return trainer;
-          });
+          return prevTrainersData.map(trainer =>
+            trainer._id === id ? { ...trainer, isBlocked: !trainer.isBlocked } : trainer
+          );
         });
+        toast.success(`Trainer ${trainersData.find(trainer => trainer._id === id).isBlocked ? 'Blocked' : 'Unblocked'} successfully!`);
       })
       .catch(err => {
         console.error("Failed to handle block:", err);
+        toast.error(`Failed to ${trainersData.find(trainer => trainer._id === id).isBlocked ? 'Block' : 'Unblock'} trainer`);
       });
+  };
+
+  const openModal = (imageUrl) => {
+    setModalImageUrl(imageUrl);
+    setIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalImageUrl('');
+    setIsOpen(false);
   };
 
   const indexOfLastTrainer = currentPage * trainersPerPage;
@@ -80,10 +96,14 @@ const Trainers = () => {
         <td className="p-3 border border-redBorder">
           <p>{trainer.email}</p> {/* email */}
         </td>
-        <td className="p-3 border border-redBorder">
-          <p>{trainer.certificate ? trainer.certificate : 'not added'}</p> {/* certificate */}
+        <td className="p-3 border border-redBorder text-center">
+          {trainer.certificate ? (
+            <button onClick={() => openModal(trainer.certificate)} className='mr-2 px-3 py-1 rounded transition-transform duration-200 hover:scale-110 hover:border-b hover:border-redBorder hover:text-redBorder'>View Certificate</button>
+          ) : (
+            <span className='text-redBorder'>No certificate added</span>
+          )}
         </td>
-        <td className="p-3 border border-redBorder text-right">
+        <td className="p-3 border border-redBorder text-center">
           <button
             onClick={() => handleBlock(trainer._id)}
             className={`mr-2 px-3 py-1 rounded transition-transform duration-200 hover:scale-110 ${trainer.isBlocked ? 'text-white border border-green-500 bg-green-900' : 'text-white border border-red-500 bg-red-900'}`}
@@ -91,7 +111,7 @@ const Trainers = () => {
             <span>{trainer.isBlocked ? 'Unblock' : 'Block'}</span>
           </button>
         </td>
-        <td className="p-3 border border-redBorder text-right">
+        <td className="p-3 border border-redBorder text-center">
           <button
             onClick={() => handleApprove(trainer._id)}
             className={`px-3 py-1 rounded transition-transform duration-200 hover:scale-110 ${trainer.certificate.trim() !== '' ? (trainer.isVerified ? 'text-white border border-green-500 bg-green-900' : 'text-white border border-blue-500 bg-blue-900') : 'text-white border border-yellow-500 bg-yellow-900'}`}
@@ -106,14 +126,14 @@ const Trainers = () => {
   const totalPages = Math.ceil(filteredTrainers.length / trainersPerPage);
 
   return (
-    <div className='bg-black w-auto h-[100%]'>
+    <div className='bg-black w-auto h-[100%] '>
       <div className="overflow-x-auto m-4 p-4 border border-redBorder bg-black text-textColor rounded-md mx-[100px] md:mx-[30px]">
         <div className="flex justify-between items-center mb-4">
           <div></div>
           <div className="relative">
-            <input 
-              type="text" 
-              placeholder="Search trainers..." 
+            <input
+              type="text"
+              placeholder="Search trainers..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="px-3 py-2 border border-redBorder rounded bg-black text-textColor pl-10"
@@ -165,6 +185,8 @@ const Trainers = () => {
           </button>
         </div>
       </div>
+
+      <CustomModal isOpen={isOpen} onClose={closeModal} imageUrl={modalImageUrl} />
     </div>
   );
 };

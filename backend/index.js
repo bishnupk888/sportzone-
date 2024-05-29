@@ -7,6 +7,7 @@ const trainerRoute = require('./routes/trainerRoute')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
 const authRoute = require('./routes/authRoute')
+const checkBlocked = require('./middlewares/checkBlocked')
 
 if (process.env.NODE_ENV != "production") {
     require('dotenv').config()
@@ -20,10 +21,10 @@ app.use(cors({
     origin: process.env.CORS_ORIGIN, // Allow requests from this origin
     credentials: true,               // Allow credentials (cookies, authorization headers, etc.)
   }));
-app.use('/api/auth', authRoute)
-app.use('/api/users', userRoute);
+app.use('/api/auth',checkBlocked,authRoute)
+app.use('/api/users',checkBlocked, userRoute);
 app.use('/api/admin',adminRoute)
-app.use('/api/trainers',trainerRoute)
+app.use('/api/trainers',checkBlocked,trainerRoute)
 
 // connect database
 connectDb();

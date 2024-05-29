@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axiosInstance from '../../axiosInstance/axiosInstance';
 import { toast } from 'react-toastify';
 import { FaSearch } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 const Athletes = () => {
   const [athletesData, setAthletesData] = useState([]);
@@ -9,15 +10,29 @@ const Athletes = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const athletesPerPage = 5;
 
+  const userRole = localStorage.getItem('adminData');
+  const navigate = useNavigate();
+
   useEffect(() => {
+    if (!userRole) {
+      navigate('/admin/login');
+      toast.info("Please login to continue.");
+    }
+  }, [userRole, navigate]);
+
+  useEffect(() => {
+    fetchAthletes();
+  }, []); // Empty dependency array ensures this effect runs once on mount
+
+  const fetchAthletes = () => {
     axiosInstance.get('/api/users')
       .then(response => {
-        setAthletesData(response.data.data); // Set the athletes data fetched from the API
+        setAthletesData(response.data.data);
       })
       .catch(error => {
         console.error('Error fetching athletes:', error);
       });
-  }, []);
+  };
 
   const handleBlock = (id) => {
     axiosInstance.post(`/api/admin/block-user/${id}`)
@@ -25,16 +40,16 @@ const Athletes = () => {
         setAthletesData(prevAthletesData => {
           return prevAthletesData.map((athlete) => {
             if (id === athlete._id) {
-              console.log(`Toggling isBlocked for athlete id ${id}`);
-              toast.success(`${athlete.isBlocked ? 'Unblocked' : 'Blocked'} ${athlete.username} successfully!`);
               return { ...athlete, isBlocked: !athlete.isBlocked };
             }
             return athlete;
           });
         });
+        toast.success(`Successfully ${athletesData.find(a => a._id === id).isBlocked ? 'Unblocked' : 'Blocked'} athlete.`);
       })
       .catch(err => {
         console.error("Failed to handle block:", err);
+        toast.error("Failed to handle block.");
       });
   };
 
@@ -64,7 +79,8 @@ const Athletes = () => {
         <td className="p-3 border border-redBorder text-right">
           <button
             onClick={() => handleBlock(athlete._id)}
-            className={`mr-2 px-3 py-1 rounded transition-transform duration-200 hover:scale-110 ${athlete.isBlocked ? 'text-white border border-green-500  bg-green-900 ' : 'text-white border border-red-500 bg-red-900'}`}>
+            className={`mr-2 px-3 py-1 rounded transition-transform duration-200 hover:scale-110 ${athlete.isBlocked ? 'text-white border border-green-500 bg-green-900' : 'text-white border border-red-500 bg-red-900'}`}
+          >
             {athlete.isBlocked ? 'Unblock' : 'Block'}
           </button>
         </td>
@@ -73,6 +89,10 @@ const Athletes = () => {
   };
 
   const totalPages = Math.ceil(filteredAthletes.length / athletesPerPage);
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
 
   return (
     <div className='bg-black w-auto h-[100%]'>
@@ -115,7 +135,7 @@ const Athletes = () => {
 
         <div className="flex justify-between items-center mt-4">
           <button
-            onClick={() => setCurrentPage(prevPage => Math.max(prevPage - 1, 1))}
+            onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
             className="px-4 py-2 text-sm font-semibold text-textColor border border-redBorder rounded disabled:opacity-50 dark:bg-black"
           >
@@ -125,7 +145,7 @@ const Athletes = () => {
             Page {currentPage} of {totalPages}
           </span>
           <button
-            onClick={() => setCurrentPage(prevPage => Math.min(prevPage + 1, totalPages))}
+            onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
             className="px-4 py-2 text-sm font-semibold text-textColor border border-redBorder rounded disabled:opacity-50 dark:bg-black"
           >

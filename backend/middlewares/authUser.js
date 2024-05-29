@@ -3,9 +3,9 @@ const User = require('../model/userModel')
 const Trainer = require('../model/trainerModel')
 
 
-const authUser = (req,res,next)=>{
+const authUser = async(req,res,next)=>{
     try {
-   
+
     const token = req.cookies.jwtUser
     const decodedToken = jwt.verify(token,process.env.JWT_SECRET_USER)
     if(decodedToken.exp < Date.now()){
@@ -13,10 +13,10 @@ const authUser = (req,res,next)=>{
     }
     let user =null
     if(decodedToken.role === 'trainer'){
-        user = Trainer.findById(decodedToken.id).select('-password')
+        user = await Trainer.findById(decodedToken.id).select('-password')
     }
     if(decodedToken.role === 'user'){
-        user = User.findById(decodedToken.id).select('-password')
+        user = await User.findById(decodedToken.id).select('-password')
     }
     if(!user){
         return res.status(400).json({message:"authentication failed"})

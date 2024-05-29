@@ -3,18 +3,18 @@ import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import defaultImage from '../../assets/images/userImage.jpg';
 import axiosInstance from '../../axiosInstance/axiosInstance';
+import { toast } from 'react-toastify';
 
 const Profile = () => {
     const user = useSelector((state) => state.user);
-    console.log(user);
     const [userData, setUserData] = useState({});
 
     useEffect(() => {
         if (user && user.userRole && user.userId) {
             axiosInstance.get(`/api/users/${user.userId}`)
                 .then((response) => {
+                    console.log(response);
                     setUserData(response.data.data);
-                    console.log(response.data.data);
                 })
                 .catch((error) => {
                     console.error('Error fetching user data:', error);

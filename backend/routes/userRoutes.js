@@ -5,7 +5,7 @@ const authUser = require('../middlewares/authUser')
 
 
 userRouter.get('/',userController.getAllUsers)
-userRouter.get('/:id',authUser,userController.getUser) 
+userRouter.get('/:id',userController.getUser) 
 userRouter.put('/:id',userController.updateUser)
 
 

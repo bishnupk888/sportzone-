@@ -43,7 +43,7 @@ const Header = () => {
 
     const handleLogout = (e) => {
         e.preventDefault();
-        axiosInstance.post('/api/auth/logout')
+        axiosInstance.post('/api/admin/logout')
             .then((response) => {
                 localStorage.removeItem('adminData');
                 toast.success("Successfully logged out");
@@ -89,19 +89,7 @@ const Header = () => {
                                     <h3 className='text-white text-[14px] md:text-[16px] leading-7 font-[600] border-b-2 border-redBorder'>Welcome, <span>{'Admin'}</span></h3>
                                 </div>
                             )}
-                            {userRole !== null && userRole !== undefined && (
-                                <div>
-                                    <Link to="/profile">
-                                        <figure className="w-[30px] h-[30px] sm:w-[35px] sm:h-[35px] md:w-[40px] md:h-[40px]">
-                                            <img
-                                                src={defaultImage}
-                                                alt="User"
-                                                className="w-full rounded-full cursor-pointer"
-                                            />
-                                        </figure>
-                                    </Link>
-                                </div>
-                            )}
+                           
                             {userRole !== null && userRole !== undefined ? (
                                 <button
                                     onClick={handleLogout}

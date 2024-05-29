@@ -27,6 +27,7 @@ import AdminLogin from '../pages/Admin/AdminLogin';
 import AdminTrainers from '../pages/Admin/Trainers'; // Renamed to avoid conflict
 import Athletes from '../pages/Admin/Athletes';
 import AdminServices from '../pages/Admin/Services'; // Renamed to avoid conflict
+import AdminBookings from '../pages/Admin/Bookings'
 
 
 const Routers = () => {
@@ -61,7 +62,7 @@ const Routers = () => {
       <Route path='/admin/trainers' element={<AdminTrainers />} />
       <Route path='/admin/users' element={<Athletes />} />
       <Route path='/admin/services' element={<AdminServices />} />
-      <Route path='/admin/bookings' element={<Bookings />} />
+      <Route path='/admin/bookings' element={<AdminBookings />} />
     </Routes>
   );
 };

@@ -2,7 +2,7 @@ import React from 'react'
 import logoSZ from "../../assets/images/logo/logo-sz.png"
 const Footer = () => {
 	return (
-		<footer className=" px-4 dark:bg-black dark:text-textColor border-t border-b border-gray-300 dark:border-gray-700">
+		<footer className=" dark:bg-black dark:text-textColor border-t border-b border-textColor dark:border-gray-700 ">
 			<div className="container flex flex-col justify-between py-10 mx-auto space-y-8 lg:flex-row lg:space-y-0">
 
 				<div className="">

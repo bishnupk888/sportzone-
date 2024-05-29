@@ -1,20 +1,20 @@
-import React from 'react'
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-
-import Header from '../components/Header/Header'
-import Footer from '../components/Footer/Footer'
-import Routers from '../routes/Routers'
-import AdminHeader from '../components/Header/AdminHeader';
-import TrainerHeader from '../components/Header/trainerHeader' // Make sure the import matches the component name
+import Header from '../components/Header/Header';
+import Footer from '../components/Footer/Footer';
+import Routers from '../routes/Routers';
+import TrainerHeader from '../components/Header/trainerHeader';
+import AdminSidebar from '../components/Sidebar/AdminSidebar';
 
 const Layout = () => {
   const userRole = useSelector((state) => state.user.userRole);
- 
-  console.log(userRole);
-  const renderHeader = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  console.log(userRole);
+
+  const renderHeader = () => {
     if (location.pathname.startsWith('/admin')) {
-      return <AdminHeader />;
+      return <AdminSidebar setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} />;
     }
     switch (userRole) {
       case 'trainer':
@@ -27,13 +27,17 @@ const Layout = () => {
   };
 
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       {renderHeader()}
-      <main>
-        <Routers />
-      </main>
-      <Footer />
-    </>
+      <div className="flex flex-grow mt-16"> {/* Adjust mt-16 based on your header height */}
+        <main className={`flex-grow transition-all duration-300 ease-in-out ${isSidebarOpen ? 'ml-64' : 'ml-20'}`}>
+          <Routers />
+        </main>
+      </div>
+      <footer className={`transition-all duration-300 ease-in-out ${isSidebarOpen ? 'ml-64' : 'ml-20'}`}>
+        <Footer />
+      </footer>
+    </div>
   );
 };
 
