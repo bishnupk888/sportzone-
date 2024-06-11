@@ -10,10 +10,10 @@ import 'react-toastify/dist/ReactToastify.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <Provider store={store}>
+    <Provider store={store}>  
 
       <BrowserRouter>
-        <ToastContainer autoClose={3000} theme="dark" closeOnClick/>
+        <ToastContainer autoClose={3000} theme="dark" closeOnClick  className="mt-20"/>
         <App />
       </BrowserRouter>
     </Provider>

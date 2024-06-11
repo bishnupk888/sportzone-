@@ -30,12 +30,16 @@ const trainerSchema = new mongoose.Schema({
     },
     fee:{
         type:Number,
+        
     },
     location:{
         type:String,
     },
     certificate:{
         type:String
+    },
+    about:{
+        type:String, //added latest make other changes
     },
     profileImage:{
         type:String,
@@ -45,11 +49,8 @@ const trainerSchema = new mongoose.Schema({
         institution: {
             type: String,  
         },
-        start_date: {
-            type: Date,
-        },
-        end_date: {
-            type: Date
+        duration:{
+            type: String
         }
     }],
     isVerified:{

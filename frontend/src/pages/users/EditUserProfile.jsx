@@ -1,22 +1,25 @@
-
-import { PhotoIcon, UserCircleIcon } from '@heroicons/react/24/solid'
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import defaultImage from '../../assets/images/userImage.jpg';
 import axiosInstance from '../../axiosInstance/axiosInstance';
+import { toast } from 'react-toastify';
 
+
+import {setUserData} from '../../Redux/features/userSlice';
+ 
 export default function Example() {
-
     const user = useSelector((state) => state.user);
-    const [userData, setUserData] = useState({});
+    const [localUserData, setLocalUserData] = useState({});
+    const [errors, setErrors] = useState({});
+    const navigate = useNavigate();
+    const dispatch = useDispatch()
 
     useEffect(() => {
         if (user && user.userRole && user.userId) {
             axiosInstance.get(`/api/users/${user.userId}`)
                 .then((response) => {
-                    console.log("user in response is : ", response.data.data);
-                    setUserData(response.data.data)
+                    setLocalUserData(response.data.data);
                 })
                 .catch((error) => {
                     console.error('Error fetching user data:', error);
@@ -25,28 +28,69 @@ export default function Example() {
         }
     }, [user]);
 
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setLocalUserData({
+            ...localUserData,
+            [name]: value,
+        });
+    };
+
+    const validateForm = () => {
+        const newErrors = {};
+        if (!localUserData.username) newErrors.username = "Full name is required";
+        if (!localUserData.email) newErrors.email = "Email address is required";
+        if (!localUserData.age) newErrors.age = "Age is required";
+        if (!localUserData.gender) newErrors.gender = "Gender is required";
+        if (!localUserData.phone) newErrors.phone = "Phone number is required";
+        if (!localUserData.interests) newErrors.interests = "Interests are required";
+        return newErrors;
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const newErrors = validateForm();
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+
+        axiosInstance.put(`/api/users/${user.userId}`, localUserData)
+            .then((response) => {
+                toast.success("User data updated successfully");
+                dispatch(setUserData(localUserData));
+                navigate('/user/profile');
+            })
+            .catch((error) => {
+                console.error('Error updating user data:', error);
+                toast.error("Failed to update user data");
+            });
+    };
+
+    const handleCancel = () => {
+        navigate('/profile');
+    };
 
     return (
         <div className='px-[5%] py-[5%] bg-black text-white'>
-            <form>
+            <form onSubmit={handleSubmit}>
                 <div className="space-y-12">
                     <div className="pb-12">
-                        <h2 className=" text-[30px] text-base font-bold lg:text-[40px] leading-7 text-textColor ">Update Profile</h2>
+                        <h2 className="text-[30px] text-base font-bold lg:text-[40px] leading-7 text-textColor">Update Profile</h2>
                         <p className="mt-5 text-sm leading-6 text-textColor">
-                            Complete full profile information for verification .
+                            Complete full profile information for verification. 
                         </p>
-
                         <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 text-textColor">
-                        <div className="col-span-full">
+                            <div className="col-span-full">
                                 <label htmlFor="photo" className="block text-xl font-medium leading-6 text-textColor">
                                     Profile Image
                                 </label>
-                                <div className="mt-2 flex items-center ">
-                                    <div className='relative  w-40 h-40 flex items-center justify-center'>
+                                <div className="mt-2 flex items-center">
+                                    <div className='relative w-40 h-40 flex items-center justify-center'>
                                         <img
-                                            src={userData?.profileImage || defaultImage}
+                                            src={localUserData?.profileImage || defaultImage}
                                             alt='user-image'
-                                            className='lg:absolute top-5 w-28 h-28  rounded-full border-2 border-redBorder'
+                                            className='lg:absolute top-5 w-28 h-28 rounded-full border-2 border-redBorder'
                                         />
                                     </div>
                                     <button
@@ -57,19 +101,22 @@ export default function Example() {
                                     </button>
                                 </div>
                             </div>
+
                             <div className="sm:col-span-3">
-                                <label htmlFor="full-name" className="block text-xl font-medium leading-6">
+                                <label htmlFor="username" className="block text-xl font-medium leading-6">
                                     Full name
                                 </label>
                                 <div className="mt-2">
                                     <input
                                         type="text"
-                                        name="full-name"
-                                        id="full-name"
-                                        placeholder={userData?.username ? userData.username : 'Enter full name'}
-                                        defaultValue={userData.username}
-                                        className="block w-full rounded-md border border-redBorder bg-white bg-opacity-5 py-1.5 text-textColor shadow-xl placeholder:text-textColor focus:outline-none focus:ring-2 focus:ring-redBorder focus:border-redBorder lg:text-[16px] sm:text-sm sm:leading-6 px-2"
+                                        name="username"
+                                        id="username"
+                                        placeholder='Enter full name'
+                                        value={localUserData.username || ''}
+                                        onChange={handleInputChange}
+                                        className={`block w-full rounded-md border ${errors.username ? 'border-red-500' : 'border-redBorder'} bg-white bg-opacity-5 py-1.5 text-textColor shadow-xl placeholder:text-textColor focus:outline-none focus:ring-2 focus:ring-redBorder focus:border-redBorder lg:text-[16px] sm:text-sm sm:leading-6 px-2`}
                                     />
+                                    {errors.username && <span className="text-red-500">{errors.username}</span>}
                                 </div>
                             </div>
 
@@ -82,12 +129,15 @@ export default function Example() {
                                         id="email"
                                         name="email"
                                         type="email"
-                                        placeholder={userData?.email ? userData.email : 'Enter email'}
-                                        defaultValue={userData.email}
-                                        className="block w-full rounded-md border border-redBorder bg-white bg-opacity-5 py-1.5 text-textColor shadow-xl placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-redBorder focus:border-redBorder lg:text-[16px] sm:text-sm sm:leading-6 px-2"
+                                        placeholder='Enter email'
+                                        value={localUserData.email || ''}
+                                        onChange={handleInputChange}
+                                        className={`block w-full rounded-md border ${errors.email ? 'border-red-500' : 'border-redBorder'} bg-white bg-opacity-5 py-1.5 text-textColor shadow-xl placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-redBorder focus:border-redBorder lg:text-[16px] sm:text-sm sm:leading-6 px-2`}
                                     />
+                                    {errors.email && <span className="text-red-500">{errors.email}</span>}
                                 </div>
                             </div>
+
                             <div className="sm:col-span-3">
                                 <label htmlFor="age" className="block text-xl font-medium leading-6">
                                     Age
@@ -97,33 +147,38 @@ export default function Example() {
                                         id="age"
                                         name="age"
                                         type="number"
-                                        placeholder={userData?.age ? userData.age : 'Enter Age'}
-                                        defaultValue={userData.age}
-                                        className="block w-[50%] rounded-md border border-redBorder bg-white bg-opacity-5 py-1.5 text-textColor shadow-xl placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-redBorder focus:border-redBorder lg:text-[16px] sm:text-sm sm:leading-6 px-2"
+                                        placeholder='Enter Age'
+                                        value={localUserData.age || ''}
+                                        onChange={handleInputChange}
+                                        className={`block w-[50%] rounded-md border ${errors.age ? 'border-red-500' : 'border-redBorder'} bg-white bg-opacity-5 py-1.5 text-textColor shadow-xl placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-redBorder focus:border-redBorder lg:text-[16px] sm:text-sm sm:leading-6 px-2`}
                                     />
+                                    {errors.age && <span className="text-red-500">{errors.age}</span>}
                                 </div>
                             </div>
-                             <div className="sm:col-span-3">
+
+                            <div className="sm:col-span-3">
                                 <label htmlFor="gender" className="block text-xl font-medium leading-6">
                                     Gender
                                 </label>
-                                <div className="mt-2" >
+                                <div className="mt-2">
                                     <select
                                         id="gender"
                                         name="gender"
-                                        placeholder={userData?.gender ? userData.email : 'Select gender'}
-                                        defaultValue={userData.gender}
-                                        className="block w-full rounded-md border border-redBorder bg-white bg-opacity-5 py-1.5 text-textColor shadow-xl focus:outline-none focus:ring-2 focus:ring-redBorder focus:border-redBorder lg:text-[16px] sm:max-w-xs sm:text-sm sm:leading-6 px-2"
+                                        value={localUserData.gender || ''}
+                                        onChange={handleInputChange}
+                                        className={`block w-full rounded-md border ${errors.gender ? 'border-red-500' : 'border-redBorder'} bg-white bg-opacity-5 py-1.5 text-textColor shadow-xl focus:outline-none focus:ring-2 focus:ring-redBorder focus:border-redBorder lg:text-[16px] sm:max-w-xs sm:text-sm sm:leading-6 px-2`}
                                     >
                                         <option value="" disabled style={{ backgroundColor: 'black' }}>
                                             Select gender
                                         </option>
-                                        <option style={{ backgroundColor: 'black' }} >Male</option>
-                                        <option style={{ backgroundColor: 'black' }}>Female</option>
-                                        <option style={{ backgroundColor: 'black' }}>Other</option>
+                                        <option style={{ backgroundColor: 'black' }} value="Male">Male</option>
+                                        <option style={{ backgroundColor: 'black' }} value="Female">Female</option>
+                                        <option style={{ backgroundColor: 'black' }} value="Other">Other</option>
                                     </select>
+                                    {errors.gender && <span className="text-red-500">{errors.gender}</span>}
                                 </div>
                             </div>
+
                             <div className="sm:col-span-4">
                                 <label htmlFor="phone" className="block text-xl font-medium leading-6">
                                     Phone
@@ -133,14 +188,14 @@ export default function Example() {
                                         id="phone"
                                         name="phone"
                                         type="number"
-                                        placeholder={userData?.phone ? userData.phone : 'Enter phone number'}
-                                        defaultValue={userData.phone}
-                                        className="block w-full rounded-md border border-redBorder bg-white bg-opacity-5 py-1.5 text-textColor shadow-xl placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-redBorder focus:border-redBorder lg:text-[16px] sm:text-sm sm:leading-6 px-2"
+                                        placeholder='Enter phone number'
+                                        value={localUserData.phone || ''}
+                                        onChange={handleInputChange}
+                                        className={`block w-full rounded-md border ${errors.phone ? 'border-red-500' : 'border-redBorder'} bg-white bg-opacity-5 py-1.5 text-textColor shadow-xl placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-redBorder focus:border-redBorder lg:text-[16px] sm:text-sm sm:leading-6 px-2`}
                                     />
+                                    {errors.phone && <span className="text-red-500">{errors.phone}</span>}
                                 </div>
                             </div>
-
-                            
 
                             <div className="col-span-full">
                                 <label htmlFor="interests" className="block text-xl font-medium leading-6">
@@ -151,14 +206,13 @@ export default function Example() {
                                         id="interests"
                                         name="interests"
                                         rows={3}
-                                        placeholder={(Array.isArray(userData.interests) && userData.interests.length > 0) ? userData.interests.join(', ') : 'Add your favorite sports (use comma if multiple inerests)'}
+                                        placeholder={(Array.isArray(localUserData.interests) && localUserData.interests.length > 0) ? localUserData.interests.join(', ') : 'Add your favorite sports (use comma if multiple inerests)'}
                                         className="block w-full lg:text-[16px] rounded-md border border-redBorder bg-white bg-opacity-5 py-1.5 text-textColor shadow-xl placeholder:text-textColor sm:text-sm sm:leading-6 focus:outline-none focus:ring-2 focus:ring-redBorder focus:border-redBorder px-3"
-                                        defaultValue={userData.interests}
+                                        defaultValue={localUserData.interests}
+                                        onChange={handleInputChange}
                                     />
                                 </div>
                             </div>
-
-                           
 
                         </div>
                     </div>

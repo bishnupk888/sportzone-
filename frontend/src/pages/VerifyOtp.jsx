@@ -35,10 +35,10 @@ const VerifyOtp = () => {
       })
       .catch((error) => {
         toast.error("OTP is invalid or expired");
-        setTimer(0);
         console.error("Error while verifying OTP:", error);
       });
   };
+  
 
   const handleResend = (e) => {
     e.preventDefault();

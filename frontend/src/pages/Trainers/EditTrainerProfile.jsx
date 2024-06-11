@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -7,7 +6,7 @@ import axiosInstance from '../../axiosInstance/axiosInstance';
 import { toast } from 'react-toastify';
 import UploadWidget from '../../components/popupComponents/UploadWidget';
 
-export default function TrainerProfile() {
+export default function EditTrainerProfile() {
     const user = useSelector((state) => state.user);
     const [trainerData, setTrainerData] = useState({
         username: '',
@@ -139,9 +138,9 @@ export default function TrainerProfile() {
             <form onSubmit={handleSubmit}>
                 <div className="space-y-12">
                     <div className="pb-12">
-                        <h2 className="text-[30px] text-base font-bold lg:text-[40px] leading-7 text-textColor">Trainer Profile</h2>
-                        <p className="mt-5 text-sm leading-6 text-textColor ">
-                            Add all profile informations for verification. Informations provided will be visible to users
+                        <h2 className="text-[30px] text-base font-bold lg:text-[40px] leading-7 text-textColor">Update Trainer Profile</h2>
+                        <p className="mt-5 text-sm leading-6 text-textColor">
+                            Complete full profile information for verification.
                         </p>
                         <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 text-textColor">
                             <div className="col-span-full">
@@ -181,18 +180,16 @@ export default function TrainerProfile() {
 
                             <div className="sm:col-span-4">
                                 <label htmlFor="email" className="block text-xl font-medium leading-6">
-                                    Email address 
+                                    Email address
                                 </label>
                                 <div className="mt-2">
                                     <input
                                         id="email"
                                         name="email"
                                         type="email"
-                                        readOnly
                                         placeholder='Enter email'
                                         value={trainerData.email || ''}
                                         onChange={handleInputChange}
-                                        onClick={()=>toast.warning('cannot change email')}
                                         className={`block w-full rounded-md border ${errors.email ? 'border-red-500' : 'border-redBorder'} bg-white bg-opacity-5 py-1.5 text-textColor shadow-xl placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-redBorder focus:border-redBorder lg:text-[16px] sm:text-sm sm:leading-6 px-2`}
                                     />
                                     {errors.email && <span className="text-red-500">{errors.email}</span>}
@@ -365,7 +362,7 @@ export default function TrainerProfile() {
                                         <img
                                             src={ trainerData?.certificate || ''}
                                             alt='trainer-certificate'
-                                            className='lg:absolute top-5 w-40 h-20 border border-redBorder'
+                                            className='lg:absolute top-5 w-40 h-20 border-2 border-redBorder'
                                         />
                                     </div>
                                     <UploadWidget onUpload={handleCertificateUpload} />
@@ -373,150 +370,24 @@ export default function TrainerProfile() {
                                 </div>
                             </div>
                         </div>
-                        <div className="mt-6 flex items-center justify-end gap-x-6">
-                    <button type="button" className="text-xl font-semibold leading-6 text-textColor hover:text-redBorder">
-                        Cancel
-                    </button>
-                    <button
-                        type="submit"
-                        className="rounded-md bg-transparent border border-redBorder px-3 py-2 text-xl font-semibold text-textColor shadow-sm hover:bg-redBorder focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-redBorder"
-                    >
-                        Save
-                    </button>
-                </div>
+                        <div className="mt-12 space-x-4 sm:space-x-12">
+                            <button
+                                type="submit"
+                                className="w-40 h-14 text-base font-medium text-textColor border border-redBorder bg-red-500 hover:bg-opacity-70 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-opacity-50 rounded-md shadow-xl hover:scale-95"
+                            >
+                                Save Changes
+                            </button>
+                            <button
+                                type="button"
+                                onClick={handleCancel}
+                                className="w-40 h-14 text-base font-medium text-textColor border border-redBorder bg-transparent hover:bg-redBorder focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-opacity-50 rounded-md shadow-xl hover:scale-95"
+                            >
+                                Cancel
+                            </button>
+                        </div>
                     </div>
                 </div>
             </form>
         </div>
     );
 }
-
-
-
-
-// import React, { useEffect, useState } from 'react';
-// import { useSelector } from 'react-redux';
-// import { Link } from 'react-router-dom';
-// import defaultImage from '../../assets/images/userImage.jpg';
-// import defaultcertficateImage from '../../assets/images/certification-placeholder.png'
-// import axiosInstance from '../../axiosInstance/axiosInstance';
-
-// const Profile = () => {
-//     const user = useSelector((state) => state.user);
-//     const [userData, setUserData] = useState({});
-
-//     useEffect(() => {
-//         if (user && user.userRole && user.userId) {
-//             axiosInstance.get(`/api/trainers/${user.userId}`)
-//                 .then((response) => {
-//                     console.log(response);
-//                     setUserData(response.data.data);
-//                 })
-//                 .catch((error) => {
-//                     console.error('Error fetching user data:', error);
-//                     toast.error("Failed to fetch user data");
-//                 });
-//         }
-//     }, [user]);
-
-//     return (
-//         <section className='px-5 lg:px-0 bg-black min-h-screen overflow-auto'>
-//             <div className='text-center w-full max-w-[80%] mx-auto rounded-[30px] shadow-md md:p-20 bg-bgColorComponennt border border-redBorder'>
-//                 <h1 className='text-textColor text-4xl md:text-5xl leading-9 font-bold pt-[40px] lg:py-[30px] md:py-[30px]'>{userData.userName ?? 'Trainer'}'s Profile</h1>
-//                 <div className='py-4 px-4'>
-//                     <div className='flex flex-col md:flex-row items-start'>
-//                         {/* Current Profile Image */}
-//                         <div className='relative mb-2 md:mr-2 w-52 h-52 flex items-center justify-center '>
-//                             <img
-//                                 src={userData?.profileImage || defaultImage}
-//                                 alt='user-image'
-//                                 className='lg:absolute top-0 w-32 h-32 md:w-40 md:h-40 rounded-[15px] border border-redBorder '
-//                             />
-//                             {/* Edit Image Button */}
-    
-//                         </div>
-
-//                         {/* User Information */}
-//                         <div className='flex-1 mb-6 md:ml-[30px] md:mt-0 w-full md:w-[70%]'>
-//                             <div className='mb-5 flex items-start'>
-//                                 <label className='text-textColor text-xl md:text-2xl w-[25%]'>Name:</label>
-//                                 <p className='text-textColor text-xl md:text-2xl leading-7 mt-2 md:ml-4 md:w-[75%] overflow-wrap break-word'>
-//                                     {userData.username}
-//                                 </p>
-//                             </div>
-//                             <div className='mb-5 flex items-start'>
-//                                 <label className='text-textColor text-xl md:text-2xl w-[25%]'>Email:</label>
-//                                 <p className='text-textColor text-xl md:text-2xl leading-7 mt-2 md:ml-4 md:w-[75%] overflow-wrap break-word'>
-//                                     {userData.email}
-//                                 </p>
-//                             </div>
-//                             <div className='mb-5 flex items-start'>
-//                                 <label className='text-textColor text-xl md:text-2xl w-[25%]'>Age:</label>
-//                                 <p className='text-textColor text-xl md:text-2xl leading-7 mt-2 md:ml-4 md:w-[75%] overflow-wrap break-word'>
-//                                     {userData.age}
-//                                 </p>
-//                             </div>
-//                             <div className='mb-5 flex items-start'>
-//                                 <label className='text-textColor text-xl md:text-2xl w-[25%]'>Gender:</label>
-//                                 <p className='text-textColor text-xl md:text-2xl leading-7 mt-2 md:ml-4 md:w-[75%] overflow-wrap break-word'>
-//                                     {userData.gender}
-//                                 </p>
-//                             </div>
-//                             <div className='mb-5 flex items-start'>
-//                                 <label className='text-textColor text-xl md:text-2xl w-[25%]'>Phone:</label>
-//                                 <p className='text-textColor text-xl md:text-2xl leading-7 mt-2 md:ml-4 md:w-[75%] overflow-wrap break-word'>
-//                                     {userData.phone}
-//                                 </p>
-//                             </div>
-//                             <div className='mb-5 flex items-start'>
-//                                 <label className='text-textColor text-xl md:text-2xl w-[25%]'>Experience:</label>
-//                                 <p className='text-textColor text-xl md:text-2xl leading-7 mt-2 md:ml-4 md:w-[75%] overflow-wrap break-word'>
-//                                     {userData.experience}
-//                                 </p>
-//                             </div>
-//                             <div className='mb-5 flex items-start'>
-//                                 <label className='text-textColor text-xl md:text-2xl w-[25%]'>Fee/Session:</label>
-//                                 <p className='text-textColor text-xl md:text-2xl leading-7 mt-2 md:ml-4 md:w-[75%] overflow-wrap break-word'>
-//                                     {userData.feePerSession}
-//                                 </p>
-//                             </div>
-//                             <div className='mb-5 flex items-start'>
-//                                 <label className='text-textColor text-xl md:text-2xl w-[25%]'>Location:</label>
-//                                 <p className='text-textColor text-xl md:text-2xl leading-7 mt-2 md:ml-4 md:w-[75%] overflow-wrap break-word'>
-//                                     {userData.location}
-//                                 </p>
-//                             </div>
-//                         </div>
-//                     </div>
-
-//                     {/* Certificate Image Section */}
-//                     <div className='relative mb-2 md:mr-2 w-52 h-10 mt-4 md:mt-0'>
-//                         <div className='relative'>
-//                             <img
-//                                 src={userData?.certificateImage || defaultcertficateImage}
-//                                 alt='certificate-image'
-//                                 className='w-full h-[50px] rounded-[5px] border border-redBorder '
-//                                 style={{ objectFit: 'fill' }}
-//                             />
-//                             {/* Edit Certificate Image Button */}
-//                             <button className='absolute bottom-[-50px] left-0 w-full bg-buttonBgColor p-1 rounded-[5px] border border-redBorder text-textColor'>
-//                                 Add Certificate
-//                             </button>
-//                         </div>
-//                     </div>
-
-//                     {/* Edit Profile Button */}
-//                     <div className='flex justify-end mt-4'>
-//                         <Link to='/trainer/edit-profile'>
-//                             <button className='max-w-[300px] bg-buttonBgColor text-textColor text-lg md:text-xl leading-[30px] rounded-lg px-4 py-3 border-2 border-redBorder'>
-//                                 Edit Profile
-//                             </button>
-//                         </Link>
-//                     </div>
-//                 </div>
-//             </div>
-//         </section>
-//     );
-// };
-
-// export default Profile;

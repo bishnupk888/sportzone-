@@ -3,7 +3,7 @@ const Admin = require('../model/adminModel')
 const jwt = require('jsonwebtoken');
 const User = require('../model/userModel');
 const Trainer = require('../model/trainerModel');
-
+     
 
 const generateToken = (admin) => {
     return jwt.sign({ id: admin._id, role: admin.role }, process.env.JWT_SECRET_USER, {
@@ -118,11 +118,37 @@ const handleApprovalTrainer= async (req,res)=>{
   }
 }
 
+const getAllTrainers = async (req, res) => {
+  try {
+      const trainers = await Trainer.find({}).select('-password')
+      if (trainers.length>0) {
+          return res.status(200).json({ data: trainers, message: "trainer found", success: true })
+      } else {
+          return res.status(404).json({ message: "trainers not found" })
+      }
+  } catch (error) {
+      res.status(404).json({ message: "server error" })
+  }
+}
+
+const getAllUsers = async (req,res)=>{
+  try {
+      
+  const users = await User.find({}).select('-password')
+  res.status(200).json({data:users, message:"users found"})
+
+  } catch (error) {
+      res.status(400).json({message:"users not found"})
+  }
+}
+
 module.exports ={
     adminLogin,
     logout,
     handleblockUser,
     handleblockTrainer,
-    handleApprovalTrainer
+    handleApprovalTrainer,
+    getAllTrainers,
+    getAllUsers
 }
 

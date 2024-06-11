@@ -1,21 +1,33 @@
 const Trainer = require('../model/trainerModel')
 
-const updateTrainer = async (req, res) => {
-    const {id} = req.params
-    try {
-        const updatedTrainer = await Trainer.findByIdAndUpdate(id, { $set: req.body }, { new: true }).select('-password')
-        res.status(200).json({ data: updatedTrainer, message: "successfully updated" })
-    } catch (error) {
-        res.status(400).json({ message: "failed to update" })
-    }
-}
 
+    const updateTrainer = async (req, res) => {
+        const { id } = req.params; // Extract trainer ID from request parameters   
+        try {
+            const updatedTrainer = await Trainer.findByIdAndUpdate(
+                id,
+                { $set: req.body }, // Update with the contents of req.body
+                { new: true } // Return the updated document
+            );
+    
+            console.log(updatedTrainer); // Log the updated trainer data
+       
+            if (!updatedTrainer) {
+                // Handle case where Trainer with given ID is not found
+                return res.status(404).json({ message: "Trainer not found" });
+            }
+    
+            res.status(200).json({ data: updatedTrainer, message: "Successfully updated" });
+        } catch (error) {
+            console.error("Error updating trainer:", error);
+            res.status(400).json({ message: "Failed to update" });
+        }
+    };
+    
 const getTrainer = async (req, res) => {
-    console.log("in getTrainer ");
     const { id } = req.params
     try {
         const trainer = await Trainer.findById(id).select('-password')
-        console.log("trainer:",trainer);
         if(trainer){
           return  res.status(200).json({ data: trainer, message: "trainer found", success: true })
         }else{
@@ -29,22 +41,30 @@ const getTrainer = async (req, res) => {
 
 
 
-const getAllTrainers = async (req, res) => {
-    console.log("in get trainer ");
+const updateProfileImage = async (req, res) => {
+    
+    const { id } = req.params;
+    const { imageUrl } = req.body; 
     try {
-        const trainers = await Trainer.find({}).select('-password')
-        if (trainers.length>0) {
-            return res.status(200).json({ data: trainers, message: "trainer found", success: true })
-        } else {
-            return res.status(404).json({ message: "trainers not found" })
-        }
+      const user = await Trainer.findById(id);
+  
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      user.profileImage = imageUrl;
+
+      await user.save();
+
+      res.status(200).json({ message: 'Profile image updated successfully', user });
     } catch (error) {
-        res.status(404).json({ message: "server error" })
+      console.error('Error updating profile image:', error);
+      res.status(500).json({ message: 'Failed to update profile image', error });
     }
-}
+  };
+
 
 module.exports = {
     updateTrainer,
     getTrainer,
-    getAllTrainers
+    updateProfileImage
 }

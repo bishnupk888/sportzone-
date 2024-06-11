@@ -13,9 +13,7 @@ const Login = ({ role }) => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    role: role,
   });
-
   const userRole = useSelector((state) => state.user.userRole);
 
   useEffect(() => {
@@ -33,15 +31,13 @@ const Login = ({ role }) => {
     if (formData.email === '' || formData.password === '') {
       toast.error('Need to fill all fields');
     } else {
-      axiosInstance.post('/api/auth/login', formData).then((response) => {
-        console.log('data = ', response.data.data);
+      axiosInstance.post('/api/auth/login', {formData,role}).then((response) => {
         dispatch(setUserData(response.data.data));
         toast.success('Successfully logged in');
         navigate('/home');
       }).catch((err) => {
         console.log(err);
         toast.error(err?.response?.data?.message);
-        navigate(`/${role}/login`);
       });
     }
   };
@@ -62,9 +58,11 @@ const Login = ({ role }) => {
           }
         `}
       </style>
-      <section className='px-5 lg:px-0 bg-black min-h-screen overflow-auto'>
+      <div className='absolute top-0 bottom-0 bg-black h-screen w-screen flex justify-center items-center'>
+      {/* <section className='px-5 lg:px-0 bg-black min-h-screen overflow-auto'> */}
         <div className='text-center w-full max-w-[500px] mx-auto rounded-[30px] shadow-md p-5 md:p-20  bg-cover bg-center bg-no-repeat border border-redBorder glow' style={{backgroundImage: `url(${bgImgLogin})`}}>
-          <h1 className='text-textColor text-4xl md:text-5xl leading-9 font-bold py-[25px]'>LOGIN</h1>
+          <h1 className='text-textColor text-4xl md:text-5xl leading-9 font-bold pt-[25px]'>LOGIN</h1>
+          <p className='text-textColor text-2xl'> {role}</p>
           <form className='py-4'>
             <div className='mb-5'>
               <input
@@ -108,7 +106,8 @@ const Login = ({ role }) => {
             </p>
           </div>
         </div>
-      </section>
+      {/* </section> */}
+      </div>
     </>
   );
 };

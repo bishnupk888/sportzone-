@@ -89,7 +89,9 @@ const Signup = () => {
           }
         `}
       </style>
-      <section className='px-5 lg:px-0 bg-black min-h-screen overflow-auto'>
+      <div className='absolute top-0 bottom-0 bg-black h-screen w-screen flex justify-center items-center'>
+
+      {/* <section className='px-5 lg:px-0 bg-black min-h-screen overflow-auto'> */}
         <div className='text-center w-full max-w-[500px] mx-auto rounded-[30px] shadow-md p-5 md:p-10 bg-cover bg-center bg-no-repeat border border-redBorder glow' style={{ backgroundImage: `url(${bgImgLogin})` }}>
           <h1 className='text-textColor text-4xl md:text-4xl leading-9 font-bold pb-[20px]'>SIGN UP</h1>
           <form className='py-3 ' onSubmit={handleSignup}>
@@ -173,7 +175,8 @@ const Signup = () => {
               </button>
           </form>
         </div>
-      </section>
+      {/* </section> */}
+      </div>
     </>
   );
 };

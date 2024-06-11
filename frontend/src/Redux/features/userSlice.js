@@ -1,38 +1,30 @@
-// features/userSlice.js
 import { createSlice } from '@reduxjs/toolkit';
+
+const initialState = {
+  userRole: '',
+  userId: '',
+  userImage: '',
+  userName: '',
+  isBlocked: false
+};
 
 const getUserDataFromLocalStorage = () => {
   try {
     const userData = JSON.parse(localStorage.getItem('userData'));
-    if (userData) {
-      return {
-        userRole: userData.userRole || '',
-        userId: userData.userId || '',
-        userImage: userData.userImage || '',
-        userName:userData.userName || ''
-      };
-    }
-    
+    return userData || initialState;
   } catch (error) {
     console.error('Failed to parse user data from localStorage:', error);
+    return initialState;
   }
-  return {
-    userRole: '',
-    userId: '',
-    userImage: '',
-    userName:''
-  };
 };
-
-const initialState = getUserDataFromLocalStorage();
-
 const saveUserDataToLocalStorage = (state) => {
   try {
     const userData = {
       userRole: state.userRole,
       userId: state.userId,
       userImage: state.userImage,
-      userName : state.userName
+      userName: state.userName,
+      isBlocked: state.isBlocked
     };
     localStorage.setItem('userData', JSON.stringify(userData));
   } catch (error) {
@@ -42,26 +34,29 @@ const saveUserDataToLocalStorage = (state) => {
 
 const userSlice = createSlice({
   name: 'userData',
-  initialState,
+  initialState: getUserDataFromLocalStorage(),
   reducers: {
     setUserData: (state, action) => {
       console.log('Data in userReducer = ', action.payload);
-      state.userRole = action.payload.role;
-      state.userId = action.payload._id;
-      state.userImage = action.payload.profileImage;
-      state.userName = action.payload.username;
-
+      const { role, _id, profileImage, username, isBlocked } = action.payload;
+      state.userRole = role;
+      state.userId = _id;
+      state.userImage = profileImage;
+      state.userName = username;
+      state.isBlocked = isBlocked;
+      
       saveUserDataToLocalStorage(state);
     },
     clearUserData: (state) => {
-      state.userRole = '';
-      state.userId = '';
-      state.userImage = '';
-      state.userName = ''
+      Object.assign(state, initialState);
       localStorage.removeItem('userData');
     },
+    setBlockedStatus: (state, action) => {
+      state.isBlocked = action.payload;
+      saveUserDataToLocalStorage(state);
+    }
   },
 });
 
-export const { setUserData, clearUserData } = userSlice.actions;
+export const { setUserData, clearUserData, setBlockedStatus } = userSlice.actions;
 export default userSlice.reducer;

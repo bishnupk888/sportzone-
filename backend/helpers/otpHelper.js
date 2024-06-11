@@ -2,7 +2,7 @@
 const crypto = require('crypto')
 const OTP = require('../model/otpSchema')
 const User = require('../model/userModel')
-
+const Trainer =require('../model/trainerModel')
 const nodemailer = require('nodemailer')
 const generateOtp = async (email) => {
  
@@ -17,7 +17,6 @@ const generateOtp = async (email) => {
   try {
     // Save the OTP document to the database
     const savedOtp = await otpDocument.save();
-    console.log("OTP Stored:", savedOtp);
   } catch (err) {
     console.error("Error saving OTP:", err);
     throw new Error('Failed to save OTP');
@@ -27,7 +26,6 @@ const generateOtp = async (email) => {
 };
 
 const sendOtp = async (email, otp) => {
-console.log("sending  otp in sendOtp");
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -47,7 +45,6 @@ console.log("sending  otp in sendOtp");
 
   try {
     const info = await transporter.sendMail(mailOptions);
-    console.log("in send otp ", info);
     
     return { message: 'OTP sent to your email' };
   } catch (error) {
@@ -57,8 +54,6 @@ console.log("sending  otp in sendOtp");
 };
 
 const verifyOtp = async (req, res) => {
-
-  console.log('In verifyotp');
   const { otp } = req.body;
   const email = req.cookies.email;
   const role = req.cookies.role
@@ -66,32 +61,27 @@ const verifyOtp = async (req, res) => {
   let user = null;
   if (role === 'user') {
     user = await User.findOne({ email })
-    console.log("role is user :", user);
 
   } else if (role === 'trainer') {
     user = await Trainer.findOne({ email })
-    console.log("role is trainer :", user);
   }
   const otpDocument = await OTP.findOne({ email })
-  console.log(otpDocument);
   if (!otpDocument) {
     return res.status(400).json({ message: "OTP has expired or is invalid" });
   }
   if (otpDocument.otp === otp) {
     user.isOtpVerified = true;
-    console.log(otpDocument);
-
     // Save the user document with the updated flag
-    user.save().then(data => {
-      res.clearCookie('email')
-      res.clearCookie('role')
+    try {
+      const data = await user.save();
+      res.clearCookie('email');
+      res.clearCookie('role');
       console.log("save");
       return res.status(200).json({ message: "OTP verified successfully", data });
-    })
-      .catch(error => {
-        console.error("Error updating user document:", error);
-        return res.status(500).json({ message: "Server error, OTP verification failed" });
-      });
+    } catch (error) {
+      console.error("Error updating user document:", error);
+      return res.status(500).json({ message: "Server error, OTP verification failed" });
+    }
   } else {
     res.status(400).json({ message: "Invalid OTP" });
   }
@@ -99,12 +89,9 @@ const verifyOtp = async (req, res) => {
 
 const resendOtp = async (req,res)=>{
   try {
-    console.log("in resend otp");
+   
     const email = req.cookies.email
-    console.log("email in resend otp:",email);
     const otp = await generateOtp(email)
-    console.log("in resend : otp",otp);
-    console.log("calling send otp with:",email,otp);
     const otpSend = await sendOtp(email,otp)
 
     res.status(200).json({message:"OTP re-send successfully"})

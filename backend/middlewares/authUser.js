@@ -7,6 +7,7 @@ const authUser = async(req,res,next)=>{
     try {
 
     const token = req.cookies.jwtUser
+    
     const decodedToken = jwt.verify(token,process.env.JWT_SECRET_USER)
     if(decodedToken.exp < Date.now()){
         return res.status(400).json({message:"token expired"})

@@ -1,14 +1,13 @@
-// src/routes/Routers.jsx
-
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { Routes, Route, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import axiosInstance from '../axiosInstance/axiosInstance';
 
 import Home from '../pages/Home';
 import Login from '../pages/Login';
 import Services from '../pages/Services';
 import Signup from '../pages/Signup';
-import Trainers from '../pages/FindATrainer'; // Assuming this is the user-facing Trainers page
+import FindTrainers from '../pages/FindATrainer'; // Assuming this is the user-facing Trainers page
 import TrainerDetails from '../pages/Trainers/TrainerDetails';
 import Contact from '../pages/Contact';
 import VerifyOtp from '../pages/VerifyOtp';
@@ -19,7 +18,8 @@ import Slots from '../pages/Trainers/Slots'
 import TrainerProfile from '../pages/Trainers/TrainerProfile';
 import EditUserProfile from '../pages/users/EditUserProfile';
 import ResetPassword from '../pages/ResetPassword';
-
+import MyBookings from '../pages/users/MyBookings';
+import Wallet from '../pages/users/Wallet'
 
 // Admin imports
 import Dashboard from '../pages/Admin/Dashboard';
@@ -27,42 +27,91 @@ import AdminLogin from '../pages/Admin/AdminLogin';
 import AdminTrainers from '../pages/Admin/Trainers'; // Renamed to avoid conflict
 import Athletes from '../pages/Admin/Athletes';
 import AdminServices from '../pages/Admin/Services'; // Renamed to avoid conflict
-import AdminBookings from '../pages/Admin/Bookings'
+import AdminBookings from '../pages/Admin/Bookings';
+import EditTrainerProfile from '../pages/Trainers/EditTrainerProfile';
+import ViewTrainerProfile from '../pages/users/ViewTrainerDetails'; 
+import PageNotFound from '../404';
 
+import PrivateRoutes from './PrivateRoutes';
+
+import { clearUserData } from '../Redux/features/userSlice';
 
 const Routers = () => {
   const userRole = useSelector((state) => state.user.userRole);
+  const isBlocked = useSelector((state) => state.user.isBlocked);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleBlockedUser = async () => {
+      if (isBlocked) {
+        try {
+          await axiosInstance.post('/api/auth/logout');
+          console.log("call to logout");
+          dispatch(clearUserData());
+          navigate('/login');
+          
+
+        } catch (error) {
+          console.error('Error logging out blocked user:', error);
+        }
+      }
+    };
+
+    handleBlockedUser();
+  }, [isBlocked]);
 
   return (
     <Routes>
+
       <Route path='/' element={<Home />} />
       <Route path='/home' element={<Home />} />
-      <Route path='/trainers' element={<Trainers />} />
-      <Route path='/trainer/:id' element={<TrainerDetails />} />
-      <Route path='/user/login' element={<Login role={'user'} />} />
-      <Route path='/trainer/login' element={<Login role={'trainer'} />} />
       <Route path='/register' element={<Signup />} />
-      <Route path='/contact' element={<Contact userRole={userRole}/>} />
-      <Route path='/services' element={<Services />} />
       <Route path='/verify-otp' element={<VerifyOtp />} />
       <Route path='/reset-password' element={<ResetPassword />} />
-      <Route path='/profile' element={<Profile />} />
-      <Route path='/bookings' element={<Bookings />} />
-      <Route path='/experience' element={<Experience />} />
-      <Route path='/slots' element={<Slots />} />
-      <Route path='/trainer-profile' element={<TrainerProfile />} />
-      <Route path='/edit-userprofile' element={<EditUserProfile />} />
-      <Route path='/slots' element={<Slots />} />
+
+      <Route path='/user/login' element={<Login role={'user'} />} />
+        <Route path='/user/*' element={<PrivateRoutes role={'user'}/>} >
+         <Route path='findtrainers' element={<FindTrainers />} />
+         <Route path='contact' element={<Contact/>} /> 
+          <Route path='trainer/:id' element={<TrainerDetails />} />
+        <Route path='services' element={<Services />} />
+        <Route path='profile' element={<Profile />} />
+        <Route path='edit-profile' element={<EditUserProfile />} />
+        <Route path='view-trainer' element={<ViewTrainerProfile/>}/>
+        <Route path='my-bookings' element={<MyBookings/>}/>
+        <Route path='wallet' element={<Wallet/>}/>
 
 
+
+        <Route path='*' element={<PageNotFound/>}/>
+      </Route>
+       <Route/>
+
+
+      <Route path='/trainer/login' element={<Login role={'trainer'}/>} />
+      <Route path='/trainer/*' element={<PrivateRoutes role={'trainer'}/>} >
+      <Route path='bookings' element={<Bookings />} />
+      <Route path='experience' element={<Experience />} />
+      <Route path='slots' element={<Slots />} />
+      <Route path='profile' element={<TrainerProfile />} />
+      <Route path='edit-profile' element={<EditTrainerProfile/>}/>
+      <Route path='*' element={<PageNotFound/>}/>
+
+      </Route>
+
+      
+      
 
       {/* Admin Routes */}
+      <Route path='/admin' element={<Dashboard />} />
       <Route path='/admin/login' element={<AdminLogin />} />
       <Route path='/admin/dashboard' element={<Dashboard />} />
       <Route path='/admin/trainers' element={<AdminTrainers />} />
       <Route path='/admin/users' element={<Athletes />} />
       <Route path='/admin/services' element={<AdminServices />} />
       <Route path='/admin/bookings' element={<AdminBookings />} />
+      <Route path='*' element={<PageNotFound/>}/>
     </Routes>
   );
 };

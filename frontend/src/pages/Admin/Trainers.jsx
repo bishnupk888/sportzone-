@@ -13,19 +13,18 @@ const Trainers = () => {
   const [isOpen, setIsOpen] = useState(false);
   const trainersPerPage = 5;
 
-
   const userRole = localStorage.getItem('adminData');
 
-  const navigate = useNavigate()
-    useEffect(()=>{
-      if(!userRole){
-        navigate('/admin/login')
-        toast.info("please login for more")       
-      }
-    },[])
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!userRole) {
+      navigate('/admin/login');
+      toast.info("Please login to continue.");
+    }
+  }, [userRole, navigate]);
 
   useEffect(() => {
-    axiosInstance.get('/api/trainers')
+    axiosInstance.get('/api/admin/trainers')
       .then(response => {
         setTrainersData(response.data.data);
       })
@@ -88,13 +87,13 @@ const Trainers = () => {
     return currentTrainers.map((trainer, index) => (
       <tr key={trainer._id} className="border border-redBorder dark:bg-black text-textColor">
         <td className="p-3 border border-redBorder">
-          <p>{indexOfFirstTrainer + index + 1}</p> {/* sl.no */}
+          <p>{indexOfFirstTrainer + index + 1}</p>
         </td>
         <td className="p-3 border border-redBorder">
-          <p>{trainer.username}</p> {/* trainer name */}
+          <p>{trainer.username}</p> 
         </td>
         <td className="p-3 border border-redBorder">
-          <p>{trainer.email}</p> {/* email */}
+          <p>{trainer.email}</p> 
         </td>
         <td className="p-3 border border-redBorder text-center">
           {trainer.certificate ? (
@@ -114,9 +113,9 @@ const Trainers = () => {
         <td className="p-3 border border-redBorder text-center">
           <button
             onClick={() => handleApprove(trainer._id)}
-            className={`px-3 py-1 rounded transition-transform duration-200 hover:scale-110 ${trainer.certificate.trim() !== '' ? (trainer.isVerified ? 'text-white border border-green-500 bg-green-900' : 'text-white border border-blue-500 bg-blue-900') : 'text-white border border-yellow-500 bg-yellow-900'}`}
+            className={`px-3 py-1 rounded transition-transform duration-200 hover:scale-110 ${trainer.certificate !== '' ? (trainer.isVerified ? 'text-white border border-green-500 bg-green-900' : 'text-white border border-blue-500 bg-blue-900') : 'text-white border border-yellow-500 bg-yellow-900'}`}
           >
-            <span>{trainer.certificate.trim() !== '' ? (trainer.isVerified ? 'Approved' : 'Approve') : 'Pending'}</span>
+            <span>{trainer.certificate !== '' ? (trainer.isVerified ? 'Approved' : 'Approve') : 'Pending'}</span>
           </button>
         </td>
       </tr>
@@ -126,13 +125,13 @@ const Trainers = () => {
   const totalPages = Math.ceil(filteredTrainers.length / trainersPerPage);
 
   return (
-    <div className='bg-black w-auto h-[100%] '>
-      <div className="overflow-x-auto m-4 p-4 border border-redBorder bg-black text-textColor rounded-md mx-[100px] md:mx-[30px]">
+    <div className='bg-black w-auto h-[100%]'>
+      <div className="overflow-x-auto m-4 p-4 border border-redBorder bg-black text-textColor rounded-md mx-[30px]">
         <div className="flex justify-between items-center mb-4">
           <div></div>
           <div className="relative">
             <input
-              type="text"
+              type="search"
               placeholder="Search trainers..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}

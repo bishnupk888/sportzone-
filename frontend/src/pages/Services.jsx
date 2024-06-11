@@ -2,6 +2,7 @@ import React,{useEffect} from 'react'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
+import ServiceList from '../components/Services/ServiceList'
 
 
  
@@ -17,7 +18,10 @@ const Services = (props) => {
     }, [])
 
   return (
-    <div>Services</div>
+    <div>
+
+      <ServiceList/>
+    </div>
   )
 }
 

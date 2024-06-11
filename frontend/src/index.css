@@ -11,10 +11,10 @@
 
 @layer components{
   .container{
-    @apply max-w-full w-[1440px] px-5 mx-auto
+    @apply max-w-full   mx-auto
   }
   .container2{
-    @apply max-w-full w-[1440px] px-5 mx-auto
+    @apply max-w-full  mx-auto
   }
   .btn{
     @apply bg-buttonBgColor py-[15px] px-[35px] text-white font-[600] mt-[38px]

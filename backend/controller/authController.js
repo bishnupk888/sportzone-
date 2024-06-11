@@ -18,7 +18,6 @@ const generateToken = (user) => {
 
 const register = async (req, res) => {
   const { name, email, password, phone, role } = req.body;
-  console.log('In register');
   try {
     let user = null;
 
@@ -27,7 +26,6 @@ const register = async (req, res) => {
     } else if (role === 'trainer') {
       user = await Trainer.findOne({ email });
     }
-
     if (user) {
       return res.status(400).json({ message: "User already exists" });
     }
@@ -35,12 +33,12 @@ const register = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     const otp = await otpHelper.generateOtp(email)
-    console.log(" in authcontroller returned otp",otp);
+    console.log(" in authcontroller send otp: ",otp);
     await otpHelper.sendOtp(email, otp); //sends email with otp
     if (role === 'user') {
       user = new User({
         username: name,
-        email,
+        email,   
         phone,
         password: hashedPassword,
         role
@@ -70,9 +68,10 @@ const register = async (req, res) => {
 
 
 const login = async (req, res) => {
-  console.log("in login");
-  const { email, password, role } = req.body
-  console.log(email, password, role);
+  const { email, password } = req.body.formData
+   const role = req.body.role
+  console.log(email, password, role);    
+  console.log('Body = ',req.body)   
   try {
     let user = null;
    if (role === 'user') {
@@ -83,16 +82,18 @@ const login = async (req, res) => {
   user = await Trainer.findOne({ email });
 } 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "User not found" });   
     }
-
+    if(user.isBlocked){
+      return res.status(400).json({ message: "Blocked user" });  
+    }
     const passwordMatch = await bcrypt.compare(password, user.password)
 
     if (!passwordMatch) {
       return res.status(400).json({ status: false, message: "invalid credentials" })
     }
     const expireIn = Date.now() + (1000 * 60 * 60 * 24 * 10);
-    const token = generateToken(user)
+    const token = generateToken(user)     
 
     res.cookie('jwtUser', token, {
       expires: new Date(expireIn),
@@ -107,8 +108,6 @@ const login = async (req, res) => {
 } 
 
 const resetPassword = (req,res)=>{
-  
-
   res.status(200).json({message:"reset password"})
   console.log("reset password");
 }
@@ -127,5 +126,4 @@ module.exports = {
   login,
   logout,
   resetPassword
-  
 }

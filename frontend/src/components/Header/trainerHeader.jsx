@@ -12,9 +12,9 @@ import defaultImage from '../../assets/images/userImage.jpg'
 
 const navLinks = [
   { path: '/home', display: 'Home' },
-  { path: '/bookings', display: 'Bookings' },
-  { path: '/experience', display: 'Experience' },
-  { path: '/slots', display: 'Slots' },
+  { path: 'trainer/bookings', display: 'Bookings' },
+  { path: 'trainer/experience', display: 'Experience' },
+  { path: 'trainer/slots', display: 'Slots' },
 ];
 
 const Header = () => {
@@ -22,7 +22,6 @@ const Header = () => {
   const userRole = useSelector((state) => state.user.userRole);
   const userImage = useSelector((state) => state.user.userImage);
   const userName = useSelector((state) => state.user.userName);
- 
   
   const headerRef = useRef(null);
   const menuRef = useRef(null);
@@ -93,12 +92,12 @@ const Header = () => {
             )}
               {userRole !== '' && (
                 <div>
-                  <Link to="/trainer-profile">
-                    <figure className="w-[30px] h-[30px] sm:w-[35px] sm:h-[35px] md:w-[40px] md:h-[40px]">
+                  <Link to="/trainer/profile">
+                    <figure className="w-[40px] h-[40px] sm:w-[40px] sm:h-[40px] md:w-[40px] md:h-[40px] hidden lg:block md:block ">
                       <img
                         src={userImage ? userImage : defaultImage}
                         alt="User"
-                        className="w-full rounded-full cursor-pointer"
+                        className="w-full rounded-full cursor-pointe max-w-[40px] max-h-[40px] border-2 border-redBorder "
                       />
                     </figure>
                   </Link>

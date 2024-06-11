@@ -3,6 +3,9 @@ import axiosInstance from '../../axiosInstance/axiosInstance';
 import { toast } from 'react-toastify';
 import { FaSearch } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import { setBlockedStatus } from '../../Redux/features/userSlice';
+import { useDispatch, useSelector } from 'react-redux';
+
 
 const Athletes = () => {
   const [athletesData, setAthletesData] = useState([]);
@@ -11,7 +14,9 @@ const Athletes = () => {
   const athletesPerPage = 5;
 
   const userRole = localStorage.getItem('adminData');
+  const isBlocked = useSelector((state)=>state.user.isBlocked)
   const navigate = useNavigate();
+  const dispatch = useDispatch()
 
   useEffect(() => {
     if (!userRole) {
@@ -25,21 +30,23 @@ const Athletes = () => {
   }, []); // Empty dependency array ensures this effect runs once on mount
 
   const fetchAthletes = () => {
-    axiosInstance.get('/api/users')
+    axiosInstance.get('/api/admin/users')
       .then(response => {
         setAthletesData(response.data.data);
       })
       .catch(error => {
-        console.error('Error fetching athletes:', error);
+        console.error('Error fetching athletes:', error); 
       });
   };
 
   const handleBlock = (id) => {
+    
     axiosInstance.post(`/api/admin/block-user/${id}`)
       .then(response => {
         setAthletesData(prevAthletesData => {
           return prevAthletesData.map((athlete) => {
             if (id === athlete._id) {
+              dispatch(setBlockedStatus(!isBlocked))
               return { ...athlete, isBlocked: !athlete.isBlocked };
             }
             return athlete;
@@ -93,6 +100,16 @@ const Athletes = () => {
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
   };
+  const handleSort = () => {
+    console.log("data sort :", athletesData);
+
+    const sorted = [...athletesData].sort((a, b) => {
+        return a.username.localeCompare(b.username);
+    });
+    setAthletesData(sorted);
+    console.log('Sorted data:', sorted);
+};
+
 
   return (
     <div className='bg-black w-auto h-[100%]'>
@@ -101,14 +118,18 @@ const Athletes = () => {
           <div></div>
           <div className="relative">
             <input 
-              type="text" 
+              type="search" 
               placeholder="Search athletes..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="px-3 py-2 border border-redBorder rounded bg-black text-textColor pl-10"
             />
             <FaSearch className="absolute left-3 top-2.5 text-textColor" />
+            <button className='bg-black border border-redBorder  ' onClick={handleSort}>
+            sort
+          </button>
           </div>
+          
         </div>
         <table className="min-w-full bg-white dark:bg-black">
           <thead>
