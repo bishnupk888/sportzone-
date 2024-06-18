@@ -13,6 +13,7 @@ const updateUser = async (req,res)=>{
     }
 }
 
+
 const getUser = async (req,res)=>{
     const {id} =req.params
     try {    
@@ -25,6 +26,7 @@ const getUser = async (req,res)=>{
 }
 
 const updateProfileImage = async (req, res) => {
+  console.log("in update profile");
     const { id } = req.params;
     const { imageUrl } = req.body; 
     try {
@@ -72,12 +74,23 @@ const getTrainer = async (req, res) => {
   }
 }
 
+const getServices =  async (req, res) => {
+  console.log("in services");
+  try {
+      const departments = await Trainer.distinct('department');
+      res.json({ success: true, data: departments });
+  } catch (error) {
+      console.error('Error fetching departments:', error);
+      res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
 
-
+   
 module.exports={
     updateUser,
     getUser,
     updateProfileImage,
     getAllTrainers,
-    getTrainer
-}
+    getTrainer,  
+    getServices,
+}   

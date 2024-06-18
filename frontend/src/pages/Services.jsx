@@ -1,27 +1,8 @@
-import React,{useEffect} from 'react'
-import { toast } from 'react-toastify'
-import { useNavigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
-import ServiceList from '../components/Services/ServiceList'
+import React from 'react'
 
-
- 
-const Services = (props) => {
-  const userRole = useSelector((state)=>state.user.userRole)
-    
-    const navigate = useNavigate()
-    useEffect(() => {
-      if (!userRole) {
-        navigate('/home');
-        toast.info(" please Login for more");
-      }
-    }, [])
-
+const Services = () => {
   return (
-    <div>
-
-      <ServiceList/>
-    </div>
+    <div className='text-white text-xl mt-50'>Services</div>
   )
 }
 

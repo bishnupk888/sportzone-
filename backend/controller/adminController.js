@@ -61,6 +61,7 @@ const logout = async (req, res) => {
   }
 
 const handleblockUser = async (req,res)=>{
+  console.log("in block user");
     const {id} = req.params
    try {
     const user = await User.findByIdAndUpdate(id)
@@ -141,6 +142,8 @@ const getAllUsers = async (req,res)=>{
       res.status(400).json({message:"users not found"})
   }
 }
+
+
 
 module.exports ={
     adminLogin,

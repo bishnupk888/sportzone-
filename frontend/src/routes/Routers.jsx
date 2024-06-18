@@ -5,7 +5,6 @@ import axiosInstance from '../axiosInstance/axiosInstance';
 
 import Home from '../pages/Home';
 import Login from '../pages/Login';
-import Services from '../pages/Services';
 import Signup from '../pages/Signup';
 import FindTrainers from '../pages/FindATrainer'; // Assuming this is the user-facing Trainers page
 import TrainerDetails from '../pages/Trainers/TrainerDetails';
@@ -20,7 +19,8 @@ import EditUserProfile from '../pages/users/EditUserProfile';
 import ResetPassword from '../pages/ResetPassword';
 import MyBookings from '../pages/users/MyBookings';
 import Wallet from '../pages/users/Wallet'
-
+import ServicesPage from '../pages/users/ServicesPage';
+import CheckoutSuccess from '../pages/users/CheckoutSuccess';
 // Admin imports
 import Dashboard from '../pages/Admin/Dashboard';
 import AdminLogin from '../pages/Admin/AdminLogin';
@@ -35,6 +35,8 @@ import PageNotFound from '../404';
 import PrivateRoutes from './PrivateRoutes';
 
 import { clearUserData } from '../Redux/features/userSlice';
+import CheckoutForm from '../components/checkout/CheckoutComponent';
+import TrainerWallet from '../pages/Trainers/TrainerWallet';
 
 const Routers = () => {
   const userRole = useSelector((state) => state.user.userRole);
@@ -75,15 +77,20 @@ const Routers = () => {
          <Route path='findtrainers' element={<FindTrainers />} />
          <Route path='contact' element={<Contact/>} /> 
           <Route path='trainer/:id' element={<TrainerDetails />} />
-        <Route path='services' element={<Services />} />
+        <Route path='services' element={<ServicesPage />} />
         <Route path='profile' element={<Profile />} />
         <Route path='edit-profile' element={<EditUserProfile />} />
         <Route path='view-trainer' element={<ViewTrainerProfile/>}/>
         <Route path='my-bookings' element={<MyBookings/>}/>
         <Route path='wallet' element={<Wallet/>}/>
+        <Route path='checkout' element={<CheckoutForm/>}/>
+        <Route path='checkout-success' element={<CheckoutSuccess/>}/>
 
 
 
+        
+
+        
         <Route path='*' element={<PageNotFound/>}/>
       </Route>
        <Route/>
@@ -96,6 +103,8 @@ const Routers = () => {
       <Route path='slots' element={<Slots />} />
       <Route path='profile' element={<TrainerProfile />} />
       <Route path='edit-profile' element={<EditTrainerProfile/>}/>
+      <Route path='wallet' element={<TrainerWallet/>}/>
+
       <Route path='*' element={<PageNotFound/>}/>
 
       </Route>

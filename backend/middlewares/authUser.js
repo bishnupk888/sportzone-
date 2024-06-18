@@ -5,9 +5,8 @@ const Trainer = require('../model/trainerModel')
 
 const authUser = async(req,res,next)=>{
     try {
-
+console.log("in auth")
     const token = req.cookies.jwtUser
-    
     const decodedToken = jwt.verify(token,process.env.JWT_SECRET_USER)
     if(decodedToken.exp < Date.now()){
         return res.status(400).json({message:"token expired"})
@@ -27,6 +26,7 @@ const authUser = async(req,res,next)=>{
 
     next()
     } catch (error) {
+        console.log("authentication failed",error);
         res.status(400).json({message:"authentication failed"})
     }
 }

@@ -7,7 +7,8 @@ const trainerRoute = require('./routes/trainerRoute')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
 const authRoute = require('./routes/authRoute')
-const checkBlocked = require('./middlewares/checkBlocked')
+
+const  bookingRoute = require('./routes/bookingRoutes')
 
 if (process.env.NODE_ENV != "production") {
     require('dotenv').config()
@@ -25,6 +26,8 @@ app.use('/api/auth',authRoute)
 app.use('/api/users', userRoute);
 app.use('/api/admin',adminRoute)
 app.use('/api/trainers',trainerRoute)
+app.use('/api/bookings',bookingRoute)
+
 
 // connect database
 connectDb();

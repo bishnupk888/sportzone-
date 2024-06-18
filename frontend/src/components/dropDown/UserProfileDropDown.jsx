@@ -4,6 +4,7 @@ import defaultImage from '../../assets/images/userImage.jpg';
 import { useSelector } from 'react-redux';
 
 
+
 const UserProfileDropDown = () => {
     const userRole = useSelector((state) => state.user.userRole);
     const userImage = useSelector((state) => state.user.userImage);
@@ -61,7 +62,7 @@ const UserProfileDropDown = () => {
                     <img
                         src={userImage ? userImage : defaultImage}
                         alt="User"
-                        className="w-full rounded-full cursor-pointer"
+                        className="w-full h-full rounded-full  cursor-pointer border-2 border-redBorder"
                     />
                 </figure>
                 {isOpen && (
@@ -100,4 +101,4 @@ const UserProfileDropDown = () => {
     );
 };
 
-export default UserProfileDropDown;
+export default UserProfileDropDown; 

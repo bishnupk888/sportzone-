@@ -11,4 +11,5 @@ const axiosInstance = axios.create({
       'timeout' : 5000,
     }, 
 })
+console.log("completed axiosInstance");
 export default axiosInstance

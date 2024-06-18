@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const OTPSchema = mongoose.Schema({
+const OTPSchema = new mongoose.Schema({
     otp: {
       type: String,
       required: true,

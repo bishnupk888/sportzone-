@@ -1,12 +1,50 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import defaultProfileImage from '../../assets/images/userImage.jpg'
+import axiosInstance from '../../axiosInstance/axiosInstance';
+import AvailableSlots from '../../components/popupComponents/AvailableSlots';
+import { FaBullseye } from 'react-icons/fa';
+import CalendarWithSlots from '../../components/popupComponents/CalenderWithSlots';
+
 const experience = [{}, {}]
 
 const ViewTrainerDetails = () => {
+
+
     const location = useLocation();
     const { trainer } = location.state || "no data";
-    console.log("in view trainer", trainer);
+    const [slotsAvailable, setSlotsAvailable] = useState([])
+    const [isViewSlots, setIsViewSlot] = useState(false)
+    const [isViewBookings, setViewBookings] = useState(false)
+    const now = new Date();
+
+const filteredSlots = slotsAvailable.filter(slot => {
+    // Filter out booked slots
+    if (slot.isBooked) {
+        return false;
+    }
+
+    // Check if the slot date and time is in the future
+    const slotDate = new Date(slot.date);
+    const [startHour, startMinute] = slot.startTime.split(':').map(Number);
+    slotDate.setHours(startHour, startMinute, 0, 0); // Set the slot start time
+
+    return slotDate >= now;
+});
+
+    useEffect(() => {
+        try {
+            const id = trainer._id
+            axiosInstance.get(`/api/users/available-slots/${id}`).then((response) => {
+                setSlotsAvailable(response.data.data)
+            })
+        } catch (error) {
+            console.error(error);
+        }
+
+    }, [])
+
+
     return (
         <div className='px-4 md:px-10 '>
             <div className="flex flex-col  lg:flex-row lg:space-x-8 ">
@@ -18,8 +56,8 @@ const ViewTrainerDetails = () => {
                         </div>
                         <div className="flex flex-col space-y-5 sm:ml-4  w-full mt-6 sm:mt-0">
                             <div>
-                                <h2 className="text-2xl md:text-3xl font-semibold">{trainer.username}</h2>
-                                <span className="text-lg md:text-lg text-textColor">{trainer.department ? trainer.department : 'not updated'}</span>
+                                <h2 className="text-2xl md:text-3xl font-semibold lg:text-4xl text-highlightTextColor">{trainer.username}</h2>
+                                <span className="text-lg md:text-lg text-textColor">{trainer.department ? `${trainer.department} specialist` : 'not updated'}</span>
                             </div>
                             <div className="space-y-2 md:space-y-3 text-sm md:text-sm" >
                                 <span className="flex items-center space-x-3 ">
@@ -36,10 +74,10 @@ const ViewTrainerDetails = () => {
                                 </span>
                                 <span className="flex items-center space-x-3">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" aria-label="Location" className="w-5 h-5 md:w-6 md:h-6">
-                                        <path  stroke="currentColor" stroke-width="38" d="M172.268 501.67c9.373 15.846 32.09 15.844 41.46 0C275.667 451.57 384 327.275 384 234.667 384 104.5 297.5 0 192 0 86.496 0 0 104.5 0 234.667c0 92.612 108.326 216.903 172.268 267.003zM192 272c-39.764 0-72-32.236-72-72s32.236-72 72-72 72 32.236 72 72-32.236 72-72 72z" />
+                                        <path stroke="currentColor" strokeWidth="38" d="M172.268 501.67c9.373 15.846 32.09 15.844 41.46 0C275.667 451.57 384 327.275 384 234.667 384 104.5 297.5 0 192 0 86.496 0 0 104.5 0 234.667c0 92.612 108.326 216.903 172.268 267.003zM192 272c-39.764 0-72-32.236-72-72s32.236-72 72-72 72 32.236 72 72-32.236 72-72 72z" />
                                     </svg>
 
-                                    <span className="text-sm md:text-sm text-textColor">{trainer.phone}</span>
+                                    <span className="text-sm md:text-sm text-textColor">{trainer.location}</span>
                                 </span>
                                 <hr className='p-4' />
                             </div>
@@ -48,25 +86,25 @@ const ViewTrainerDetails = () => {
                         </div>
 
                     </div>
-                    <div className='flex flex-row border space-x-4 '>
+                    <div className='flex flex-row  space-x-4 '>
 
-                        <div className='flex flex-col w-48 border space-y-2 justify-start '>
+                        <div className='flex flex-col w-48  space-y-2 justify-start '>
                             <button className='btn rounded-[10px] w-full border border-redBorder bg-black scale-90 hover:scale-95'>Message</button>
                             <button className='btn rounded-[10px] w-full border border-redBorder bg-black scale-90 hover:scale-95 '>Videocall</button>
                         </div>
-                        <div className='border-2  '>
+                        <div className='  '>
                             <span className="flex items-center space-x-3">
-                                <span className="text-sm md:text-lg text-textColor">Age:{trainer.age ? trainer.age : 'not '}</span><span className="pl-4 lg:pl-12 text-sm md:text-lg text-textColor">Gender:{trainer.gender ? trainer.gender : ''}</span>
+                                <span className="text-sm md:text-lg text-textColor">Age:{trainer.age ? trainer.age : '38 '}</span><span className="pl-4 lg:pl-12 text-sm md:text-lg text-textColor">Gender:{trainer.gender ? trainer.gender : ''}</span>
                             </span>
                             <span className="flex items-center space-x-3">
 
                             </span>
-                            <span className="flex items-center space-x-3">
+                            {/* <span className="flex items-center space-x-3">
                                 <span className="text-sm md:text-lg text-textColor">Gender:</span>
                             </span>
                             <span className="flex items-center space-x-3">
                                 <span className="text-sm md:text-lg text-textColor">Gender:</span>
-                            </span>
+                            </span> */}
                         </div>
                     </div>
 
@@ -75,30 +113,80 @@ const ViewTrainerDetails = () => {
                 </div>
 
                 {/* Right Section */}
-                <div className="max-w-md md:max-w-2xl p-4 md:p-8 bg-buttonBgColor text-textColor rounded-[20px] w-full lg:w-1/2 my-4 ">
-                    <div className="space-y-2">
-                        <div>
-                            <h2 className="text-2xl md:text-2xl font-semibold">About</h2>
-                        </div>
-                        <div className="space-y-2 md:space-y-4">
-                            <span className="flex items-center space-x-2">
-                                <span className="text-sm md:text-sm text-textColor">Additional info here Additional info here Additional info here Additional info here  here Additional info here Additional info here</span>
-                            </span>
-                        </div>
-                        <div>
-                            <h2 className="text-2xl md:text-2xl font-semibold">Experience</h2>
-                        </div>
-                        <div className="space-y-2 md:space-y-4">
-                            <span className="flex items-center space-x-2">
-                                <span className="text-md md:text-md text-textColor">Additional info here Additional info here</span>
-                            </span>
-                        </div>
+                <div className="max-w-md md:max-w-2xl p-4 md:p-8 bg-buttonBgColor text-textColor rounded-[20px] w-full lg:w-1/2 my-4 shadow-xl">
+                    <div className="mb-4">
+                        <h2 className="text-xl md:text-2xl lg:text-2xl font-bold text-highlightTextColor" >BOOK A TRAINING SESSION </h2>
+                    </div>
+                    <div className="mb-4">
+                        <h2 className="text-xl md:text-xl font-semibold"> Training Fee : {trainer.fee ? trainer.fee : 'Not added'} Rs / Session</h2>
+                    </div>
+                    <div className="w-full h-auto flex flex-wrap">
+                        <div className="flex flex-col w-full md:w-1/3">
+                            <div className="mb-4">
+                                <h2 className="text-xl md:text-xl font-semibold">Available Slots: {filteredSlots.length}</h2>
+                                <button
+                                    className="bg-blue-800 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded mt-2"
+                                    onClick={() => setIsViewSlot(!isViewSlots)}
+                                >
+                                    {isViewSlots ? 'Hide ' : 'View '} Slots
+                                </button>
 
-
-
+                            </div>
+                            <div>
+                                <h2 className="text-xl md:text-xl font-semibold">Book Slots:</h2>
+                                <button
+                                    className="bg-green-700 hover:bg-green-500 text-white font-bold py-2 px-4 rounded mt-2"
+                                    onClick={() => {
+                                        setViewBookings(!isViewBookings);
+                                    }}
+                                >
+                                    Book Slots
+                                </button>
+                            </div>
+                        </div>
+                        <div className="w-full  ">
+                            {isViewSlots ? <AvailableSlots slots={filteredSlots} /> : ''}
+                        </div>
                     </div>
                 </div>
+
             </div>
+
+            <div className="  p-4 md:p-8 bg-buttonBgColor text-textColor rounded-[20px] w-full  my-4 ">
+                <div className="space-y-2">
+                    <div>
+                        <h2 className="text-xl  lg:text-2xl md:text-2xl font-semibold">ABOUT</h2>
+                    </div>
+                    <div className="space-y-2 md:space-y-4">
+                        <span className="flex items-center space-x-2">
+                            <span className="text-sm md:text-lg text-textColor">{trainer.about}</span>
+                        </span>
+                    </div>
+                    <div>
+                        <h2 className="text-xl md:text-2xl lg:text-2xl  font-semibold">EXPERIENCE</h2>
+                    </div>
+                    <div className="space-y-2 md:space-y-4">
+                        <span className="flex items-center space-x-2">
+                            <span className="text-md md:text-md text-textColor">Additional info here Additional info here</span>
+                        </span>
+                    </div>
+
+                </div>
+            </div>
+            <div className='relative'>
+                {isViewBookings && (
+                    <div className="fixed inset-0 top-24 flex items-center justify-center z-50 border border-yellow-400">
+                        <div className="absolute inset-0 bg-black opacity-80"></div>
+                        <div className="relative ">
+                            <div className="bg-buttonBgColor shadow-lg rounded-lg p-2 border-2 border-blue-500">
+                                <CalendarWithSlots slots={filteredSlots} setIsOpen={setViewBookings} trainerFee={trainer.fee} trainerId={trainer._id}/>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
+
+
         </div>
     );
 };

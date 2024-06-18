@@ -4,25 +4,35 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import axiosInstance from '../axiosInstance/axiosInstance';
 import { toast } from 'react-toastify';
+import BouncingBallLoader from '../components/Loader/BouncingBallLoader';
 
 // import'../'
 const Home = () => {
   const userRole = useSelector((state) => state.user.userRole)
   const navigate = useNavigate()
   const [userData,setUserData] = useState([])
+  const [loaderActive,setLoaderActive] = useState(false) 
   useEffect(()=>{
     try {
+      setLoaderActive(true)
       axiosInstance.get('/api/users/get-trainers').then((response)=>{
         setUserData(response.data.data)
-        console.log(response.data.data);
+     
+        setLoaderActive(false)
+
       }).catch((error)=>{
+
         console.error(error);
+        setLoaderActive(false)
+
       })
     } catch (error) {
       console.error(error);
-      
     }
   },[])
+  if(loaderActive){
+    return <BouncingBallLoader/>
+  }
    
   return (
     <>
@@ -64,26 +74,25 @@ const Home = () => {
           </div>
         </div>
       </section>
-      {/* hero section end*/}
-      
+      {/* hero section end*/}    
 {userRole ==='trainer'?'':<section className="py-6 dark:bg-black dark:text-textColor mt-10">       
 	<div className="container flex flex-col items-center justify-center p-4 mx-auto sm:p-4">
 		<p className="p-2 text-sm font-medium tracking-wider text-center uppercase"> our Experts </p>
 		<h1 className="text-4xl font-bold leading-none text-center sm:text-5xl">Talented Trainers With Us</h1>
 		<div className="flex flex-row flex-wrap-reverse justify-center mt-8">
 
-    {userData.slice(0,6).map((athlete, index) => (
-        <div key={athlete._id} onClick={()=>{
+    {userData.filter((data)=>data.isVerified===true).slice(0,6).map((trainer, index) => (
+        <div key={trainer._id} onClick={()=>{
           if(userRole){
-            navigate('/user/view-trainer', { state: { trainer: athlete } })
+            navigate('/user/view-trainer', { state: { trainer: trainer } })
           }else{
             toast.warning('Login for more')
           }
           }} className="flex flex-col justify-center w-full px-8 mx-6 my-12 text-center rounded-md md:w-96 lg:w-80 xl:w-64 dark:bg-buttonBgColor dark:text-gray-100 cursor-pointer">
-				<img alt="" className="self-center flex-shrink-0 w-24 h-24 -mt-12 bg-center bg-cover rounded-full dark:bg-gray-500 border-2 border-redBorder" src="https://source.unsplash.com/100x100/?portrait?0" />
+				<img alt="" className="self-center flex-shrink-0 w-24 h-24 -mt-12 bg-center bg-cover rounded-full dark:bg-gray-500 border-2 border-redBorder" src={trainer.profileImage} />
 				<div className="flex-1 my-4">
-					<p className="text-xl font-semibold leading-snug">{athlete.username}</p>
-					<p>{athlete.department?athlete.department:''}</p>
+					<p className="text-xl font-semibold leading-snug">{trainer.username}</p>
+					<p>{trainer.department?trainer.department:''}</p>
 				</div>	
 			</div>
        

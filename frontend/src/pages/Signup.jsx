@@ -3,10 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../axiosInstance/axiosInstance';
 import { toast } from 'react-toastify';
 import bgImgLogin from '../assets/images/loginBG.png';
+import BouncingBallLoader from '../components/Loader/BouncingBallLoader';
 
 const Signup = () => {
   const navigate = useNavigate();
-
+  const [loaderActive,setLoaderActive] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -22,33 +23,44 @@ const Signup = () => {
 
   const handleSignup = (e) => {
     e.preventDefault();
-
+    setLoaderActive(true)
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/;
     const phoneRegex = /^\d{10}$/;
 
     if (!formData.name) {
       toast.error("Name is required.");
+      setLoaderActive(false)
     }
 
     if (!emailRegex.test(formData.email)) {
       toast.error("Enter a valid email address.");
+      setLoaderActive(false)
+
     }
 
     if (!phoneRegex.test(formData.phone)) {
       toast.error("Phone number must be 10 digits.");
+      setLoaderActive(false)
+
     }
 
     if (!passwordRegex.test(formData.password)) {
       toast.error("Password must be at least 8 characters and include 1 uppercase, 1 lowercase, 1 digit, and 1 special character.");
+      setLoaderActive(false)
+     
     }
 
     if (formData.password !== formData.confirmPassword) {
       toast.error("Passwords do not match.");
+      setLoaderActive(false)
+
     }
 
     if (!formData.role) {
       toast.error("Please select a role.");
+      setLoaderActive(false)
+
     }
 
     if (
@@ -59,11 +71,14 @@ const Signup = () => {
       formData.password === formData.confirmPassword &&
       formData.role
     ) {
+      setLoaderActive(true)
       axiosInstance.post('/api/auth/register', formData)
         .then((response) => {
           console.log(response);
           toast.success("OTP sent to your email");
           navigate('/verify-otp');
+          setLoaderActive(false)
+
         })
         .catch((err) => {
           toast.error(err.response.data.message);
@@ -71,6 +86,7 @@ const Signup = () => {
         });
     }
   };
+
 
   return (
     <>
@@ -90,9 +106,14 @@ const Signup = () => {
         `}
       </style>
       <div className='absolute top-0 bottom-0 bg-black h-screen w-screen flex justify-center items-center'>
-
+      
       {/* <section className='px-5 lg:px-0 bg-black min-h-screen overflow-auto'> */}
         <div className='text-center w-full max-w-[500px] mx-auto rounded-[30px] shadow-md p-5 md:p-10 bg-cover bg-center bg-no-repeat border border-redBorder glow' style={{ backgroundImage: `url(${bgImgLogin})` }}>
+        {loaderActive && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 rounded-[30px]">
+          <BouncingBallLoader />
+        </div>
+      )}
           <h1 className='text-textColor text-4xl md:text-4xl leading-9 font-bold pb-[20px]'>SIGN UP</h1>
           <form className='py-3 ' onSubmit={handleSignup}>
             <div className='mb-3'>

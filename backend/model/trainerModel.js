@@ -28,6 +28,9 @@ const trainerSchema = new mongoose.Schema({
         type:String,
         enum:['male','female','other'] 
     },
+    age:{
+        type:Number,
+    },
     fee:{
         type:Number,
         
@@ -53,6 +56,10 @@ const trainerSchema = new mongoose.Schema({
             type: String
         }
     }],
+    wallet:{
+        type:Number,
+        default:0
+    },
     isVerified:{
         type:Boolean,
         default:false

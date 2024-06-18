@@ -34,7 +34,7 @@ const Trainers = () => {
   }, []);
 
   const handleApprove = (id) => {
-    axiosInstance.post(`/api/admin/trainer-approval/${id}`)
+    axiosInstance.patch(`/api/admin/${id}/trainer-approval`)
       .then((response) => {
         setTrainersData(prevTrainersData => {
           return prevTrainersData.map(trainer =>
@@ -50,7 +50,7 @@ const Trainers = () => {
   };
 
   const handleBlock = (id) => {
-    axiosInstance.post(`/api/admin/block-trainer/${id}`)
+    axiosInstance.patch(`/api/admin/block-trainer/${id}`)
       .then(response => {
         setTrainersData(prevTrainersData => {
           return prevTrainersData.map(trainer =>
@@ -83,6 +83,14 @@ const Trainers = () => {
   );
   const currentTrainers = filteredTrainers.slice(indexOfFirstTrainer, indexOfLastTrainer);
 
+  const handleSort = () => {
+    const sorted = [...trainersData].sort((a, b) => {
+      return a.username.localeCompare(b.username);
+    });
+    setTrainersData(sorted);
+    console.log('Sorted data:', sorted);
+  };
+
   const renderTrainers = () => {
     return currentTrainers.map((trainer, index) => (
       <tr key={trainer._id} className="border border-redBorder dark:bg-black text-textColor">
@@ -90,10 +98,10 @@ const Trainers = () => {
           <p>{indexOfFirstTrainer + index + 1}</p>
         </td>
         <td className="p-3 border border-redBorder">
-          <p>{trainer.username}</p> 
+          <p>{trainer.username}</p>
         </td>
         <td className="p-3 border border-redBorder">
-          <p>{trainer.email}</p> 
+          <p>{trainer.email}</p>
         </td>
         <td className="p-3 border border-redBorder text-center">
           {trainer.certificate ? (
@@ -138,6 +146,12 @@ const Trainers = () => {
               className="px-3 py-2 border border-redBorder rounded bg-black text-textColor pl-10"
             />
             <FaSearch className="absolute left-3 top-2.5 text-textColor" />
+            <button
+              onClick={handleSort}
+              className="bg-black border border-redBorder text-textColor ml-2 px-4 py-2 rounded"
+            >
+              Sort by Name
+            </button>
           </div>
         </div>
         <table className="min-w-full bg-white dark:bg-black">

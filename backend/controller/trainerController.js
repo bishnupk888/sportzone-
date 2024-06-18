@@ -62,9 +62,31 @@ const updateProfileImage = async (req, res) => {
     }
   };
 
+  const updateCertificate = async (req, res) => {
+    const { id } = req.params;
+    const { certificateUrl } = req.body; 
+    try {
+      const trainer = await Trainer.findById(id);
+  
+      if (!trainer) {
+        return res.status(404).json({ message: 'Trainer not found' });
+      }
+      trainer.certificate = certificateUrl;
+      trainer.isVerified = false
+      await trainer.save();
+      res.status(200).json({ message: 'Certificate uploaded successfully', trainer });
+    } catch (error) {
+      console.error('Error uploading certificate:', error);
+      res.status(500).json({ message: 'Failed to upload certificate', error });
+    }
+  };
+  
 
 module.exports = {
     updateTrainer,
     getTrainer,
-    updateProfileImage
+    updateProfileImage,
+    updateCertificate
 }
+
+

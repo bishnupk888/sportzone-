@@ -35,7 +35,7 @@ const saveUserDataToLocalStorage = (state) => {
 const userSlice = createSlice({
   name: 'userData',
   initialState: getUserDataFromLocalStorage(),
-  reducers: {
+reducers: {
     setUserData: (state, action) => {
       console.log('Data in userReducer = ', action.payload);
       const { role, _id, profileImage, username, isBlocked } = action.payload;

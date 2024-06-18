@@ -8,6 +8,7 @@ import { clearUserData } from '../../Redux/features/userSlice';
 import axiosInstance from '../../axiosInstance/axiosInstance';
 import {toast} from 'react-toastify'
 import defaultImage from '../../assets/images/userImage.jpg'
+import TrainerProfileDropDown from './TrainerProfileDropDown';
 
 
 const navLinks = [
@@ -91,17 +92,7 @@ const Header = () => {
                 </div>
             )}
               {userRole !== '' && (
-                <div>
-                  <Link to="/trainer/profile">
-                    <figure className="w-[40px] h-[40px] sm:w-[40px] sm:h-[40px] md:w-[40px] md:h-[40px] hidden lg:block md:block ">
-                      <img
-                        src={userImage ? userImage : defaultImage}
-                        alt="User"
-                        className="w-full rounded-full cursor-pointe max-w-[40px] max-h-[40px] border-2 border-redBorder "
-                      />
-                    </figure>
-                  </Link>
-                </div>
+                <TrainerProfileDropDown/>
               )}
               {userRole !== '' ?(
                 <button

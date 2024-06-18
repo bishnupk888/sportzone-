@@ -30,6 +30,7 @@ const Athletes = () => {
   }, []); // Empty dependency array ensures this effect runs once on mount
 
   const fetchAthletes = () => {
+    
     axiosInstance.get('/api/admin/users')
       .then(response => {
         setAthletesData(response.data.data);
@@ -41,7 +42,7 @@ const Athletes = () => {
 
   const handleBlock = (id) => {
     
-    axiosInstance.post(`/api/admin/block-user/${id}`)
+    axiosInstance.patch(`/api/admin/${id}/block-user`)
       .then(response => {
         setAthletesData(prevAthletesData => {
           return prevAthletesData.map((athlete) => {
@@ -125,8 +126,11 @@ const Athletes = () => {
               className="px-3 py-2 border border-redBorder rounded bg-black text-textColor pl-10"
             />
             <FaSearch className="absolute left-3 top-2.5 text-textColor" />
-            <button className='bg-black border border-redBorder  ' onClick={handleSort}>
-            sort
+            <button
+            onClick={handleSort}
+            className="bg-black border border-redBorder text-textColor ml-2 px-4 py-2 rounded"
+          >
+            Sort by Name
           </button>
           </div>
           

@@ -37,6 +37,10 @@ const userSchema = new mongoose.Schema({
         type:String,
         enum:['male','female','other'] 
     },
+    wallet:{
+        type:Number,
+        default:0
+    },
     isOtpVerified:{
         type:Boolean,
         default:false
@@ -45,15 +49,14 @@ const userSchema = new mongoose.Schema({
         type:Boolean,
         default:false
     },
-    bookingHistory:[{
+    slots:[{
         type:mongoose.Schema.Types.ObjectId,
-        ref:'Booking'
+        ref:'Slot'
     }],
 createdAt:{
     type:Date,
     default: Date.now
 }
-    
     
 })
 

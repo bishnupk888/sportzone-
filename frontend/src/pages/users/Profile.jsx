@@ -4,22 +4,28 @@ import { useNavigate } from 'react-router-dom';
 import defaultImage from '../../assets/images/userImage.jpg';
 import axiosInstance from '../../axiosInstance/axiosInstance';
 import { toast } from 'react-toastify';
+import UploadWidget from '../../components/popupComponents/UploadWidget';
+import { setUserData } from '../../Redux/features/userSlice';
 
 
-import {setUserData} from '../../Redux/features/userSlice';
- 
-export default function Example() {
+
+export default function Profile() {
+
     const user = useSelector((state) => state.user);
     const [localUserData, setLocalUserData] = useState({});
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
     const dispatch = useDispatch()
+    const [initialtrainerData, setInintialTrainerData] = useState([])
+
+
 
     useEffect(() => {
         if (user && user.userRole && user.userId) {
             axiosInstance.get(`/api/users/${user.userId}`)
                 .then((response) => {
                     setLocalUserData(response.data.data);
+                    setInintialTrainerData(response.data.data)
                 })
                 .catch((error) => {
                     console.error('Error fetching user data:', error);
@@ -46,6 +52,27 @@ export default function Example() {
         if (!localUserData.interests) newErrors.interests = "Interests are required";
         return newErrors;
     };
+    const handleImageUpload = async (url) => {
+        try {
+            axiosInstance.patch(`/api/users/${user.userId}/profile-image`, { imageUrl: url })
+                .then((response) => {
+                    console.log('Profile image updated:', response.data);
+                    const updatedUserData = {
+                        ...localUserData,
+                        profileImage: url
+                    };
+
+                    setLocalUserData(updatedUserData);
+                    dispatch(setUserData(updatedUserData));
+                })
+                .catch((error) => {
+                    console.error('Error updating profile image:', error);
+                });
+        } catch (error) {
+            console.error('Error updating profile image:', error);
+        }
+    };
+
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -67,8 +94,13 @@ export default function Example() {
             });
     };
 
+    const handleEmailClick = () => {
+       toast.warning("email cannot be edited")
+    };
+
     const handleCancel = () => {
-        navigate('/profile');
+        setLocalUserData(initialtrainerData)
+    
     };
 
     return (
@@ -78,7 +110,7 @@ export default function Example() {
                     <div className="pb-12">
                         <h2 className="text-[3px] text-base font-bold lg:text-[40px] leading-7 text-textColor">User Profile</h2>
                         <p className="mt-5 text-sm leading-6 text-textColor">
-                            Complete full profile informations. 
+                            Complete full profile informations.
                         </p>
                         <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 text-textColor">
                             <div className="col-span-full">
@@ -93,12 +125,7 @@ export default function Example() {
                                             className='lg:absolute top-5 w-28 h-28 rounded-full border-2 border-redBorder'
                                         />
                                     </div>
-                                    <button
-                                        type="button"
-                                        className="rounded-md bg-transparent px-2.5 py-1.5 text-sm font-semibold text-textColor shadow-sm ring-1 ring-inset ring-redBorder hover:bg-redBorder"
-                                    >
-                                        Change
-                                    </button>
+                                    <UploadWidget onUpload={handleImageUpload} />
                                 </div>
                             </div>
 
@@ -129,14 +156,16 @@ export default function Example() {
                                         id="email"
                                         name="email"
                                         type="email"
-                                        placeholder='Enter email'
+                                        placeholder="Enter email"
                                         value={localUserData.email || ''}
-                                        onChange={handleInputChange}
+                                        onClick={handleEmailClick}
+                                        readOnly
                                         className={`block w-full rounded-md border ${errors.email ? 'border-red-500' : 'border-redBorder'} bg-white bg-opacity-5 py-1.5 text-textColor shadow-xl placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-redBorder focus:border-redBorder lg:text-[16px] sm:text-sm sm:leading-6 px-2`}
                                     />
                                     {errors.email && <span className="text-red-500">{errors.email}</span>}
                                 </div>
                             </div>
+
 
                             <div className="sm:col-span-3">
                                 <label htmlFor="age" className="block text-xl font-medium leading-6">
@@ -171,9 +200,9 @@ export default function Example() {
                                         <option value="" disabled style={{ backgroundColor: 'black' }}>
                                             Select gender
                                         </option>
-                                        <option style={{ backgroundColor: 'black' }} value="Male">Male</option>
-                                        <option style={{ backgroundColor: 'black' }} value="Female">Female</option>
-                                        <option style={{ backgroundColor: 'black' }} value="Other">Other</option>
+                                        <option style={{ backgroundColor: 'black' }} value="male">Male</option>
+                                        <option style={{ backgroundColor: 'black' }} value="female">Female</option>
+                                        <option style={{ backgroundColor: 'black' }} value="other">Other</option>
                                     </select>
                                     {errors.gender && <span className="text-red-500">{errors.gender}</span>}
                                 </div>

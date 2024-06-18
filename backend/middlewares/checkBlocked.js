@@ -3,7 +3,7 @@ const User = require('../model/userModel');
 const Trainer = require('../model/trainerModel');
 
 const checkBlocked = async (req, res, next) => {
-    
+    console.log("in check blocked");
   try {
     // Check if jwtUser token exists in cookies
     if (!req.cookies.jwtUser) {
@@ -11,7 +11,6 @@ const checkBlocked = async (req, res, next) => {
     }
     const token = req.cookies.jwtUser;
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET_USER);
-    console.log(decodedToken.role);
     if (decodedToken.role === 'trainer') {
       const user = await Trainer.findById(decodedToken.id).select('-password');
       if (!user) {
@@ -26,7 +25,7 @@ const checkBlocked = async (req, res, next) => {
     } else if (decodedToken.role === 'user') {
       const user = await User.findById(decodedToken.id).select('-password');
       if (!user) {
-        throw new Error('User not found.');
+        throw new Error('User not found ');
       }
       if (user.isBlocked) {
         console.log("blocked user");

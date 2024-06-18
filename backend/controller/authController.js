@@ -4,7 +4,7 @@ const Trainer = require('../model/trainerModel')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const crypto = require('crypto')
-const userHelper = require('../helpers/userHelpers')
+
 const otpHelper = require('../helpers/otpHelper')
 const OTP = require('../model/otpSchema')
 
@@ -66,46 +66,52 @@ const register = async (req, res) => {
   }
 }
 
-
 const login = async (req, res) => {
-  const { email, password } = req.body.formData
-   const role = req.body.role
-  console.log(email, password, role);    
-  console.log('Body = ',req.body)   
+  const { email, password } = req.body.formData;
+  const role = req.body.role  
+  
   try {
     let user = null;
-   if (role === 'user') {
-  console.log("Role is user:", role);
-  user = await User.findOne({ email });
-} else if (role === 'trainer') {
-  console.log("Role is trainer:", role);
-  user = await Trainer.findOne({ email });
-} 
+    if (role === 'user') {
+      user = await User.findOne({email:email});
+      console.log("user found :",user);
+
+    } else if (role === 'trainer') {
+      user = await Trainer.findOne({email:email})
+      console.log("trainer found :",user);
+    } 
+    console.log("user in login:",user);
     if (!user) {
       return res.status(404).json({ message: "User not found" });   
     }
-    if(user.isBlocked){
+    
+    if (user.isBlocked) {
       return res.status(400).json({ message: "Blocked user" });  
     }
-    const passwordMatch = await bcrypt.compare(password, user.password)
+    
+    const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordMatch) {
-      return res.status(400).json({ status: false, message: "invalid credentials" })
+      return res.status(400).json({ status: false, message: "Invalid credentials" });
     }
+    
     const expireIn = Date.now() + (1000 * 60 * 60 * 24 * 10);
-    const token = generateToken(user)     
+    const token = generateToken(user);     
 
     res.cookie('jwtUser', token, {
       expires: new Date(expireIn),
       httpOnly: true,
       sameSite: 'lax'
     });
-    const { _id, profileImage, username } = user
-    res.status(200).json({ message: "Login successful", data: { _id, profileImage, role, username } },);
+    
+    const { _id, profileImage, username } = user;
+    res.status(200).json({ message: "Login successful", data: { _id, profileImage, role, username } });
   } catch (error) {
-    res.status(400).json({ message: " server error Login failed " });
+    console.error('Error during login:', error);
+    res.status(400).json({ message: "Server error: Login failed" });
   }
-} 
+}; 
+ 
 
 const resetPassword = (req,res)=>{
   res.status(200).json({message:"reset password"})

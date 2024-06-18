@@ -1,61 +1,96 @@
-
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import defaultImage from '../../assets/images/userImage.jpg';
 import axiosInstance from '../../axiosInstance/axiosInstance';
 import { toast } from 'react-toastify';
 import UploadWidget from '../../components/popupComponents/UploadWidget';
+import { setUserData } from '../../Redux/features/userSlice';
 
-export default function TrainerProfile() {
+export default function EditTrainerProfile() {
     const user = useSelector((state) => state.user);
+    const [initialtrainerData, setInintialTrainerData] = useState([])
     const [trainerData, setTrainerData] = useState({
-        username: '',
-        email: '',
-        phone: '',
-        gender: '',
-        department: '',
-        fee: '',
-        location: '',
-        profileImage: '',
-        certificate:'',
-        experience: [
-            { institution: '', duration: '' }
-        ],
+        username: user.username || '',
+        email: user.email || '',
+        phone: user.phone || '',
+        gender: user.gender || '',
+        department: user.department || '',
+        fee: user.fee || '',
+        age: user.age || '',
+        location: user.location || '',
+        profileImage: user.profileImage || '',
+        about: user.about || '',
+        certificate: user.certificate || '',
+        experience: user.experience || [{ institution: '', duration: '' }],
+
     });
+
+
+
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     useEffect(() => {
         if (user && user.userRole && user.userId) {
-            axiosInstance.get(`/api/trainers/${user.userId}`)
-                .then((response) => {
+            const fetchTrainerData = async () => {
+                try {
+                    const response = await axiosInstance.get(`/api/trainers/${user.userId}`);
                     setTrainerData(response.data.data);
-                })
-                .catch((error) => {
+                    setInintialTrainerData(response.data.data)
+
+                } catch (error) {
                     console.error('Error fetching trainer data:', error);
                     toast.error("Failed to fetch trainer data");
-                });
+                }
+            };
+
+            fetchTrainerData();
         }
     }, [user]);
-    const handleCertificateUpload =async()=>{
-        console.log("certificate upload");
-    }
+
+    const handleCertificateUpload = async (certificateUrl) => {
+        try {
+            const response = await axiosInstance.patch(`/api/trainers/${user.userId}/certificate`, { certificateUrl });
+            console.log('Certificate uploaded:', response.data);
+
+            setTrainerData((prevData) => ({
+                ...prevData,
+                certificate: certificateUrl,
+            }));
+
+            dispatch(setUserData({
+                ...trainerData,
+                certificate: certificateUrl,
+            }));
+
+            toast.success("Successfully uploaded certificate");
+        } catch (error) {
+            toast.error("Certificate upload failed");
+            console.error('Error uploading certificate:', error);
+        }
+    };
+
     const handleImageUpload = async (url) => {
         try {
-                axiosInstance.patch(`/api/trainers/${user.userId}/profile-image`,{imageUrl:url}).then((response)=>{
-                    console.log('Profile image updated:', response.data);
-                    setTrainerData(prevData => ({
-                        ...prevData,
-                        profileImage: url
-                    }));
-                })
-                .catch((error)=>{
-                    console.log(error);
-                })
-                
+            const response = await axiosInstance.patch(`/api/trainers/${user.userId}/profile-image`, { imageUrl: url });
+            console.log('Profile image updated:', response.data);
+
+            setTrainerData((prevData) => ({
+                ...prevData,
+                profileImage: url,
+            }));
+
+            dispatch(setUserData({
+                ...trainerData,
+                profileImage: url,
+            }));
+
+            toast.success("Successfully updated image");
         } catch (error) {
-            console.error('Error updating profile image:', error);
+            toast.error("Image updation failed");
+            console.error(error);
         }
     };
 
@@ -87,61 +122,49 @@ export default function TrainerProfile() {
         if (!trainerData.gender) newErrors.gender = "Gender is required";
         if (!trainerData.department) newErrors.department = "Department is required";
         if (!trainerData.fee) newErrors.fee = "Fee is required";
+        if (!trainerData.age) newErrors.age = "Age is required";
+        if (!trainerData.about) newErrors.about = "About is required";
         if (!trainerData.location) newErrors.location = "Location is required";
-        if (!trainerData.experience || trainerData.experience.length === 0) newErrors.experience = "Experience is required";
         return newErrors;
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("in handle submit");
         const newErrors = validateForm();
+
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
             return;
         }
 
-        axiosInstance.put(`/api/trainers/${user.userId}`, trainerData)
-            .then((response) => {
-                console.log("in response");
-                toast.success("Trainer data updated successfully");
-                navigate('/trainer/profile');
-            })
-            .catch((error) => {
-                console.error('Error updating trainer data:', error);
-                toast.error("Failed to update trainer data");
-            });
+        try {
+            const response = await axiosInstance.put(`/api/trainers/${user.userId}`, trainerData);
+            console.log("API call successful:", response.data);
+            setTrainerData(response.data.data);
+            dispatch(setUserData(trainerData));
+            toast.success("Trainer data updated successfully");
+        } catch (error) {
+            console.error('Error updating trainer data:', error);
+            toast.error("Failed to update trainer data");
+        }
+    };
+
+    const handleEmailClick = () => {
+       toast.warning("email cannot be edited")
     };
 
     const handleCancel = () => {
-        navigate('/trainer-profile');
+        setTrainerData(initialtrainerData)
     };
-
-    // const addExperienceField = () => {
-    //     setTrainerData(prevData => ({
-    //         ...prevData,
-    //         experience: [
-    //             ...prevData.experience,
-    //             { institution: '', duration: '' }
-    //         ],
-    //     }));
-    // };
-
-    // const removeExperienceField = (indexToRemove) => {
-    //     setTrainerData(prevData => ({
-    //         ...prevData,
-    //         experience: prevData.experience.filter((exp, index) => index !== indexToRemove),
-    //     }));
-    // };
 
     return (
         <div className='px-[5%] py-[5%] bg-black text-white'>
             <form onSubmit={handleSubmit}>
                 <div className="space-y-12">
                     <div className="pb-12">
-                        <h2 className="text-[30px] text-base font-bold lg:text-[40px] leading-7 text-textColor">Trainer Profile</h2>
-                        <p className="mt-5 text-sm leading-6 text-textColor ">
-                            Add all profile informations for verification. Informations provided will be visible to users
+                        <h2 className=" text-3xl lg:text-4xl font-bold  leading-7 text-textColor">Trainer Profile</h2>
+                        <p className="mt-5 text-sm leading-6 text-textColor">
+                            Complete full profile information for verification.
                         </p>
                         <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 text-textColor">
                             <div className="col-span-full">
@@ -151,13 +174,12 @@ export default function TrainerProfile() {
                                 <div className="mt-2 flex items-center">
                                     <div className='relative w-40 h-40 flex items-center justify-center'>
                                         <img
-                                            src={ trainerData?.profileImage || defaultImage}
+                                            src={trainerData?.profileImage || defaultImage}
                                             alt='trainer-image'
                                             className='lg:absolute top-5 w-28 h-28 rounded-full border-2 border-redBorder'
                                         />
                                     </div>
                                     <UploadWidget onUpload={handleImageUpload} />
-
                                 </div>
                             </div>
 
@@ -181,18 +203,17 @@ export default function TrainerProfile() {
 
                             <div className="sm:col-span-4">
                                 <label htmlFor="email" className="block text-xl font-medium leading-6">
-                                    Email address 
+                                    Email address
                                 </label>
                                 <div className="mt-2">
                                     <input
                                         id="email"
                                         name="email"
                                         type="email"
-                                        readOnly
-                                        placeholder='Enter email'
+                                        placeholder="Enter email"
                                         value={trainerData.email || ''}
-                                        onChange={handleInputChange}
-                                        onClick={()=>toast.warning('cannot change email')}
+                                        onClick={handleEmailClick}
+                                        readOnly
                                         className={`block w-full rounded-md border ${errors.email ? 'border-red-500' : 'border-redBorder'} bg-white bg-opacity-5 py-1.5 text-textColor shadow-xl placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-redBorder focus:border-redBorder lg:text-[16px] sm:text-sm sm:leading-6 px-2`}
                                     />
                                     {errors.email && <span className="text-red-500">{errors.email}</span>}
@@ -217,23 +238,6 @@ export default function TrainerProfile() {
                                 </div>
                             </div>
 
-                            <div className="col-span-full">
-                                <label htmlFor="interests" className="block text-xl font-medium leading-6">
-                                    About
-                                </label>
-                                <div className="mt-2">
-                                    <textarea
-                                        id="interests"
-                                        name="interests"
-                                        rows={3}
-                                        placeholder={(Array.isArray(trainerData.interests) && trainerData.interests.length > 0) ? trainerData.interests.join(', ') : 'Add your favorite sports (use comma if multiple inerests)'}
-                                        className="block w-full lg:text-[16px] rounded-md border border-redBorder bg-white bg-opacity-5 py-1.5 text-textColor shadow-xl placeholder:text-textColor sm:text-sm sm:leading-6 focus:outline-none focus:ring-2 focus:ring-redBorder focus:border-redBorder px-3"
-                                        defaultValue={trainerData.interests}
-                                        onChange={handleInputChange}
-                                    />
-                                </div>
-                            </div>
-
                             <div className="sm:col-span-3">
                                 <label htmlFor="gender" className="block text-xl font-medium leading-6">
                                     Gender
@@ -242,34 +246,48 @@ export default function TrainerProfile() {
                                     <select
                                         id="gender"
                                         name="gender"
-                                        value={trainerData.gender || ''}
+                                        value={trainerData.gender}
                                         onChange={handleInputChange}
-                                        className={`block w-full rounded-md border ${errors.gender ? 'border-red-500' : 'border-redBorder'} bg-white bg-opacity-5 py-1.5 text-textColor shadow-xl focus:outline-none focus:ring-2 focus:ring-redBorder focus:border-redBorder lg:text-[16px] sm:max-w-xs sm:text-sm sm:leading-6 px-2`}
+                                        className={`block w-full rounded-md border ${errors.gender ? 'border-red-500' : 'border-redBorder'} bg-white bg-opacity-5 py-1.5 text-textColor shadow-xl placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-redBorder focus:border-redBorder lg:text-[16px] sm:text-sm sm:leading-6 px-2`}
                                     >
-                                        <option value="" disabled style={{ backgroundColor: 'black' }}>
-                                            Select gender
-                                        </option>
-                                        <option style={{ backgroundColor: 'black' }} value="Male">Male</option>
-                                        <option style={{ backgroundColor: 'black' }} value="Female">Female</option>
-                                        <option style={{ backgroundColor: 'black' }} value="Other">Other</option>
+                                        <option value="" disabled>Select gender</option>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                        <option value="other">Other</option>
                                     </select>
                                     {errors.gender && <span className="text-red-500">{errors.gender}</span>}
                                 </div>
                             </div>
-
+                            <div className="sm:col-span-3">
+                                <label htmlFor="fee" className="block text-xl font-medium leading-6">
+                                    Age
+                                </label>
+                                <div className="mt-2">
+                                    <input
+                                        id="age"
+                                        name="age"
+                                        type="number"
+                                        placeholder='Enter your age'
+                                        value={trainerData.age || ''}
+                                        onChange={handleInputChange}
+                                        className={`block w-full rounded-md border ${errors.age ? 'border-red-500' : 'border-redBorder'} bg-white bg-opacity-5 py-1.5 text-textColor shadow-xl placeholder:text-textColor focus:outline-none focus:ring-2 focus:ring-redBorder focus:border-redBorder lg:text-[16px] sm:text-sm sm:leading-6 px-2`}
+                                    />
+                                    {errors.age && <span className="text-red-500">{errors.age}</span>}
+                                </div>
+                            </div>
                             <div className="sm:col-span-3">
                                 <label htmlFor="department" className="block text-xl font-medium leading-6">
                                     Department
                                 </label>
                                 <div className="mt-2">
                                     <input
-                                        id="department"
-                                        name="department"
                                         type="text"
+                                        name="department"
+                                        id="department"
                                         placeholder='Enter department'
                                         value={trainerData.department || ''}
                                         onChange={handleInputChange}
-                                        className={`block w-full rounded-md border ${errors.department ? 'border-red-500' : 'border-redBorder'} bg-white bg-opacity-5 py-1.5 text-textColor shadow-xl placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-redBorder focus:border-redBorder lg:text-[16px] sm:text-sm sm:leading-6 px-2`}
+                                        className={`block w-full rounded-md border ${errors.department ? 'border-red-500' : 'border-redBorder'} bg-white bg-opacity-5 py-1.5 text-textColor shadow-xl placeholder:text-textColor focus:outline-none focus:ring-2 focus:ring-redBorder focus:border-redBorder lg:text-[16px] sm:text-sm sm:leading-6 px-2`}
                                     />
                                     {errors.department && <span className="text-red-500">{errors.department}</span>}
                                 </div>
@@ -277,23 +295,23 @@ export default function TrainerProfile() {
 
                             <div className="sm:col-span-3">
                                 <label htmlFor="fee" className="block text-xl font-medium leading-6">
-                                    Fee
+                                    Fee/Session
                                 </label>
                                 <div className="mt-2">
                                     <input
                                         id="fee"
                                         name="fee"
-                                        type="text"
-                                        placeholder='Enter fee'
+                                        type="number"
+                                        placeholder='Enter fee per session'
                                         value={trainerData.fee || ''}
                                         onChange={handleInputChange}
-                                        className={`block w-full rounded-md border ${errors.fee ? 'border-red-500' : 'border-redBorder'} bg-white bg-opacity-5 py-1.5 text-textColor shadow-xl placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-redBorder focus:border-redBorder lg:text-[16px] sm:text-sm sm:leading-6 px-2`}
+                                        className={`block w-full rounded-md border ${errors.fee ? 'border-red-500' : 'border-redBorder'} bg-white bg-opacity-5 py-1.5 text-textColor shadow-xl placeholder:text-textColor focus:outline-none focus:ring-2 focus:ring-redBorder focus:border-redBorder lg:text-[16px] sm:text-sm sm:leading-6 px-2`}
                                     />
                                     {errors.fee && <span className="text-red-500">{errors.fee}</span>}
                                 </div>
                             </div>
 
-                            <div className="sm:col-span-3">
+                            <div className="sm:col-span-4">
                                 <label htmlFor="location" className="block text-xl font-medium leading-6">
                                     Location
                                 </label>
@@ -311,80 +329,91 @@ export default function TrainerProfile() {
                                 </div>
                             </div>
 
-                            {/* <div className="sm:col-span-6">
-                                <label className="block text-xl font-medium leading-6">
-                                    Experience
+                            <div className="col-span-full">
+                                <label htmlFor="about" className="block text-xl font-medium leading-6">
+                                    About
                                 </label>
-                                <div className="mt-2 space-y-4">
-                                    {trainerData.experience.map((exp, index) => (
-                                        <div key={index} className="flex items-center">
-                                            <input
-                                                type="text"
-                                                name={`experience.${index}.institution`}
-                                                placeholder="Institution"
-                                                value={exp.institution}
-                                                onChange={(e) => handleInputChange(e, index)}
-                                                className={`block w-2/3 rounded-md border ${errors.experience ? 'border-red-500' : 'border-redBorder'} bg-white bg-opacity-5 py-1.5 text-textColor shadow-xl placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-redBorder focus:border-redBorder lg:text-[16px] sm:text-sm sm:leading-6 px-2 mr-2`}
-                                            />
-                                            <input
-                                                type="text"
-                                                name={`experience.${index}.duration`}
-                                                placeholder="Duration"
-                                                value={exp.duration}
-                                                onChange={(e) => handleInputChange(e, index)}
-                                                className={`block w-1/3 rounded-md border ${errors.experience ? 'border-red-500' : 'border-redBorder'} bg-white bg-opacity-5 py-1.5 text-textColor shadow-xl placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-redBorder focus:border-redBorder lg:text-[16px] sm:text-sm sm:leading-6 px-2`}
-                                            />
-                                            {errors.experience && <span className="text-red-500">{errors.experience}</span>}
-                                            {index > 0 && (
-                                                <button
-                                                    type="button"
-                                                    className="ml-2 text-sm font-medium text-red-500 hover:text-red-700 focus:outline-none focus:text-red-700"
-                                                    onClick={() => removeExperienceField(index)}
-                                                >
-                                                    Remove
-                                                </button>
-                                            )}
-                                        </div>
-                                    ))}
-                                    <button
-                                        type="button"
-                                        className="text-sm font-medium text-red-500 hover:text-red-700 focus:outline-none"
-                                        onClick={addExperienceField}
-                                    >
-                                        + Add Experience
-                                    </button>
+                                <div className="mt-2">
+                                    <textarea
+                                        id="about"
+                                        name="about"
+                                        placeholder='Tell us about yourself'
+                                        value={trainerData.about || ''}
+                                        onChange={handleInputChange}
+                                        rows="3"
+                                        className={`block w-full rounded-md border ${errors.about ? 'border-red-500' : 'border-redBorder'} bg-white bg-opacity-5 py-1.5 text-textColor shadow-xl placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-redBorder focus:border-redBorder lg:text-[16px] sm:text-sm sm:leading-6 px-2`}
+                                    />
+                                    {errors.about && <span className="text-red-500">{errors.about}</span>}
                                 </div>
-                            </div> */}
+                            </div>
 
                             <div className="col-span-full">
-                                <label htmlFor="photo" className="block text-xl font-medium leading-6 text-textColor">
+                                <label htmlFor="certificate" className="block text-xl font-medium leading-6">
                                     Certificate
                                 </label>
                                 <div className="mt-2 flex items-center">
-                                    <div className='relative w-40 h-40 flex items-center justify-center'>
-                                        <img
-                                            src={ trainerData?.certificate || ''}
-                                            alt='trainer-certificate'
-                                            className='lg:absolute top-5 w-40 h-20 border border-redBorder'
-                                        />
+                                    <div className="w-32">
+                                        {trainerData.certificate && (
+                                            <img src={trainerData.certificate} alt="Certificate" className="rounded-md shadow-md" />
+                                        )}
                                     </div>
                                     <UploadWidget onUpload={handleCertificateUpload} />
-
                                 </div>
                             </div>
+
+                            {/* <div className="col-span-full">
+                                <label htmlFor="experience" className="block text-xl font-medium leading-6">
+                                    Experience
+                                </label>
+                                {trainerData.experience.map((exp, index) => (
+                                    <div key={index} className="mt-2 flex gap-x-4">
+                                        <input
+                                            type="text"
+                                            name={`experience.${index}.institution`}
+                                            placeholder='Institution'
+                                            value={exp.institution}
+                                            onChange={(e) => handleInputChange(e, index)}
+                                            className={`block w-full rounded-md border ${errors[`experience.${index}.institution`] ? 'border-red-500' : 'border-redBorder'} bg-white bg-opacity-5 py-1.5 text-textColor shadow-xl placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-redBorder focus:border-redBorder lg:text-[16px] sm:text-sm sm:leading-6 px-2`}
+                                        />
+                                        <input
+                                            type="text"
+                                            name={`experience.${index}.duration`}
+                                            placeholder='Duration'
+                                            value={exp.duration}
+                                            onChange={(e) => handleInputChange(e, index)}
+                                            className={`block w-full rounded-md border ${errors[`experience.${index}.duration`] ? 'border-red-500' : 'border-redBorder'} bg-white bg-opacity-5 py-1.5 text-textColor shadow-xl placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-redBorder focus:border-redBorder lg:text-[16px] sm:text-sm sm:leading-6 px-2`}
+                                        />
+                                    </div>
+                                ))}
+                                <button
+                                    type="button"
+                                    onClick={() => setTrainerData(prevData => ({
+                                        ...prevData,
+                                        experience: [...prevData.experience, { institution: '', duration: '' }]
+                                    }))}
+                                    className="mt-2 text-textColor hover:text-red-500"
+                                >
+                                    Add more experience
+                                </button>
+                            </div> */}
                         </div>
-                        <div className="mt-6 flex items-center justify-end gap-x-6">
-                    <button type="button" className="text-xl font-semibold leading-6 text-textColor hover:text-redBorder">
+                    </div>
+                </div>
+
+                <div className="mt-6 flex items-center justify-end gap-x-6">
+                    <button
+                        type="button"
+                        className="text-xl font-semibold leading-6 text-textColor hover:text-redBorder hover:scale-90"
+                        onClick={handleCancel}
+                    >
                         Cancel
                     </button>
                     <button
                         type="submit"
-                        className="rounded-md bg-transparent border border-redBorder px-3 py-2 text-xl font-semibold text-textColor shadow-sm hover:bg-redBorder focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-redBorder"
+                        className="rounded-md bg-black border border-redBorder px-5 py-3 text-xl font-semibold text-white shadow-sm hover:bg-redBorder hover:scale-90 "
                     >
                         Save
                     </button>
-                </div>
-                    </div>
                 </div>
             </form>
         </div>
@@ -393,130 +422,3 @@ export default function TrainerProfile() {
 
 
 
-
-// import React, { useEffect, useState } from 'react';
-// import { useSelector } from 'react-redux';
-// import { Link } from 'react-router-dom';
-// import defaultImage from '../../assets/images/userImage.jpg';
-// import defaultcertficateImage from '../../assets/images/certification-placeholder.png'
-// import axiosInstance from '../../axiosInstance/axiosInstance';
-
-// const Profile = () => {
-//     const user = useSelector((state) => state.user);
-//     const [userData, setUserData] = useState({});
-
-//     useEffect(() => {
-//         if (user && user.userRole && user.userId) {
-//             axiosInstance.get(`/api/trainers/${user.userId}`)
-//                 .then((response) => {
-//                     console.log(response);
-//                     setUserData(response.data.data);
-//                 })
-//                 .catch((error) => {
-//                     console.error('Error fetching user data:', error);
-//                     toast.error("Failed to fetch user data");
-//                 });
-//         }
-//     }, [user]);
-
-//     return (
-//         <section className='px-5 lg:px-0 bg-black min-h-screen overflow-auto'>
-//             <div className='text-center w-full max-w-[80%] mx-auto rounded-[30px] shadow-md md:p-20 bg-bgColorComponennt border border-redBorder'>
-//                 <h1 className='text-textColor text-4xl md:text-5xl leading-9 font-bold pt-[40px] lg:py-[30px] md:py-[30px]'>{userData.userName ?? 'Trainer'}'s Profile</h1>
-//                 <div className='py-4 px-4'>
-//                     <div className='flex flex-col md:flex-row items-start'>
-//                         {/* Current Profile Image */}
-//                         <div className='relative mb-2 md:mr-2 w-52 h-52 flex items-center justify-center '>
-//                             <img
-//                                 src={userData?.profileImage || defaultImage}
-//                                 alt='user-image'
-//                                 className='lg:absolute top-0 w-32 h-32 md:w-40 md:h-40 rounded-[15px] border border-redBorder '
-//                             />
-//                             {/* Edit Image Button */}
-    
-//                         </div>
-
-//                         {/* User Information */}
-//                         <div className='flex-1 mb-6 md:ml-[30px] md:mt-0 w-full md:w-[70%]'>
-//                             <div className='mb-5 flex items-start'>
-//                                 <label className='text-textColor text-xl md:text-2xl w-[25%]'>Name:</label>
-//                                 <p className='text-textColor text-xl md:text-2xl leading-7 mt-2 md:ml-4 md:w-[75%] overflow-wrap break-word'>
-//                                     {userData.username}
-//                                 </p>
-//                             </div>
-//                             <div className='mb-5 flex items-start'>
-//                                 <label className='text-textColor text-xl md:text-2xl w-[25%]'>Email:</label>
-//                                 <p className='text-textColor text-xl md:text-2xl leading-7 mt-2 md:ml-4 md:w-[75%] overflow-wrap break-word'>
-//                                     {userData.email}
-//                                 </p>
-//                             </div>
-//                             <div className='mb-5 flex items-start'>
-//                                 <label className='text-textColor text-xl md:text-2xl w-[25%]'>Age:</label>
-//                                 <p className='text-textColor text-xl md:text-2xl leading-7 mt-2 md:ml-4 md:w-[75%] overflow-wrap break-word'>
-//                                     {userData.age}
-//                                 </p>
-//                             </div>
-//                             <div className='mb-5 flex items-start'>
-//                                 <label className='text-textColor text-xl md:text-2xl w-[25%]'>Gender:</label>
-//                                 <p className='text-textColor text-xl md:text-2xl leading-7 mt-2 md:ml-4 md:w-[75%] overflow-wrap break-word'>
-//                                     {userData.gender}
-//                                 </p>
-//                             </div>
-//                             <div className='mb-5 flex items-start'>
-//                                 <label className='text-textColor text-xl md:text-2xl w-[25%]'>Phone:</label>
-//                                 <p className='text-textColor text-xl md:text-2xl leading-7 mt-2 md:ml-4 md:w-[75%] overflow-wrap break-word'>
-//                                     {userData.phone}
-//                                 </p>
-//                             </div>
-//                             <div className='mb-5 flex items-start'>
-//                                 <label className='text-textColor text-xl md:text-2xl w-[25%]'>Experience:</label>
-//                                 <p className='text-textColor text-xl md:text-2xl leading-7 mt-2 md:ml-4 md:w-[75%] overflow-wrap break-word'>
-//                                     {userData.experience}
-//                                 </p>
-//                             </div>
-//                             <div className='mb-5 flex items-start'>
-//                                 <label className='text-textColor text-xl md:text-2xl w-[25%]'>Fee/Session:</label>
-//                                 <p className='text-textColor text-xl md:text-2xl leading-7 mt-2 md:ml-4 md:w-[75%] overflow-wrap break-word'>
-//                                     {userData.feePerSession}
-//                                 </p>
-//                             </div>
-//                             <div className='mb-5 flex items-start'>
-//                                 <label className='text-textColor text-xl md:text-2xl w-[25%]'>Location:</label>
-//                                 <p className='text-textColor text-xl md:text-2xl leading-7 mt-2 md:ml-4 md:w-[75%] overflow-wrap break-word'>
-//                                     {userData.location}
-//                                 </p>
-//                             </div>
-//                         </div>
-//                     </div>
-
-//                     {/* Certificate Image Section */}
-//                     <div className='relative mb-2 md:mr-2 w-52 h-10 mt-4 md:mt-0'>
-//                         <div className='relative'>
-//                             <img
-//                                 src={userData?.certificateImage || defaultcertficateImage}
-//                                 alt='certificate-image'
-//                                 className='w-full h-[50px] rounded-[5px] border border-redBorder '
-//                                 style={{ objectFit: 'fill' }}
-//                             />
-//                             {/* Edit Certificate Image Button */}
-//                             <button className='absolute bottom-[-50px] left-0 w-full bg-buttonBgColor p-1 rounded-[5px] border border-redBorder text-textColor'>
-//                                 Add Certificate
-//                             </button>
-//                         </div>
-//                     </div>
-
-//                     {/* Edit Profile Button */}
-//                     <div className='flex justify-end mt-4'>
-//                         <Link to='/trainer/edit-profile'>
-//                             <button className='max-w-[300px] bg-buttonBgColor text-textColor text-lg md:text-xl leading-[30px] rounded-lg px-4 py-3 border-2 border-redBorder'>
-//                                 Edit Profile
-//                             </button>
-//                         </Link>
-//                     </div>
-//                 </div>
-//             </div>
-//         </section>
-//     );
-// };
-
-// export default Profile;
