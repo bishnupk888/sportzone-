@@ -295,7 +295,7 @@ export default function EditTrainerProfile() {
 
                             <div className="sm:col-span-3">
                                 <label htmlFor="fee" className="block text-xl font-medium leading-6">
-                                    Fee/Session
+                                    Fee/Hour
                                 </label>
                                 <div className="mt-2">
                                     <input

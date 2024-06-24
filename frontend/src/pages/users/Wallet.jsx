@@ -36,7 +36,6 @@ const Wallet = () => {
             <div>
               <p>Current Balance</p>
               <h2 className="text-4xl font-bold text-white">{userData.wallet ? userData.wallet : 0} Rs</h2>
-              <p>0 $</p>
             </div>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1} stroke="white" className="size-12">
               <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a2.25 2.25 0 0 0-2.25-2.25H15a3 3 0 1 1-6 0H5.25A2.25 2.25 0 0 0 3 12m18 0v6a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 18v-6m18 0V9M3 12V9m18 0a2.25 2.25 0 0 0-2.25-2.25H5.25A2.25 2.25 0 0 0 3 9m18 0V6a2.25 2.25 0 0 0-2.25-2.25H5.25A2.25 2.25 0 0 0 3 6v3" />
@@ -52,9 +51,9 @@ const Wallet = () => {
             {/* <button className="flex-1 rounded-lg flex flex-col items-center justify-center p-2 border border-red-500 m-2 cursor-pointer hover:border-2 hover:border-red-700">
               <p className="text-white text-lg">Transfer</p>
             </button> */}
-            <button className="flex-1 rounded-lg flex flex-col items-center justify-center p-2 border border-red-500 m-2 cursor-pointer hover:border-2 hover:border-red-700">
+            {/* <button className="flex-1 rounded-lg flex flex-col items-center justify-center p-2 border border-red-500 m-2 cursor-pointer hover:border-2 hover:border-red-700">
               <p className="text-white text-lg">Redeem</p>
-            </button>
+            </button> */}
           </div>
         </div>
       </div>

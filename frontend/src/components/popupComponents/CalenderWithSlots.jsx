@@ -16,10 +16,37 @@ const CalendarWithSlots = ({ slots , setIsOpen,trainerFee , trainerId }) => {
     
     const [selectedSlots,setSelectedSlots] = useState([])
 
-    const totalAmount =  trainerFee * selectedSlots.length
+
+    console.log("selected slots : ",selectedSlots);
+    
     const navigate = useNavigate()
 
-    console.log(slots);
+    const calculateDurationInHours = (startTime, endTime) => {
+        const start = new Date(`1970-01-01T${startTime}:00`);
+        let end = new Date(`1970-01-01T${endTime}:00`);
+      
+        // Handle cases where end time is past midnight
+        if (end < start) {
+          end = new Date(`1970-01-02T${endTime}:00`);
+        }
+      
+        const diffInMinutes = (end - start) / (1000 * 60);
+        return diffInMinutes / 60;
+      };
+
+      const calculateTotalAmount = (selectedSlots, trainerFee) => {
+        let totalAmount = 0;
+      
+        selectedSlots.forEach(slot => {
+          const durationInHours = calculateDurationInHours(slot.startTime, slot.endTime);
+          totalAmount += durationInHours * trainerFee;
+        });
+      
+        return Math.floor(totalAmount);
+      };
+      
+      const totalAmount =  calculateTotalAmount(selectedSlots , trainerFee)
+      console.log("totalAmount : ",totalAmount);
 
     const formatDate = (date) => {
         const day = date.getDate().toString().padStart(2, '0');

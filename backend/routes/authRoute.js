@@ -6,8 +6,12 @@ const authController = require('../controller/authController')
 
 
 authRouter.post('/login',authController.login)
+authRouter.post('/google-sign-in',authController.googleSignIn)
+
 
 authRouter.post('/register',authController.register)
+authRouter.post('/google-sign-up',authController.googleSignUp)
+
 authRouter.post('/verify-otp',otpHelper.verifyOtp)
 authRouter.post('/re-send-otp',otpHelper.resendOtp)
 authRouter.post('/logout',authController.logout)

@@ -9,7 +9,6 @@ const updateSlots = async (slotIds) => {
     const updatePromises = slotIds.map(id => 
       Slot.findByIdAndUpdate(id, { isBooked: true }, { new: true })
     );
-    
     const updatedSlots = await Promise.all(updatePromises);
     console.log('Slots updated:', updatedSlots);
   } catch (error) {

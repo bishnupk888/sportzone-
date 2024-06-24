@@ -156,47 +156,48 @@ const Slots = () => {
     <div className="mx-10 mt-10">
       <h1 className="text-white text-3xl mb-5">Time Slots</h1>
       <div className="p-5 rounded-lg bg-buttonBgColor">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mb-5">
-          <div>
-            <p className="text-white mb-1">Select Date</p>
-            <CustomDatePicker
-              selectedDate={selectedDate}
-              setSelectedDate={setSelectedDate}
-            />
-          </div>
-          <div>
-            <p className="text-white mb-2">Starting Time</p>
-            <TimePicker
-              onChange={setStartTime}
-              value={startTime}
-              className="w-full h-10 text-white bg-black"
-              clockClassName="bg-black text-white"
-              format="hh:mm a"
-              clearIcon={null}
-              disableClock
-            />
-          </div>
-          <div>
-            <p className="text-white mb-2">Ending Time</p>
-            <TimePicker
-              onChange={setEndTime}
-              value={endTime}
-              className="w-full h-10 text-white bg-black"
-              clockClassName=" "
-              format="hh:mm a"
-              clearIcon={null}
-              disableClock
-            />
-          </div>
-          <div className="flex items-center justify-center pt-7">
-            <button
-              onClick={handleAddSlot}
-              className="bg-green-800 text-white py-2 px-4 rounded-md hover:bg-green-700 hover:scale-95"
-            >
-              Add Slot
-            </button>
-          </div>
-        </div>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mb-5">
+  <div>
+    <p className="text-white mb-1">Select Date</p>
+    <CustomDatePicker
+      selectedDate={selectedDate}
+      setSelectedDate={setSelectedDate}
+    />
+  </div>
+  <div>
+    <p className="text-white mb-2">Starting Time</p>
+    <TimePicker
+      onChange={setStartTime}
+      value={startTime}
+      className="w-full h-10 text-white bg-black"
+      clockClassName="bg-black text-white"
+      format="hh:mm a"
+      clearIcon={null}
+      disableClock
+    />
+  </div>
+  <div>
+    <p className="text-white mb-2">Ending Time</p>
+    <TimePicker
+      onChange={setEndTime}
+      value={endTime}
+      className="w-full h-10 text-white bg-black"
+      clockClassName=" "
+      format="hh:mm a"
+      clearIcon={null}
+      disableClock
+    />
+  </div>
+  <div className="flex items-center justify-center pt-7">
+    <button
+      onClick={handleAddSlot}
+      className="bg-green-800 text-white py-2 px-4 rounded-md hover:bg-green-700 hover:scale-95"
+    >
+      Add Slot
+    </button>
+  </div>
+</div>
+
         {currentSlots.length > 0 && (
           <div className="mt-5">
             <div className="flex justify-end mb-3 mr-10">

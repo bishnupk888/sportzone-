@@ -46,15 +46,14 @@ const FindATrainer = () => {
     filterTrainers(searchTerm, filterDepartment, sortOption);
   };
 
-  // Function to handle clear search button click
+ 
   const handleClearSearch = () => {
     setSearchTerm('');
     setFilterDepartment('');
     setSortOption('');
-    getTrainers(); // Reset trainers to original list
+    getTrainers(); 
   };
 
-  // Function to filter and sort trainers based on criteria
   const filterTrainers = (term, department, sort) => {
     let filteredTrainers = trainers.filter(trainer =>
       (trainer.username.toLowerCase().includes(term.toLowerCase()) ||

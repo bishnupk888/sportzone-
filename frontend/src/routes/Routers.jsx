@@ -37,6 +37,8 @@ import PrivateRoutes from './PrivateRoutes';
 import { clearUserData } from '../Redux/features/userSlice';
 import CheckoutForm from '../components/checkout/CheckoutComponent';
 import TrainerWallet from '../pages/Trainers/TrainerWallet';
+import LoginGoogleAuth from '../pages/LoginGoogleAuth';
+import BookingDetails from '../pages/users/BookingDetails';
 
 const Routers = () => {
   const userRole = useSelector((state) => state.user.userRole);
@@ -71,8 +73,11 @@ const Routers = () => {
       <Route path='/register' element={<Signup />} />
       <Route path='/verify-otp' element={<VerifyOtp />} />
       <Route path='/reset-password' element={<ResetPassword />} />
+      <Route path='/test-route' element={<BookingDetails />} />
 
-      <Route path='/user/login' element={<Login role={'user'} />} />
+
+
+      <Route path='/user/login' element={<Login Role={'user'} />} />
         <Route path='/user/*' element={<PrivateRoutes role={'user'}/>} >
          <Route path='findtrainers' element={<FindTrainers />} />
          <Route path='contact' element={<Contact/>} /> 
@@ -86,17 +91,13 @@ const Routers = () => {
         <Route path='checkout' element={<CheckoutForm/>}/>
         <Route path='checkout-success' element={<CheckoutSuccess/>}/>
 
-
-
-        
-
         
         <Route path='*' element={<PageNotFound/>}/>
       </Route>
        <Route/>
 
 
-      <Route path='/trainer/login' element={<Login role={'trainer'}/>} />
+      <Route path='/trainer/login' element={<Login Role={'trainer'}/>} />
       <Route path='/trainer/*' element={<PrivateRoutes role={'trainer'}/>} >
       <Route path='bookings' element={<Bookings />} />
       <Route path='experience' element={<Experience />} />

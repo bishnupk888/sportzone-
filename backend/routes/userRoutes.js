@@ -18,6 +18,10 @@ userRouter.get('/available-slots/:id',authUser,checkBlocked,userHelpers.getTrain
 
 userRouter.post('/bookSlot',authUser,checkBlocked,userHelpers.bookSlot)
 userRouter.get('/mybookings/:id',authUser,checkBlocked,userBookingHelper.getAllUserBookings)
+userRouter.post('/cancel-booking/:bookingId',authUser,checkBlocked,userBookingHelper.cancelUserBooking)
+userRouter.get('/booking-details/:bookingId',authUser,checkBlocked,userBookingHelper.getBookingDetails)
+
+
 
 
 

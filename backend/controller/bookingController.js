@@ -44,22 +44,27 @@ const getCheckoutSession = async (req, res) => {
             slots: slotIds,
             bookingAmount: totalAmount,
             session: session.id,
-            bookingStatus: 'completed', // Assuming bookingStatus and bookingDate are defined variables
-            bookingDate: new Date()   // Example for bookingDate, adjust as per your requirement
+            bookingStatus: 'success',
+            bookingDate: new Date()   
         });
 
        
         await slotController.updateSlots(slotIds)
         
         await booking.save();
-       return res.status(200).json({ success: true, message: "Successfully booked paid", session });
+       return res.status(200).json({ success: true, message: "Successfully booked and paid", session });
     }
     else{
         res.status(500).json({ success: false, message: "Error creating checkout session" });
     }
         
     } catch (error) {
-        console.error("Error creating checkout session:", error);
+       console.error("Error creating checkout session:", error);
+
+        if (error.type === 'StripeCardError') {
+            return res.status(400).json({ success: false, message: "Card error: " + error.message });
+        }
+
         res.status(500).json({ success: false, message: "Error creating checkout session" });
     }
 };

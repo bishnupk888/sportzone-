@@ -59,7 +59,7 @@ const Header = () => {
 
   return (
     <>
-      <header className="header flex items-center" ref={headerRef}>
+      <header className="header flex items-center" ref={headerRef}  style={{ zIndex: 1000 }}>
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between">
             <Link to="/home">

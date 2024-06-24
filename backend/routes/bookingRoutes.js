@@ -8,4 +8,7 @@ const bookingRouter = express.Router()
 bookingRouter.post('/checkout-session',authenticate,bookingController.getCheckoutSession)
 
 
+
+
+
 module.exports = bookingRouter
