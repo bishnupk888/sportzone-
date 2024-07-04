@@ -5,7 +5,7 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm ,message ,question }) =>
     <>
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75">
-          <div className="flex flex-col max-w-md gap-2 p-6 rounded-md shadow-md bg-black text-white border border-red-600">
+          <div className="flex flex-col max-w-md gap-2 p-6 rounded-md shadow-md bg-black text-white border border-red-00">
             <h2 className="flex items-center gap-2 text-xl font-semibold leading-tight tracking-wide">
               <svg
                 xmlns="http://www.w3.org/2000/svg"

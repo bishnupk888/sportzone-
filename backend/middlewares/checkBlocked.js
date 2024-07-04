@@ -3,7 +3,6 @@ const User = require('../model/userModel');
 const Trainer = require('../model/trainerModel');
 
 const checkBlocked = async (req, res, next) => {
-    console.log("in check blocked");
   try {
     // Check if jwtUser token exists in cookies
     if (!req.cookies.jwtUser) {
@@ -14,11 +13,9 @@ const checkBlocked = async (req, res, next) => {
     if (decodedToken.role === 'trainer') {
       const user = await Trainer.findById(decodedToken.id).select('-password');
       if (!user) {
-        console.log("user not found");
         throw new Error('trainer not found.');
       }
       if (user.isBlocked) {
-        console.log("blocked trainer");
         throw new Error('blocked trainer.');
       }
       req.authUser = user; // Attach user data to request object
@@ -28,7 +25,6 @@ const checkBlocked = async (req, res, next) => {
         throw new Error('User not found ');
       }
       if (user.isBlocked) {
-        console.log("blocked user");
         return res.status(400).json({message:"blocked user"})   
       }
       req.authUser = user; // Attach user data to request object

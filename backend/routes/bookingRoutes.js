@@ -6,6 +6,8 @@ const bookingRouter = express.Router()
 
 
 bookingRouter.post('/checkout-session',authenticate,bookingController.getCheckoutSession)
+bookingRouter.post('/wallet-payment',authenticate,bookingController.walletBooking)
+
 
 
 

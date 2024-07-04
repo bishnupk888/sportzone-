@@ -1,9 +1,9 @@
-import React from 'react'
+	import React from 'react'
 import logoSZ from "../../assets/images/logo/logo-sz.png"
 const Footer = () => {
 	return (
-		<footer className=" dark:bg-black dark:text-textColor border-t border-b border-textColor dark:border-gray-700 ">
-			<div className="container flex flex-col justify-between py-10 mx-auto space-y-8 lg:flex-row lg:space-y-0">
+		<footer className=" p-10 dark:bg-black dark:text-textColor border-t border-b border-textColor dark:border-gray-700 ">
+			<div className="container flex flex-col justify-around items-center  mx-auto space-y-8 lg:flex-row lg:space-y-0">
 
 				<div className="">
 					<a rel="noopener noreferrer" href="#" className="flex justify-center space-x-3 lg:justify-start">

@@ -24,7 +24,7 @@ const CheckoutSuccess = () => {
           <div className="py-10 text-center">
             <a
               href="/"
-              className="px-12 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3"
+              className="px-12 bg-green-600 hover:bg-green-500 text-white font-semibold py-3"
             >
               GO BACK HOME
             </a>

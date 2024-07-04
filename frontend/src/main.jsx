@@ -10,6 +10,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 const GoogleAuthClientId = import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID;
 
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <Provider store={store}>  

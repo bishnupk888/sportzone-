@@ -11,7 +11,7 @@ const Trainers = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [modalImageUrl, setModalImageUrl] = useState('');
   const [isOpen, setIsOpen] = useState(false);
-  const trainersPerPage = 5;
+  const trainersPerPage = 10;
 
   const userRole = localStorage.getItem('adminData');
 
@@ -57,11 +57,11 @@ const Trainers = () => {
             trainer._id === id ? { ...trainer, isBlocked: !trainer.isBlocked } : trainer
           );
         });
-        toast.success(`Trainer ${trainersData.find(trainer => trainer._id === id).isBlocked ? 'Blocked' : 'Unblocked'} successfully!`);
+        toast.success(`Trainer ${trainersData.find(trainer => trainer._id === id).isBlocked ? 'Unblocked' :'Blocked' } successfully!`);
       })
       .catch(err => {
         console.error("Failed to handle block:", err);
-        toast.error(`Failed to ${trainersData.find(trainer => trainer._id === id).isBlocked ? 'Block' : 'Unblock'} trainer`);
+        toast.error(`Failed to ${trainersData.find(trainer => trainer._id === id).isBlocked ? 'Unblocked' :'Blocked'} trainer`);
       });
   };
 
@@ -136,7 +136,9 @@ const Trainers = () => {
     <div className='bg-black w-auto h-[100%]'>
       <div className="overflow-x-auto m-4 p-4 border border-redBorder bg-black text-textColor rounded-md mx-[30px]">
         <div className="flex justify-between items-center mb-4">
-          <div></div>
+        <div>
+            <h1 className='text-2xl font-bold pl-10'>TRAINERS</h1>
+          </div>
           <div className="relative">
             <input
               type="search"

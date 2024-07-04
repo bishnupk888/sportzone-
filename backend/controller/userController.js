@@ -77,13 +77,16 @@ const getTrainer = async (req, res) => {
 const getServices =  async (req, res) => {
   console.log("in services");
   try {
-      const departments = await Trainer.distinct('department');
+    const departments = await Trainer.distinct('department', { isVerified: true });
+
       res.json({ success: true, data: departments });
   } catch (error) {
       console.error('Error fetching departments:', error);
       res.status(500).json({ success: false, message: 'Server error' });
   }
 };
+
+
 
    
 module.exports={

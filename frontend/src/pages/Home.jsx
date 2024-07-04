@@ -81,12 +81,14 @@ const Home = () => {
           </div>
         </div>
       </section>
-      {/* hero section end*/}    
+      {/* hero section end*/}   
+
+     
 {userRole ==='trainer'?'':<section className="py-6 dark:bg-black dark:text-textColor mt-10">       
 	<div className="container flex flex-col items-center justify-center p-4 mx-auto sm:p-4">
-		<p className="p-2 text-sm font-medium tracking-wider text-center uppercase"> our Experts </p>
-		<h1 className="text-4xl font-bold leading-none text-center sm:text-5xl">Talented Trainers With Us</h1>
-		<div className="flex flex-row flex-wrap-reverse justify-center mt-8">
+		<p className="p-2 text-sm lg:text-2xl font-medium tracking-wider text-center uppercase"> our Experts </p>
+		<h1 className="lg:text-[60px] font-bold leading-none text-center text-4xl lg:mb-10">Talented Trainers With Us</h1>
+		<div className="flex flex-row flex-wrap-reverse justify-center mt-10">
 
     {userData.filter((data)=>data.isVerified===true).slice(0,6).map((trainer, index) => (
         <div key={trainer._id} onClick={()=>{
@@ -95,7 +97,7 @@ const Home = () => {
           }else{
             toast.warning('Login for more')
           }
-          }} className="flex flex-col justify-center w-full px-8 mx-6 my-12 text-center rounded-md md:w-96 lg:w-80 xl:w-64 dark:bg-buttonBgColor dark:text-gray-100 cursor-pointer">
+          }} className="flex flex-col justify-center w-full px-8 mx-6 my-12 text-center rounded-md md:w-96 lg:w-80 xl:w-64 dark:bg-buttonBgColor dark:text-gray-100 cursor-pointer hover:scale-105 hover:border border-redBorder">
 				<img alt="" className="self-center flex-shrink-0 w-24 h-24 -mt-12 bg-center bg-cover rounded-full dark:bg-gray-500 border-2 border-redBorder" src={trainer.profileImage} />
 				<div className="flex-1 my-4">
 					<p className="text-xl font-semibold leading-snug">{trainer.username}</p>

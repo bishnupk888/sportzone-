@@ -13,6 +13,8 @@ const MyBookings = () => {
   const [sortOrder, setSortOrder] = useState('asc');
   const [viewBookingDetails, setViewBookingDetails] = useState(false);
   const [selectedBookingId, setSelectedBookingId] = useState(null);
+  const [paginatedData, setPaginatedData] = useState([])
+  const [filteredData, setFilteredData] = useState([])
 
   const itemsPerPage = 10;
   const userId = useSelector((state) => state.user.userId);
@@ -34,6 +36,7 @@ const MyBookings = () => {
           bookingDate: formatDate(booking.bookingDate),
         }));
         setBookingData(transformedData);
+
       })
       .catch((err) => {
         console.log(err);
@@ -88,12 +91,22 @@ const MyBookings = () => {
     setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
   };
 
-  const filteredData = bookingData.filter(booking =>
-    booking.trainerId.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    booking.trainerId.email.toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
-  const paginatedData = filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  useEffect(() => {
+    const fData = bookingData.filter(booking =>
+      booking.trainerId.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      booking.trainerId.email.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    const pData = fData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+    setFilteredData(fData)
+    setPaginatedData(pData)
+
+  }, [bookingData])
+
+
 
   const handleCancelBooking = (bookingId) => {
     axiosInstance.post(`/api/users/cancel-booking/${bookingId}`)
@@ -110,13 +123,15 @@ const MyBookings = () => {
       });
   };
 
+
   return (
     <>
       <div className='m-10'>
         <div className="flex justify-between items-center mb-4">
           <h1 className='text-white text-2xl my-4'>MY BOOKING</h1>
           <div className="flex items-center">
-            <div className="relative mr-4 ">
+            <div className="flex mr-4 " >
+              <FaSearch className="relative left-7 top-3 text-textColor" />
               <input
                 type="search"
                 placeholder="Search bookings..."
@@ -124,7 +139,7 @@ const MyBookings = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="px-3 py-2 border border-redBorder rounded bg-black text-textColor pl-10"
               />
-              <FaSearch className="absolute left-3 top-2.5 text-textColor" />
+
             </div>
             <button
               onClick={handleSort}
@@ -242,7 +257,9 @@ const MyBookings = () => {
           <BookingDetails
             bookingId={selectedBookingId}
             cancelBooking={handleCancelBooking}
-            setViewBookingDetails ={setViewBookingDetails}
+            setViewBookingDetails={setViewBookingDetails}
+            bookingData={bookingData}
+
             onClose={() => setViewBookingDetails(false)} // Provide an onClose prop to handle closing the overlay
           />
         </div>

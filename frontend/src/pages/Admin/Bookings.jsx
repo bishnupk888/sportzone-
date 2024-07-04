@@ -62,8 +62,8 @@ const Bookings = () => {
             <td className="p-3 border border-redBorder">{booking.trainerId ? booking.trainerId.username : 'N/A'}</td>
             {slotIndex === 0 && (
               <td className={`p-3 border border-redBorder ${
-                booking.status === 'Completed' ? 'bg-green-50 text-green-600 border-green-600' : 
-                booking.status === 'Cancelled' ? 'bg-red-50 text-red-600 border-red-600' : ''
+                booking.bookingStatus === 'success' ? ' text-green-600 border-green-600' : 
+                booking.bookingStatus === 'cancelled' ? ' text-red-600 border-red-600' : ''
               }`} rowSpan={booking.slots.length}>
                 {booking.bookingStatus}
               </td>
@@ -79,7 +79,9 @@ const Bookings = () => {
     <div className='bg-black w-auto h-[100%]'>
       <div className="overflow-x-auto m-4 p-4 border border-redBorder bg-black text-textColor rounded-md mx-[100px] md:mx-[30px]">
         <div className="flex justify-between items-center mb-4">
-          <div></div>
+        <div>
+            <h1 className='text-2xl font-bold pl-10'>BOOKINGS</h1>
+          </div>
           <div className="relative">
             <input 
               type="search" 

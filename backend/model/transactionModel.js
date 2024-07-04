@@ -6,6 +6,11 @@ const transactionSchema = new mongoose.Schema({
         ref: 'User',
         required: true,
     },
+    // trainerId:{
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'Trainer',
+    //     required: true,
+    // },
     bookingId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Booking',
@@ -22,7 +27,7 @@ const transactionSchema = new mongoose.Schema({
     },
     transactionType: {
         type: String,
-        enum: ['payment', 'refund'],
+        enum: ['payment', 'refund' ],
         required: true,
     },
     status: {

@@ -220,7 +220,7 @@ const Signup = () => {
           }
         `}
       </style>
-      <div className={`bgImage absolute top-0 bottom-0 bg-black h-screen w-screen flex justify-center items-center`}>
+      <div className={"bgImage fixed top-0 bottom-0 bg-black h-screen w-screen flex justify-center items-center"} style={{ zIndex: 1000 }}>
         <div className='flex items-center justify-left w-full bg-black bg-opacity-50 h-full'>
           <div className="flex-col w-full form-container rounded-md shadow sm:p-8 dark:text-white bg-black hover:bg-opacity-100 border-r hover:border-r-4 border-redBorder lg:ml-40 md:ml-40 lg:hover:ml-44 ">
             <div className="flex flex-col items-center mb-4">

@@ -5,6 +5,7 @@ const trainerSlotHelper = require('../helpers/trainerHelpers/slotHelpers')
 const trainerBookingHelper = require('../helpers/trainerHelpers/bookingHelper')
 const authTrainer = require('../middlewares/authUser')
 const checkBlocked = require('../middlewares/checkBlocked')
+const trainerTransactionHelper = require('../helpers/trainerHelpers/transactionHelper')
 
 
 
@@ -17,6 +18,12 @@ trainerRouter.post('/slots/add-slot',authTrainer,checkBlocked,trainerSlotHelper.
 trainerRouter.get('/:id/slots',authTrainer,checkBlocked,trainerSlotHelper.getTrainerSlots)
 trainerRouter.delete('/slots/delete-slot/:id',authTrainer,checkBlocked,trainerSlotHelper.deleteSlot)
 trainerRouter.get('/bookings/:id',authTrainer,checkBlocked,trainerBookingHelper.getAllBookings)
+trainerRouter.get('/booking-details/:bookingId',authTrainer,checkBlocked,trainerBookingHelper.getBookingDetails)
+trainerRouter.get('/transactions/:userId',authTrainer,checkBlocked,trainerTransactionHelper.getAllTransactions)
+
+
+
+
 
 
 

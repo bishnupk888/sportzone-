@@ -21,8 +21,8 @@ const TrainerProfileDropDown = () => {
         navigate('/trainer/profile')
         setIsOpen(!isOpen);
     }
-    const handleWallet = () => {
-        navigate('/trainer/wallet')
+    const handleTransactions = () => {
+        navigate('/trainer/transactions')
         setIsOpen(!isOpen);
     }
     // const handleBookings = () => {
@@ -57,7 +57,7 @@ const TrainerProfileDropDown = () => {
 
         `}
             </style>
-            <div className="relative inline-block text-left" ref={dropdownRef}>
+            <div className="relative inline-block text-left " ref={dropdownRef} >
                 <figure className="w-[35px] h-[35px] sm:w-[35px] sm:h-[35px] md:w-[40px] md:h-[40px]" onClick={toggleDropdown}>
                     <img
                         src={userImage ? userImage : defaultImage}
@@ -73,7 +73,7 @@ const TrainerProfileDropDown = () => {
                                 className="block px-4 py-2 text-sm text-textColor hover:text-white w-full text-left"
                                 role="menuitem"
                             >
-                                Profile
+                                Trainer Profile
                             </button>
 
                             <hr />
@@ -86,11 +86,11 @@ const TrainerProfileDropDown = () => {
                             </button>
                             <hr /> */}
 
-                            <button onClick={handleWallet}
+                            <button onClick={handleTransactions}
                                 className="block px-4 py-2 text-sm text-textColor hover:text-white w-full text-left"
                                 role="menuitem"
                             >
-                                Wallet
+                                Transactions
                             </button>
 
                         </div>

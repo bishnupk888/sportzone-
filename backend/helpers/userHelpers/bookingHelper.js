@@ -1,6 +1,8 @@
+const { updateCancelledSlots } = require('../../controller/slotControllers');
 const Booking = require('../../model/bookingModel');
 const Slot = require('../../model/slotModel'); // Ensure the Slot model is correctly imported
 const Trainer = require('../../model/trainerModel');
+const Transaction = require('../../model/transactionModel');
 const User = require('../../model/userModel');
 
 const getAllUserBookings = async (req, res) => {
@@ -59,11 +61,21 @@ const cancelUserBooking = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-
     user.wallet += booking.bookingAmount;
+    await updateCancelledSlots(booking.slots)
     await user.save();
+    const transaction = new Transaction({
+      userId:booking.userId,
+      bookingId:booking._id,
+      amount:booking.bookingAmount,
+      paymentMethod: 'wallet',
+      transactionType:'refund',
+      status:'success'
+    })
 
-    res.status(200).json({ message: "Booking cancelled and wallet updated" });
+    await transaction.save()
+
+    res.status(200).json({ message: "Booking cancelled and wallet updated" ,success:true});
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
   }

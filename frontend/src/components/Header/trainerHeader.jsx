@@ -1,7 +1,7 @@
 import { useRef, useEffect } from 'react';
 import Logo from '../../assets/images/logo/logo.png';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
-import { BiMenu } from 'react-icons/bi';
+import { BiMenu, BiBell, BiMessage } from 'react-icons/bi';
 import LoginDropdown from './LoginDropdown';
 import { useSelector, useDispatch } from 'react-redux';
 import { clearUserData } from '../../Redux/features/userSlice'; 
@@ -14,7 +14,7 @@ import TrainerProfileDropDown from './TrainerProfileDropDown';
 const navLinks = [
   { path: '/home', display: 'Home' },
   { path: 'trainer/bookings', display: 'Bookings' },
-  { path: 'trainer/experience', display: 'Experience' },
+  { path: 'trainer/create-videocall', display: 'Videocall Session' },
   { path: 'trainer/slots', display: 'Slots' },
 ];
 
@@ -87,12 +87,15 @@ const Header = () => {
             </div>
             <div className="flex items-center gap-4">
             {userRole !== '' && (
-                <div className="hidden lg:block md:hidden">
-                    <h3 className='text-white text-[14px] md:text-[16px] leading-7 font-[600] border-b-2 border-redBorder'>Welcome, <span>{userName?userName:'Trainer'}</span></h3>
-                </div>
-            )}
-              {userRole !== '' && (
-                <TrainerProfileDropDown/>
+                <>
+                  <div className="hidden lg:flex md:flex items-center gap-8  mr-4">
+                    {/* Notification Icon */}
+                    <BiBell onClick={() => { navigate('#') }} className="w-6 h-6 cursor-pointer text-white hover:scale-125 hover:text-redBorder" aria-label="Notifications" />
+                    {/* Chat Icon */}
+                    <BiMessage onClick={() => { navigate('/trainer/messages') }} className="w-6 h-6 cursor-pointer text-white hover:scale-125 hover:text-redBorder" aria-label="Chat" />
+                  </div>
+                  <TrainerProfileDropDown />
+                </>
               )}
               {userRole !== '' ?(
                 <button

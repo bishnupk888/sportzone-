@@ -11,7 +11,7 @@ const Athletes = () => {
   const [athletesData, setAthletesData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
-  const athletesPerPage = 5;
+  const athletesPerPage = 10;
 
   const userRole = localStorage.getItem('adminData');
   const isBlocked = useSelector((state)=>state.user.isBlocked)
@@ -116,7 +116,9 @@ const Athletes = () => {
     <div className='bg-black w-auto h-[100%]'>
       <div className="overflow-x-auto m-4 p-4 border border-redBorder bg-black text-textColor rounded-md mx-[100px] md:mx-[30px]">
         <div className="flex justify-between items-center mb-4">
-          <div></div>
+          <div>
+            <h1 className='text-2xl font-bold pl-10'>ATHLETES</h1>
+          </div>
           <div className="relative">
             <input 
               type="search" 

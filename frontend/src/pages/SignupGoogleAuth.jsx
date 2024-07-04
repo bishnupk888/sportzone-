@@ -125,7 +125,7 @@ const LoginGoogleAuth = () => {
           }
         `}
       </style>
-      <div className={`bgImage absolute top-0 bottom-0 bg-black h-screen w-screen flex justify-center items-center`}>
+      <div className={`bgImage absolute top-0 bottom-0 bg-black h-screen w-screen flex justify-center items-center`} >
         <div className='flex items-center justify-left w-full bg-black bg-opacity-50 lg:pl-40 h-full'>
           <div className="flex-col w-full form-container rounded-md shadow sm:p-8 dark:text-white bg-black hover:bg-opacity-100 border-r hover:border-r-4 hover:border-b-4 border-redBorder">
             <div className="flex flex-col items-center mb-4">

@@ -1,10 +1,10 @@
 import { useRef, useEffect } from 'react';
 import Logo from '../../assets/images/logo/logo.png';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
-import { BiMenu } from 'react-icons/bi';
+import { BiMenu, BiBell, BiMessage } from 'react-icons/bi';
 import LoginDropdown from './LoginDropdown';
 import { useSelector, useDispatch } from 'react-redux';
-import { clearUserData } from '../../Redux/features/userSlice'; 
+import { clearUserData } from '../../Redux/features/userSlice';
 import axiosInstance from '../../axiosInstance/axiosInstance';
 import { toast } from 'react-toastify';
 import defaultImage from '../../assets/images/userImage.jpg';
@@ -47,13 +47,13 @@ const Header = () => {
   };
 
   // const checkIsBlocked = () => {
-    
+
   //   if(isBlocked) {
   //     navigate('/home');
   //     toast.warning("You are blocked. Redirecting to home...");
   //   }
   // };
-  const handleWarning = ()=>{
+  const handleWarning = () => {
     toast.warning('please login for more.')
   }
 
@@ -88,7 +88,7 @@ const Header = () => {
           }
         `}
       </style>
-      <header className="header flex items-center z-" ref={headerRef}   style={{ zIndex: 1000 }}>
+      <header className="header flex items-center z-" ref={headerRef} style={{ zIndex: 1000 }}>
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between">
             <Link to="/home">
@@ -101,36 +101,39 @@ const Header = () => {
                 {navLinks.map((link, index) => (
                   <li key={index}>
                     {userRole ? (
-        <NavLink
-          to={link.path}
-          className={({ isActive }) =>
-            isActive
-              ? 'text-white text-[14px] md:text-[16px] leading-7 font-[600] border-b-2 border-redBorder'
-              : 'text-textColor text-[14px] md:text-[16px] leading-7 font-[500] hover:text-white'
-          }
-        >
-          {link.display}
-        </NavLink>
-      ) : (
-        <span
-          onClick={handleWarning}
-          className="cursor-pointer text-textColor text-[14px] md:text-[16px] leading-7 font-[500] hover:text-white"
-        >
-          {link.display}
-        </span>
-      )}
+                      <NavLink
+                        to={link.path}
+                        className={({ isActive }) =>
+                          isActive
+                            ? 'text-white text-[14px] md:text-[16px] leading-7 font-[600] border-b-2 border-redBorder'
+                            : 'text-textColor text-[14px] md:text-[16px] leading-7 font-[500] hover:text-white'
+                        }
+                      >
+                        {link.display}
+                      </NavLink>
+                    ) : (
+                      <span
+                        onClick={handleWarning}
+                        className="cursor-pointer text-textColor text-[14px] md:text-[16px] leading-7 font-[500] hover:text-white"
+                      >
+                        {link.display}
+                      </span>
+                    )}
                   </li>
                 ))}
               </ul>
             </div>
             <div className="flex items-center gap-4">
               {userRole !== '' && (
-                <div className="hidden lg:block md:hidden">
-                  <h3 className='text-white text-[14px] md:text-[16px] leading-7 font-[600] border-b-2 border-redBorder'>Welcome, <span>{userName ? userName : 'user'}</span></h3>
-                </div>
-              )}
-              {userRole !== '' && (
-                <UserProfileDropDown/>
+                <>
+                  <div className="hidden lg:flex md:flex items-center gap-8  mr-4">
+                    {/* Notification Icon */}
+                    <BiBell onClick={() => { navigate() }} className="w-6 h-6 cursor-pointer text-white hover:scale-125 hover:text-redBorder" aria-label="Notifications" />
+                    {/* Chat Icon */}
+                    <BiMessage onClick={() => { navigate('/user/messages') }} className="w-6 h-6 cursor-pointer text-white hover:scale-125 hover:text-redBorder" aria-label="Chat" />
+                  </div>
+                  <UserProfileDropDown />
+                </>
               )}
               {userRole !== '' ? (
                 <button

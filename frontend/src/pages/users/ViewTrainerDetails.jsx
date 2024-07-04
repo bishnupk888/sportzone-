@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import defaultProfileImage from '../../assets/images/userImage.jpg'
 import axiosInstance from '../../axiosInstance/axiosInstance';
 import AvailableSlots from '../../components/popupComponents/AvailableSlots';
 import { FaBullseye } from 'react-icons/fa';
 import CalendarWithSlots from '../../components/popupComponents/CalenderWithSlots';
+import { toast } from 'react-toastify';
+import RatingComponent from '../../components/Trainer/RatingComponent';
+
 
 const experience = [{}, {}]
 
@@ -17,20 +20,22 @@ const ViewTrainerDetails = () => {
     const [isViewSlots, setIsViewSlot] = useState(false)
     const [isViewBookings, setViewBookings] = useState(false)
     const now = new Date();
+    const navigate = useNavigate()
 
-const filteredSlots = slotsAvailable.filter(slot => {
-    // Filter out booked slots
-    if (slot.isBooked) {
-        return false;
-    }
 
-    // Check if the slot date and time is in the future
-    const slotDate = new Date(slot.date);
-    const [startHour, startMinute] = slot.startTime.split(':').map(Number);
-    slotDate.setHours(startHour, startMinute, 0, 0); // Set the slot start time
+    const filteredSlots = slotsAvailable.filter(slot => {
+        // Filter out booked slots
+        if (slot.isBooked) {
+            return false;
+        }
 
-    return slotDate >= now;
-});
+        // Check if the slot date and time is in the future
+        const slotDate = new Date(slot.date);
+        const [startHour, startMinute] = slot.startTime.split(':').map(Number);
+        slotDate.setHours(startHour, startMinute, 0, 0); // Set the slot start time
+
+        return slotDate >= now;
+    });
 
     useEffect(() => {
         try {
@@ -43,6 +48,36 @@ const filteredSlots = slotsAvailable.filter(slot => {
         }
 
     }, [])
+
+    const handleBookSlots = () => {
+        filteredSlots.length ?
+            setViewBookings(!isViewBookings)
+            : toast.error('no available slots')
+    }
+
+
+    const handleClickMessage = (trainer)=>{
+        console.log("clicked on message with trainer Id: ",trainer );
+        const trainerData = {
+            _id:trainer._id,
+            username:trainer.username,
+            profileImage:trainer.profileImage,
+            department:trainer.department,
+        }
+
+        navigate('/user/chat',{ state: trainerData })
+    }
+    const handleClickVideoCall = (trainer)=>{
+        console.log("clicked on videocall with trainer Id: ",trainer );
+        const trainerData = {
+            _id:trainer._id,
+            username:trainer.username,
+            profileImage:trainer.profileImage,
+            department:trainer.department,
+        }
+
+        navigate('/user/joinvideocall',{ state: trainerData })
+    }
 
 
     return (
@@ -89,15 +124,16 @@ const filteredSlots = slotsAvailable.filter(slot => {
                     <div className='flex flex-row  space-x-4 '>
 
                         <div className='flex flex-col w-48  space-y-2 justify-start '>
-                            <button className='btn rounded-[10px] w-full border border-redBorder bg-black scale-90 hover:scale-95'>Message</button>
-                            <button className='btn rounded-[10px] w-full border border-redBorder bg-black scale-90 hover:scale-95 '>Videocall</button>
+                            <button onClick={()=>handleClickMessage(trainer)} className='btn rounded-[10px] w-full border border-redBorder bg-black scale-90 hover:scale-95'>Message</button>
+                            <button onClick={()=>handleClickVideoCall(trainer)}className='btn rounded-[10px] w-full border border-redBorder bg-black scale-90 hover:scale-95 '>Videocall</button>
                         </div>
                         <div className='  '>
                             <span className="flex items-center space-x-3">
                                 <span className="text-sm md:text-lg text-textColor">Age:{trainer.age ? trainer.age : '38 '}</span><span className="pl-4 lg:pl-12 text-sm md:text-lg text-textColor">Gender:{trainer.gender ? trainer.gender : ''}</span>
                             </span>
                             <span className="flex items-center space-x-3">
-
+                                    <h1 className='p-4 text-bold text-xl' >Rating :</h1>
+                                    <RatingComponent rating={4} />
                             </span>
                             {/* <span className="flex items-center space-x-3">
                                 <span className="text-sm md:text-lg text-textColor">Gender:</span>
@@ -118,7 +154,7 @@ const filteredSlots = slotsAvailable.filter(slot => {
                         <h2 className="text-xl md:text-2xl lg:text-2xl font-bold text-highlightTextColor" >BOOK A TRAINING SESSION </h2>
                     </div>
                     <div className="mb-4">
-                        <h2 className="text-xl md:text-xl font-semibold"> Training Fee : {trainer.fee ? trainer.fee : 'Not added'} Rs / Session</h2>
+                        <h2 className="text-xl md:text-xl font-semibold"> Training Fee : {trainer.fee ? trainer.fee : 'Not added'} Rs / Hour</h2>
                     </div>
                     <div className="w-full h-auto flex flex-wrap">
                         <div className="flex flex-col w-full md:w-1/3">
@@ -136,9 +172,7 @@ const filteredSlots = slotsAvailable.filter(slot => {
                                 <h2 className="text-xl md:text-xl font-semibold">Book Slots:</h2>
                                 <button
                                     className="bg-green-700 hover:bg-green-500 text-white font-bold py-2 px-4 rounded mt-2"
-                                    onClick={() => {
-                                        setViewBookings(!isViewBookings);
-                                    }}
+                                    onClick={handleBookSlots}
                                 >
                                     Book Slots
                                 </button>
@@ -175,18 +209,16 @@ const filteredSlots = slotsAvailable.filter(slot => {
             </div>
             <div className='relative'>
                 {isViewBookings && (
-                    <div className="fixed inset-0 top-24 flex items-center justify-center z-50 border border-yellow-400">
+                    <div className="fixed inset-0 top-24 flex items-center justify-center z-50 ">
                         <div className="absolute inset-0 bg-black opacity-80"></div>
                         <div className="relative ">
-                            <div className="bg-buttonBgColor shadow-lg rounded-lg p-2 border-2 border-blue-500">
-                                <CalendarWithSlots slots={filteredSlots} setIsOpen={setViewBookings} trainerFee={trainer.fee} trainerId={trainer._id}/>
+                            <div className="bg-buttonBgColor shadow-lg rounded-lg p-2 border border-white">
+                                <CalendarWithSlots slots={filteredSlots} setIsOpen={setViewBookings} trainerFee={trainer.fee} trainerId={trainer._id} />
                             </div>
                         </div>
                     </div>
                 )}
             </div>
-
-
         </div>
     );
 };

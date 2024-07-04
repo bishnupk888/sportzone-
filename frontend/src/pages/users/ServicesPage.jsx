@@ -6,9 +6,7 @@ const ServicesPage = () => {
 
 const [services,setServices] = useState([])
 
-// const verifiedServices = trainers
-//   .filter(trainer => trainer.isVerified)
-//   .map(trainer => trainer.department);
+
 
 useEffect(()=>{
   
@@ -25,7 +23,7 @@ useEffect(()=>{
 
   return (
     <>
-    <div className='text-white text-3xl px-10 mt-10'>SERVICES </div>
+    <div className='text-white text-3xl px-10 mt-10'>AVAILABLE SERVICES </div>
     <ServiceList services={services}/>
     </>
   )

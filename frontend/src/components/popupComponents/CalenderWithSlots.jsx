@@ -6,63 +6,63 @@ import SlotsInDate from './SlotsInDate';
 import { useNavigate } from 'react-router-dom';
 
 
-const CalendarWithSlots = ({ slots , setIsOpen,trainerFee , trainerId }) => {
+const CalendarWithSlots = ({ slots, setIsOpen, trainerFee, trainerId }) => {
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [viewBookingSlots, setViewBookingSlots] = useState(false);
     const [selectedDate, setSelectedDate] = useState([]);
     const [slotAvailableDates, setSlotsAvailableDate] = useState([])
-    
-   
-    
-    const [selectedSlots,setSelectedSlots] = useState([])
 
 
-    console.log("selected slots : ",selectedSlots);
-    
+
+    const [selectedSlots, setSelectedSlots] = useState([])
+
+
+    console.log("selected slots : ", selectedSlots);
+
     const navigate = useNavigate()
 
     const calculateDurationInHours = (startTime, endTime) => {
         const start = new Date(`1970-01-01T${startTime}:00`);
         let end = new Date(`1970-01-01T${endTime}:00`);
-      
+
         // Handle cases where end time is past midnight
         if (end < start) {
-          end = new Date(`1970-01-02T${endTime}:00`);
+            end = new Date(`1970-01-02T${endTime}:00`);
         }
-      
+
         const diffInMinutes = (end - start) / (1000 * 60);
         return diffInMinutes / 60;
-      };
+    };
 
-      const calculateTotalAmount = (selectedSlots, trainerFee) => {
+    const calculateTotalAmount = (selectedSlots, trainerFee) => {
         let totalAmount = 0;
-      
+
         selectedSlots.forEach(slot => {
-          const durationInHours = calculateDurationInHours(slot.startTime, slot.endTime);
-          totalAmount += durationInHours * trainerFee;
+            const durationInHours = calculateDurationInHours(slot.startTime, slot.endTime);
+            totalAmount += durationInHours * trainerFee;
         });
-      
+
         return Math.floor(totalAmount);
-      };
-      
-      const totalAmount =  calculateTotalAmount(selectedSlots , trainerFee)
-      console.log("totalAmount : ",totalAmount);
+    };
+
+    const totalAmount = calculateTotalAmount(selectedSlots, trainerFee)
+    console.log("totalAmount : ", totalAmount);
 
     const formatDate = (date) => {
         const day = date.getDate().toString().padStart(2, '0');
         const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Month is zero-indexed
         const year = date.getFullYear().toString();
         return `${day}/${month}/${year}`;
-      };
+    };
 
-    useEffect(()=>{
+    useEffect(() => {
         const AvailableSlotsDates = slots.map(slot => formatDate(new Date(slot.date)));
         setSlotsAvailableDate(AvailableSlotsDates)
-    },[slots])
+    }, [slots])
 
 
 
-    
+
 
 
     const nextMonth = () => {
@@ -75,7 +75,7 @@ const CalendarWithSlots = ({ slots , setIsOpen,trainerFee , trainerId }) => {
             setCurrentMonth(previousMonth);
         }
     };
-    
+
 
     const handleDateClick = (date) => {
         console.log(date);
@@ -93,24 +93,26 @@ const CalendarWithSlots = ({ slots , setIsOpen,trainerFee , trainerId }) => {
     // const getSelectedSlots = (slotsSelected)=>{
     //         setSelectedSlot(slotsSelected)
     // }
-    
-    
-    const handleBookNowClick = async ()=>{
-    
-       console.log("clicked booknow");
-    //    const selectedSlots = [/* your selected slots data */];
-       
-       console.log("total amount :",totalAmount);
 
-  navigate('/user/checkout', {
-    state: { 
-        selectedSlots: selectedSlots,
-        totalAmount: totalAmount,
-        trainerId:trainerId },
-  })
-       console.log("slot selected: ",selectedSlots);
+
+    const handleBookNowClick = async () => {
+
+        console.log("clicked booknow");
+        console.log("total amount :", totalAmount);
+        if(!selectedSlots.length){
+            toast.error("no slots selected")
+        }else{
+            navigate('/user/checkout', {
+                state: {
+                    selectedSlots: selectedSlots,
+                    totalAmount: totalAmount,
+                    trainerId: trainerId
+                },
+            })
+        } 
+
     }
-    
+
 
     const renderHeader = () => {
         return (
@@ -167,7 +169,7 @@ const CalendarWithSlots = ({ slots , setIsOpen,trainerFee , trainerId }) => {
     };
 
     const renderDays = () => {
-        const days = [ 'Su','Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa',];
+        const days = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa',];
 
         return (
             <thead>
@@ -190,12 +192,12 @@ const CalendarWithSlots = ({ slots , setIsOpen,trainerFee , trainerId }) => {
         const startDate = startOfWeek(monthStart);
         const endDate = endOfWeek(monthEnd);
         const today = new Date();
-    
+
         const rows = [];
         let days = [];
         let day = startDate;
         let formattedDate = '';
-    
+
         while (day <= endDate) {
             for (let i = 0; i < 7; i++) {
                 formattedDate = format(day, 'd');
@@ -203,7 +205,7 @@ const CalendarWithSlots = ({ slots , setIsOpen,trainerFee , trainerId }) => {
                 const isMuted = isBefore(cloneDay, today) && !isSameDay(cloneDay, today);
                 const isIncludeSlots = slotAvailableDates.includes(formatDate(new Date(cloneDay)));
                 const isCurrentMonth = isSameMonth(day, monthStart);
-                
+
                 days.push(
                     <td key={day} className={`p-2`}>
                         <div
@@ -231,11 +233,11 @@ const CalendarWithSlots = ({ slots , setIsOpen,trainerFee , trainerId }) => {
         }
         return <tbody>{rows}</tbody>;
     };
-    
+
 
     return (
         <div>
-            <div className="flex flex-col md:flex-row justify-center p-20 border border-green-400 bg-black">
+            <div className="flex flex-col md:flex-row justify-center p-20  bg-black">
 
                 {/* Left side */}
                 <div className="max-w-sm w-full shadow-lg md:mr-4 mb-4 md:mb-0">
@@ -255,17 +257,18 @@ const CalendarWithSlots = ({ slots , setIsOpen,trainerFee , trainerId }) => {
                 {viewBookingSlots && (
                     <div className="flex-col md:px-4 px-2 py-4 z-50 m-12 md:w-auto border border-redBorder ">
                         <div className="bg-gray-900 shadow-lg rounded-t-md p-4 ">
-                            <SlotsInDate date={selectedDate} slots={slots} setSelectedSlots={setSelectedSlots} selectedSlots={selectedSlots}  />
+                            <SlotsInDate date={selectedDate} slots={slots} setSelectedSlots={setSelectedSlots} selectedSlots={selectedSlots} />
                         </div>
                     </div>
                 )}
             </div>
             <div className="absolute bottom-6 right-10 space-x-4">
-                <button onClick={(e)=>{
+                <button onClick={(e) => {
                     e.preventDefault()
-                    setIsOpen(false)}} className=" text-white px-4 py-2 rounded-lg text-lg hover:scale-110 hover:text-red-600  border border-red-600 bg-red-700 hover:bg-black">Cancel</button>
-                {viewBookingSlots&&
-                <button onClick={handleBookNowClick} className="text-white px-4 py-2 rounded-lg text-lg hover:scale-110 hover:text-green-500  border border-green-600 bg-green-600 hover:bg-black">Book Now</button>
+                    setIsOpen(false)
+                }} className=" text-white px-4 py-2 rounded-lg text-lg hover:scale-110 hover:text-red-600  border border-red-600 bg-red-700 hover:bg-black">Cancel</button>
+                {viewBookingSlots &&
+                    <button onClick={handleBookNowClick} className="text-white px-4 py-2 rounded-lg text-lg hover:scale-110 hover:text-green-500  border border-green-600 bg-green-600 hover:bg-black">Book Now</button>
                 }
             </div>
 

@@ -94,7 +94,7 @@ const Slots = () => {
 
     axiosInstance.post('/api/trainers/slots/add-slot', newSlot)
       .then((response) => {
-        setSlots([...slots, newSlot]);
+        setSlots([ newSlot, ...slots]);
         setCount(count + 1)
         toast.success('Slot added successfully!');
       })

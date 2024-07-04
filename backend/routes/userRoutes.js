@@ -5,6 +5,7 @@ const authUser = require('../middlewares/authUser')
 const userHelpers = require('../helpers/userHelpers/slotsHelper')
 const checkBlocked = require('../middlewares/checkBlocked')
 const userBookingHelper =require('../helpers/userHelpers/bookingHelper')
+const userTransactionHelper  = require('../helpers/userHelpers/transactionHelper')
 
 // userRouter.get('/',userController.getAllUsers)  
 userRouter.get('/trainer-profile/:id',userController.getTrainer)
@@ -20,6 +21,10 @@ userRouter.post('/bookSlot',authUser,checkBlocked,userHelpers.bookSlot)
 userRouter.get('/mybookings/:id',authUser,checkBlocked,userBookingHelper.getAllUserBookings)
 userRouter.post('/cancel-booking/:bookingId',authUser,checkBlocked,userBookingHelper.cancelUserBooking)
 userRouter.get('/booking-details/:bookingId',authUser,checkBlocked,userBookingHelper.getBookingDetails)
+userRouter.get('/transactions/:userId',authUser,checkBlocked,userTransactionHelper.getAllTransactions)
+
+
+
 
 
 

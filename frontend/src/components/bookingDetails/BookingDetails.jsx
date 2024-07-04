@@ -4,14 +4,16 @@ import { FaArrowLeft } from 'react-icons/fa';
 import ConfirmationModal from '../popupComponents/ConfirmationModal';
 import { toast } from 'react-toastify';
 
-const BookingDetails = ({cancelBooking , bookingId , setViewBookingDetails }) => {
+const BookingDetails = ({cancelBooking , bookingId , setViewBookingDetails ,bookingData}) => {
 
-//   const bookingId = "66787909df1a698c232ac15d";
+
   
   
   const [bookingDetails, setBookingDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
+
+
 
   const handleOpenModal = () => {
     setModalOpen(true);
@@ -23,9 +25,10 @@ const BookingDetails = ({cancelBooking , bookingId , setViewBookingDetails }) =>
 
   const handleConfirmAction = () => {
     cancelBooking(bookingId)
-    console.log('Confirmed action');
-    setModalOpen(false); // Close modal after confirming
+    setModalOpen(false);
+     
   };
+
 
   const formatDate = (dateStr) => {
     const dateObj = new Date(dateStr);
@@ -46,7 +49,7 @@ const BookingDetails = ({cancelBooking , bookingId , setViewBookingDetails }) =>
         console.log(err);
         setLoading(false);
       });
-  }, [bookingId]);
+  }, [bookingId,bookingData]);
 
   if (loading) {
     return <div>Loading...</div>;

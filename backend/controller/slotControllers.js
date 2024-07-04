@@ -16,6 +16,19 @@ const updateSlots = async (slotIds) => {
   }
 };
 
+const updateCancelledSlots = async (slotIds) => {
+  try {
+    const updatePromises = slotIds.map(id => 
+      Slot.findByIdAndUpdate(id, { isBooked: false }, { new: true })
+    );
+    const updatedSlots = await Promise.all(updatePromises);
+    console.log(' cancelled Slots updated:', updatedSlots);
+  } catch (error) {
+    console.error('Error updating cancelled slots :', error);
+  }
+};
+
 module.exports ={
-    updateSlots
+    updateSlots,
+    updateCancelledSlots
 }

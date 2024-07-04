@@ -1,22 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import axiosInstance from '../../axiosInstance/axiosInstance';
+import { toast } from 'react-toastify';
 
 const Wallet = () => {
   const user = useSelector((state) => state.user);
   const [userData, setUserData] = useState({});
   const [transactions, setTransactions] = useState([]);
+  const [userCache, setUserCache] = useState({});
 
   useEffect(() => {
     if (user.userId) {
       axiosInstance.get(`/api/users/${user.userId}`)
         .then((response) => {
           setUserData(response.data.data);
-          // return axiosInstance.get(`/api/transactions/${user.userId}`);
+          return axiosInstance.get(`/api/users/transactions/${user.userId}`);
         })
-        // .then((response) => {
-        //   setTransactions(response.data.transactions);
-        // })
+        .then((response) => {
+          setTransactions(response.data.data);
+        })
         .catch((error) => {
           console.error('Error fetching data:', error);
           toast.error("Failed to fetch data");
@@ -24,14 +26,15 @@ const Wallet = () => {
     }
   }, [user]);
 
+
   return (
-    <div className='m-10 text-textColor border border-redBorder rounded-lg p-10'>
+    <div className='m-10 text-textColor border border-white rounded-lg p-10'>
       <div>
         <h1 className='text-white text-3xl lg:text-4xl pb-4'>MY WALLET</h1>
       </div>
 
       <div className="lg:flex gap-4 items-stretch">
-        <div className="bg-cardBgColor md:p-2 p-6 rounded-lg border border-redBorder mb-4 lg:mb-0 shadow-md lg:w-[35%]">
+        <div className="bg-cardBgColor md:p-2 p-6 rounded-lg border border-red-600 mb-4 lg:mb-0 shadow-md lg:w-[35%]">
           <div className="flex justify-center items-center space-x-5 h-full text-textColor">
             <div>
               <p>Current Balance</p>
@@ -45,8 +48,8 @@ const Wallet = () => {
 
         <div className="bg-cardBgColor p-4 rounded-lg xs:mb-4 max-w-full shadow-md lg:w-[65%]">
           <div className="flex flex-wrap justify-between h-full">
-            <button className="flex-1 rounded-lg flex flex-col items-center justify-center p-2 border border-red-500 m-2 cursor-pointer hover:border-2 hover:border-red-700">
-              <p className="text-white text-lg">Deposit</p>
+            <button className=" flex-1 rounded-lg flex flex-col bg-green-700 items-center justify-center p-2 border border-green-800 m-2 cursor-pointer hover:bg-green-600 hover:scale-105 ">
+              <p className="text-white text-xl ">RECHARGE WALLET</p>
             </button>
             {/* <button className="flex-1 rounded-lg flex flex-col items-center justify-center p-2 border border-red-500 m-2 cursor-pointer hover:border-2 hover:border-red-700">
               <p className="text-white text-lg">Transfer</p>
@@ -63,13 +66,16 @@ const Wallet = () => {
           <thead>
             <tr>
               <th className="px-4 py-2 text-left border-b-2">
-                <h2 className="text-ml font-bold text-white">Transactions</h2>
+                <h2 className="text-ml font-bold text-white">Transaction Date</h2>
               </th>
               <th className="px-4 py-2 text-left border-b-2">
                 <h2 className="text-ml font-bold text-white">Transaction Type</h2>
               </th>
               <th className="px-4 py-2 text-left border-b-2">
                 <h2 className="text-ml font-bold text-white">Payment Type</h2>
+              </th>
+              <th className="px-4 py-2 text-left border-b-2">
+                <h2 className="text-ml font-bold text-white">Payment To</h2>
               </th>
               <th className="px-4 py-2 text-right border-b-2">
                 <h2 className="text-ml font-bold text-white">Amount</h2>
@@ -82,17 +88,20 @@ const Wallet = () => {
                 <td className="px-4 py-2 text-left align-top">
                   <div>
                     <h2 className="text-white">{transaction.description}</h2>
-                    <p className="text-gray-400">{new Date(transaction.date).toLocaleDateString()}</p>
+                    <p className="text-gray-400">{new Date(transaction.createdAt).toLocaleDateString()}</p>
                   </div>
                 </td>
                 <td className="px-4 py-2 text-left align-top text-white">
                   {transaction.transactionType}
                 </td>
                 <td className="px-4 py-2 text-left align-top text-white">
-                  {transaction.paymentType}
+                  {transaction.paymentMethod}
                 </td>
-                <td className="px-4 py-2 text-right text-red-500">
-                  <span>{transaction.amount}</span>
+                <td className="px-4 py-2 text-left align-top text-white">
+                  {transaction.userId.username}
+                </td>
+                <td className={`px-4 py-2 text-right ${transaction.transactionType === 'refund' ? "text-green-500" : 'text-red-500'}`}>
+                  <span>{transaction.transactionType === 'refund' ? `+${transaction.amount}` : `-${transaction.amount}`}</span>
                 </td>
               </tr>
             ))}

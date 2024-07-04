@@ -3,13 +3,13 @@ import axiosInstance from '../../axiosInstance/axiosInstance';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import bgImgLogin from '../../assets/images/loginBG.png'; // Adjust the import path as necessary
-import {setAdminData} from '../../Redux/features/adminSlice'
-import { useSelector , useDispatch } from 'react-redux';
-
+import { setAdminData } from '../../Redux/features/adminSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import logoImg from '../../assets/images/logo/logo.png'
 
 const AdminLogin = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const userRole = useSelector((state) => state.admin.adminRole);
   console.log(userRole);
@@ -26,11 +26,18 @@ const AdminLogin = () => {
   });
 
   const handleInputChange = (e) => {
+    
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleAdminLogin = (e) => {
     e.preventDefault();
+    if(!formData.email || !formData.password){
+      toast.error('All fields are required')
+    }
+    else{
+
+   
     axiosInstance.post('/api/admin/login', formData)
       .then((response) => {
         dispatch(setAdminData(response.data.data)); // redux store
@@ -41,6 +48,7 @@ const AdminLogin = () => {
         console.log(err);
         toast.error('Failed to login');
       });
+    }
   };
 
   return (
@@ -59,9 +67,13 @@ const AdminLogin = () => {
           }
         `}
       </style>
-      <section className='px-5 lg:px-0 bg-black min-h-screen flex items-center justify-center'>
+      <section className='fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black z-50'>
         <div className='text-center w-full max-w-[570px] mx-auto rounded-[30px] shadow-md md:p-20 bg-cover bg-center bg-no-repeat border border-redBorder glow' style={{ backgroundImage: `url(${bgImgLogin})` }}>
-          <h1 className='text-textColor text-4xl md:text-5xl leading-9 font-bold py-[25px]'>ADMIN LOGIN</h1>
+        <div className="flex flex-col items-center">
+              <img src={logoImg} alt="logo" className="h-24 mb-4" />
+              <h2 className="mb-3 text-4xl  font-bold text-center text-highlightTextColor">Admin Login</h2>
+              <br />
+            </div>
           <form className='py-4 px-4' onSubmit={handleAdminLogin}>
             <div className='mb-5'>
               <input

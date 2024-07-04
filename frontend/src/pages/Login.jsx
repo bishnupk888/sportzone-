@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 import logo from '../assets/images/logo/logo.png';
 import bgImage from '../assets/images/background/20215.jpg'; // Adjust the path accordingly
 import { useGoogleLogin } from '@react-oauth/google';
+import BouncingBallLoader from '../components/Loader/BouncingBallLoader';
 
 // import RoleSelectModal from '../components/popupComponents/RoleSelectModal';
 
@@ -17,6 +18,7 @@ const Login = ({Role}) => {
   const userRole = useSelector((state) => state.user.userRole);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [isLoaderActive, setLoaderActive] = useState(true)
   // const [isModalOpen,setIsModalOpen] = useState(true)
   // const [role,setRole] = useState(null)
   const [formData, setFormData] = useState({
@@ -37,19 +39,19 @@ const Login = ({Role}) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const openModal = (e) => {
-    e.preventDefault();
-    if (!formData.role) {
-      setIsModalOpen(true);
-    } else {
-      handleSignUp(e);
-    }
-  };
+  // const openModal = (e) => {
+  //   e.preventDefault();
+  //   if (!formData.role) {
+  //     setIsModalOpen(true);
+  //   } else {
+  //     handleSignUp(e);
+  //   }
+  // };
 
-  const handleRoleSelect = (role) => {
-    setRole(role)
-    setFormData({ ...formData,role:role});
-  };
+  // const handleRoleSelect = (role) => {
+  //   setRole(role)
+  //   setFormData({ ...formData,role:role});
+  // };
 
   const GoogleSignIn = useGoogleLogin({
     onSuccess: tokenResponse => handleGoogleSignIn(tokenResponse),
@@ -59,6 +61,7 @@ const Login = ({Role}) => {
 
   const handleLogin = (e) => {
     e.preventDefault();
+    setLoaderActive(true)
     console.log(formData);
     if (formData.email === '' || formData.password === ''|| formData.role ==='' ) {
       toast.error('Need to fill all fields');
@@ -66,6 +69,7 @@ const Login = ({Role}) => {
       axiosInstance.post('/api/auth/login', formData).then((response) => {
         dispatch(setUserData(response.data.data));
         toast.success('Successfully logged in');
+        setLoaderActive(false)
         navigate('/home');
       }).catch((err) => {
         toast.error(err?.response?.data?.message || 'Login failed');
@@ -85,6 +89,7 @@ const Login = ({Role}) => {
     })
     .then(response => response.json())
     .then(data => {
+      setLoaderActive(true)
       console.log("data : ",data);
       const { email } = data;
       const role = formData.role
@@ -94,6 +99,7 @@ const Login = ({Role}) => {
         .then(response => {
           dispatch(setUserData(response.data.data));
           toast.success('Successfully logged in');
+          setLoaderActive(false)
           navigate('/home');
         })
         .catch(error => {
@@ -127,12 +133,12 @@ const Login = ({Role}) => {
           }
         `}
       </style>
-      <div className="bgImage absolute top-0 bottom-0 bg-black h-screen w-screen flex justify-center items-center">
-        <div className='flex items-center justify-center lg:justify-start md:justify-start w-full min-h-screen bg-black bg-opacity-50 lg:ml-[15%] md:ml-[15%] '>
+      <div className="bgImage fixed top-0 bottom-0 bg-black h-screen w-screen flex justify-center items-center" style={{ zIndex: 1000 }}>
+        <div className='flex items-center justify-center lg:justify-start md:justify-start w-full min-h-screen bg-black bg-opacity-50 lg:pl-[15%] md:pl-[15%] '>
           <div className="flex-col w-full max-w-md p-4 rounded-md shadow sm:p-8 dark:text-white bg-black hover:bg-opacity-100 border hover:border-r-4 hover:border-b-4 border-redBorder button-hover-effect">
             <div className="flex flex-col items-center">
               <img src={logo} alt="logo" className="h-24 mb-4" />
-              <h2 className="mb-3 lg:text-3xl md:text-2xl text-lg font-semibold text-center">Login to <span className='text-bold'>{Role?Role:role}</span> account</h2>
+              <h2 className="mb-3 lg:text-3xl md:text-2xl text-lg font-semibold text-center">Login to <span className='text-bold'>{Role ? (Role === 'trainer' ? 'trainer' : 'user'):'your' }</span> account</h2>
               <br />
             </div>
             <form noValidate="" action="" className="space-y-8" onSubmit={handleLogin}>
@@ -182,13 +188,8 @@ const Login = ({Role}) => {
           </div>
         </div>
       </div>
-      {/* {Role===''|undefined&&(<RoleSelectModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onRoleSelect={handleRoleSelect}
-        selectedRole={role}
-       
-      />)} */}
+      
+      
       
     </>
   );

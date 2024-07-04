@@ -14,7 +14,7 @@ const Dashboard = () => {
     },[])
 
   return (
-    <div className='bg-white text-black '>Dashboard</div>
+    <div className='bg-white text-white '>Dashboard</div>
   )
 }
 
