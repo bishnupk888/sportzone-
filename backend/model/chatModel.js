@@ -25,6 +25,18 @@ const chatSchema = new Schema({
         required: true
       },
       content: {
+        // text:{
+      //   type: String,
+      //   default:''
+      // },
+      // image:{
+      //   type: String,
+      //   default:''
+      // },
+      // video:{
+      //   type: String,
+      //   default:''
+      // }
         type: String,
         required: true
       },
@@ -50,6 +62,18 @@ const chatSchema = new Schema({
       required: true
     },
     content: {
+      // text:{
+      //   type: String,
+      //   default:''
+      // },
+      // image:{
+      //   type: String,
+      //   default:''
+      // },
+      // video:{
+      //   type: String,
+      //   default:''
+      // }
       type: String,
       required: true
     },

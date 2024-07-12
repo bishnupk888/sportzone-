@@ -6,7 +6,7 @@ const getAllBookings = async (req, res) => {
   const { id } = req.params;
 
   try {
-    let bookings = await Booking.find({ trainerId: id })
+    const bookings = await Booking.find({ trainerId: id })
       .populate('userId', 'username email profileImage')
       .exec();
 

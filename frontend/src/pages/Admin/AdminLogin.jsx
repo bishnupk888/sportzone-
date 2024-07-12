@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import axiosInstance from '../../axiosInstance/axiosInstance';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import bgImgLogin from '../../assets/images/loginBG.png'; // Adjust the import path as necessary
-import { setAdminData } from '../../Redux/features/adminSlice';
+import { setAdminData } from '../../redux/features/adminSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import logoImg from '../../assets/images/logo/logo.png'
+import apiServices from '../../apiServices/apiServices';
 
 const AdminLogin = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const userRole = useSelector((state) => state.admin.adminRole);
-  console.log(userRole);
+
   useEffect(() => {
     if (userRole) {
       navigate('/admin/dashboard');
@@ -37,15 +37,14 @@ const AdminLogin = () => {
     }
     else{
 
-   
-    axiosInstance.post('/api/admin/login', formData)
+    apiServices.adminLogin(formData)
       .then((response) => {
         dispatch(setAdminData(response.data.data)); // redux store
         toast.success("Successfully logged in");
         navigate('/admin/dashboard');
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
         toast.error('Failed to login');
       });
     }

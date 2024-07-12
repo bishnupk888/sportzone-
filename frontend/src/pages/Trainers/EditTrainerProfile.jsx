@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import defaultImage from '../../assets/images/userImage.jpg';
-import axiosInstance from '../../axiosInstance/axiosInstance';
 import { toast } from 'react-toastify';
 import UploadWidget from '../../components/popupComponents/UploadWidget';
+import apiServices from '../../apiServices/apiServices';
 
 export default function EditTrainerProfile() {
-    const user = useSelector((state) => state.user);
+    const {userId,userRole} = useSelector((state) => state.user);
     const [trainerData, setTrainerData] = useState({
         username: '',
         email: '',
@@ -26,8 +26,8 @@ export default function EditTrainerProfile() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (user && user.userRole && user.userId) {
-            axiosInstance.get(`/api/trainers/${user.userId}`)
+        if ( userRole && userId) {
+            apiServices.getTrainerData(userId)
                 .then((response) => {
                     setTrainerData(response.data.data);
                 })
@@ -36,13 +36,14 @@ export default function EditTrainerProfile() {
                     toast.error("Failed to fetch trainer data");
                 });
         }
-    }, [user]);
+    }, [userId]);
     const handleCertificateUpload =async()=>{
         console.log("certificate upload");
     }
-    const handleImageUpload = async (url) => {
+    const handleImageUpload = async (userId,url) => {
         try {
-                axiosInstance.patch(`/api/trainers/${user.userId}/profile-image`,{imageUrl:url}).then((response)=>{
+                apiServices.uploadTrainerImage(userId,url)
+                .then((response)=>{
                     console.log('Profile image updated:', response.data);
                     setTrainerData(prevData => ({
                         ...prevData,
@@ -99,8 +100,7 @@ export default function EditTrainerProfile() {
             setErrors(newErrors);
             return;
         }
-
-        axiosInstance.put(`/api/trainers/${user.userId}`, trainerData)
+        apiServices.updateTrainerData(userId,trainerData)
             .then((response) => {
                 console.log("in response");
                 toast.success("Trainer data updated successfully");

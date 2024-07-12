@@ -41,11 +41,11 @@ const trainerSchema = new mongoose.Schema({
         type:String
     },
     about:{
-        type:String, //added latest make other changes
+        type:String, 
     },
     profileImage:{
         type:String,
-        default:''
+        default:'https://res.cloudinary.com/sportzone-sportsapp/image/upload/v1720269805/userImage_qnxetg.jpg'
     },
     experience: [{
         institution: {

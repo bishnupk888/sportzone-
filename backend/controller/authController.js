@@ -205,9 +205,11 @@ const googleSignIn = async (req, res) => {
 }; 
  
 
-const resetPassword = (req,res)=>{
+const resetPassword = async(req,res)=>{
   res.status(200).json({message:"reset password"})
   console.log("reset password");
+  const otp = await otpHelper.generateOtp(email)
+  await otpHelper.sendOtp(email, otp);
 }
 
 

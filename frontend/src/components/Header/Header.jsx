@@ -1,14 +1,16 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import Logo from '../../assets/images/logo/logo.png';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { BiMenu, BiBell, BiMessage } from 'react-icons/bi';
 import LoginDropdown from './LoginDropdown';
 import { useSelector, useDispatch } from 'react-redux';
-import { clearUserData } from '../../Redux/features/userSlice';
+import { clearUserData } from '../../redux/features/userSlice';
 import axiosInstance from '../../axiosInstance/axiosInstance';
 import { toast } from 'react-toastify';
-import defaultImage from '../../assets/images/userImage.jpg';
 import UserProfileDropDown from '../dropDown/UserProfileDropDown';
+import NotificationsPanel from '../notificationComponent/NotificationPanel';
+import apiServices from '../../apiServices/apiServices';
+
 
 const navLinks = [
   { path: '/home', display: 'Home' },
@@ -17,14 +19,15 @@ const navLinks = [
   { path: '/user/contact', display: 'Contact' },
 ];
 
-const Header = () => {
+const Header = ({notifications}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  const [viewNotification, setViewNotification] = useState(false)
   const userRole = useSelector((state) => state.user.userRole);
   const userImage = useSelector((state) => state.user.userImage);
   const userName = useSelector((state) => state.user.userName);
   // const isBlocked = useSelector((state) => state.user.isBlocked);
+
 
   const headerRef = useRef(null);
   const menuRef = useRef(null);
@@ -56,9 +59,14 @@ const Header = () => {
   const handleWarning = () => {
     toast.warning('please login for more.')
   }
+  const handleNotificationClick = () => {
+    console.log('clicked on notification icon');
+    setViewNotification(!viewNotification)
+  }
 
   const handleLogout = () => {
-    axiosInstance.post('/api/auth/logout')
+    apiServices.logout()
+    
       .then((response) => {
         console.log(response.data);
         toast.success("Successfully logged out");
@@ -128,9 +136,14 @@ const Header = () => {
                 <>
                   <div className="hidden lg:flex md:flex items-center gap-8  mr-4">
                     {/* Notification Icon */}
-                    <BiBell onClick={() => { navigate() }} className="w-6 h-6 cursor-pointer text-white hover:scale-125 hover:text-redBorder" aria-label="Notifications" />
+                    <BiBell
+                      onClick={handleNotificationClick}
+                      className={`w-6 h-6 cursor-pointer hover:scale-125 ${viewNotification ? 'text-redBorder scale-125' : 'text-white'}`}
+                      aria-label="Notifications"
+                    />
+
                     {/* Chat Icon */}
-                    <BiMessage onClick={() => { navigate('/user/messages') }} className="w-6 h-6 cursor-pointer text-white hover:scale-125 hover:text-redBorder" aria-label="Chat" />
+                    <BiMessage onClick={() => { navigate('/user/messages') }} className={`w-6 h-6 cursor-pointer text-white hover:scale-125 hover:text-redBorder`} aria-label="Chat" />
                   </div>
                   <UserProfileDropDown />
                 </>
@@ -152,6 +165,7 @@ const Header = () => {
           </div>
         </div>
       </header>
+      {viewNotification && <NotificationsPanel notifications={notifications} setViewNotification={setViewNotification} viewNotification={viewNotification}  userRole={userRole}/> }
     </>
   );
 };

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import axiosInstance from '../../axiosInstance/axiosInstance';
 import { toast } from 'react-toastify';
 import ReactPaginate from 'react-paginate';
+import apiServices from '../../apiServices/apiServices';
 
 const TrainerWallet = () => {
   const user = useSelector((state) => state.user);
@@ -13,11 +13,11 @@ const TrainerWallet = () => {
 
   useEffect(() => {
     if (user.userId) {
-      axiosInstance.get(`/api/trainers/${user.userId}`)
+      apiServices.getTrainerData(user.userId)
         .then((response) => {
           console.log(response);
           setUserData(response.data.data);
-          return axiosInstance.get(`/api/trainers/transactions/${user.userId}`);
+          return apiServices.getTrainerTransactions(user.userId) 
         })
         .then((response) => {
           console.log("transactions:", response.data);

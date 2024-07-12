@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 
 const Dashboard = () => {
   const userRole = localStorage.getItem('adminData');
+  console.log('userRole of admin : ',userRole);
 
   const navigate = useNavigate()
     useEffect(()=>{
@@ -14,7 +15,7 @@ const Dashboard = () => {
     },[])
 
   return (
-    <div className='bg-white text-white '>Dashboard</div>
+    <div className='bg-white text-black '>Dashboard</div>
   )
 }
 

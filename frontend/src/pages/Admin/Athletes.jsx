@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import axiosInstance from '../../axiosInstance/axiosInstance';
 import { toast } from 'react-toastify';
 import { FaSearch } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import { setBlockedStatus } from '../../Redux/features/userSlice';
+import { setBlockedStatus } from '../../redux/features/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
+import UserDetails from '../../components/admin/UserDetails';
+import apiServices from '../../apiServices/apiServices';
 
 
 const Athletes = () => {
   const [athletesData, setAthletesData] = useState([]);
+  const [athleteData,setAthleteData] = useState(null)
+  const [viewUserDetails,setViewUserDetails] = useState(false)
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const athletesPerPage = 10;
@@ -23,15 +26,14 @@ const Athletes = () => {
       navigate('/admin/login');
       toast.info("Please login to continue.");
     }
-  }, [userRole, navigate]);
+  }, []);
 
   useEffect(() => {
     fetchAthletes();
   }, []); // Empty dependency array ensures this effect runs once on mount
 
   const fetchAthletes = () => {
-    
-    axiosInstance.get('/api/admin/users')
+    apiServices.getAllUsers()
       .then(response => {
         setAthletesData(response.data.data);
       })
@@ -41,8 +43,7 @@ const Athletes = () => {
   };
 
   const handleBlock = (id) => {
-    
-    axiosInstance.patch(`/api/admin/${id}/block-user`)
+    apiServices.ManageBlockUser(id)
       .then(response => {
         setAthletesData(prevAthletesData => {
           return prevAthletesData.map((athlete) => {
@@ -81,15 +82,20 @@ const Athletes = () => {
         <td className="p-3 border border-redBorder">
           <p>{athlete.email}</p> {/* email */}
         </td>
-        <td className="p-3 border border-redBorder">
-          <p>{athlete.phone}</p> {/* phone */}
-        </td>
         <td className="p-3 border border-redBorder text-right">
           <button
             onClick={() => handleBlock(athlete._id)}
             className={`mr-2 px-3 py-1 rounded transition-transform duration-200 hover:scale-110 ${athlete.isBlocked ? 'text-white border border-green-500 bg-green-900' : 'text-white border border-red-500 bg-red-900'}`}
           >
             {athlete.isBlocked ? 'Unblock' : 'Block'}
+          </button>
+        </td>
+        <td className="p-3 border border-redBorder text-right">
+          <button
+            onClick={() => handleViewDetails(athlete)}
+            className={`mr-2 px-3 py-1 rounded transition-transform duration-200 hover:scale-110 text-white border border-green-500 bg-green-900 `}
+          >
+            Details
           </button>
         </td>
       </tr>
@@ -102,14 +108,17 @@ const Athletes = () => {
     setCurrentPage(newPage);
   };
   const handleSort = () => {
-    console.log("data sort :", athletesData);
 
     const sorted = [...athletesData].sort((a, b) => {
         return a.username.localeCompare(b.username);
     });
     setAthletesData(sorted);
-    console.log('Sorted data:', sorted);
 };
+
+const handleViewDetails = (athlete)=>{
+  setAthleteData(athlete)
+  setViewUserDetails(true)
+}
 
 
   return (
@@ -143,8 +152,9 @@ const Athletes = () => {
               <th className="p-3 border border-redBorder">sl.no</th>
               <th className="p-3 border border-redBorder">Athlete Name</th>
               <th className="p-3 border border-redBorder">Email</th>
-              <th className="p-3 border border-redBorder">Phone</th>
               <th className="p-3 border border-redBorder">Options</th>
+              <th className="p-3 border border-redBorder">More</th>
+
             </tr>
           </thead>
           <tbody>
@@ -180,6 +190,8 @@ const Athletes = () => {
           </button>
         </div>
       </div>
+      {viewUserDetails && <UserDetails user={athleteData}  setViewUserDetails={setViewUserDetails}  />}
+
     </div>
   );
 };

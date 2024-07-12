@@ -2,34 +2,35 @@ import React, { useEffect, useState } from 'react';
 import hero2Img from '../assets/images/messi.png';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import axiosInstance from '../axiosInstance/axiosInstance';
 import { toast } from 'react-toastify';
-import BouncingBallLoader from '../components/Loader/BouncingBallLoader';
+import BouncingBallLoader from '../components/loader/BouncingBallLoader';
+import apiServices from '../apiServices/apiServices'
 
 // import'../'
 const Home = () => {
   const userRole = useSelector((state) => state.user.userRole)
   const navigate = useNavigate()
   const [userData,setUserData] = useState([])
-  const [loaderActive,setLoaderActive] = useState(false) 
-  useEffect(()=>{
-    try {
-      setLoaderActive(true)
-      axiosInstance.get('/api/users/get-trainers').then((response)=>{
-        setUserData(response.data.data)
-     
-        setLoaderActive(false)
-
-      }).catch((error)=>{
-
+  const [loaderActive,setLoaderActive] = useState(false)
+  
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    const fetchData = async () => {
+      try {
+        const response = await apiServices.fetchAllTrainers();
+        setUserData(response.data.data);
+        setLoaderActive(false);
+      } catch (error) {
         console.error(error);
-        setLoaderActive(false)
+        setError(error);
+        setLoaderActive(false);
+      }
+    };
 
-      })
-    } catch (error) {
-      console.error(error);
-    }
-  },[])
+    fetchData();
+  }, []);
+
+
   if(loaderActive){
     return <BouncingBallLoader/>
   }
@@ -93,7 +94,7 @@ const Home = () => {
     {userData.filter((data)=>data.isVerified===true).slice(0,6).map((trainer, index) => (
         <div key={trainer._id} onClick={()=>{
           if(userRole){
-            navigate('/user/view-trainer', { state: { trainer: trainer } })
+            navigate(`/user/view-trainer/${trainer._id}`, { state: { trainer: trainer } })
           }else{
             toast.warning('Login for more')
           }

@@ -9,7 +9,7 @@ const getAllUserBookings = async (req, res) => {
   const { id } = req.params;
  
   try {
-    let bookings = await Booking.find({ userId: id })
+    const bookings = await Booking.find({ userId: id })
       .populate('trainerId', 'username email profileImage')
       .exec();
 
@@ -57,17 +57,18 @@ const cancelUserBooking = async (req, res) => {
     await booking.save();
 
     const user = await User.findById(booking.userId);
-    console.log("user:=+++ ",user);
+    
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    user.wallet += booking.bookingAmount;
+    const amountAfterDeduction = booking.bookingAmount - (booking.bookingAmount * 0.20);
+    user.wallet += amountAfterDeduction;
     await updateCancelledSlots(booking.slots)
     await user.save();
     const transaction = new Transaction({
       userId:booking.userId,
       bookingId:booking._id,
-      amount:booking.bookingAmount,
+      amount:amountAfterDeduction,
       paymentMethod: 'wallet',
       transactionType:'refund',
       status:'success'

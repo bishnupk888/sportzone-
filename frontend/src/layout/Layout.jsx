@@ -1,22 +1,22 @@
 // src/Layout.js
 import React, { useState,useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import Header from '../components/Header/Header';
-import Footer from '../components/Footer/Footer';
+import Header from '../components/header/Header';
+import Footer from '../components/footer/Footer';
 import Routers from '../routes/Routers';
-import TrainerHeader from '../components/Header/trainerHeader';
-import AdminSidebar from '../components/Sidebar/AdminSidebar';
+import TrainerHeader from '../components/header/TrainerHeader';
+
+import AdminSidebar from '../components/sidebar/AdminSidebar';
 import { SocketProvider } from '../context/SocketContext';
 import socket from '../utils/socket';
-
+import apiServices from '../apiServices/apiServices';
 
 
 
 const Layout = () => {
   const {userId,userRole} = useSelector((state) => state.user);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  console.log(userRole);
+  const [notifications,setNotifications] = useState([])
 
   useEffect(() => {
     if (userId && userRole) {
@@ -30,6 +30,33 @@ const Layout = () => {
     }
 }, [userId, userRole]);
 
+useEffect(()=>{
+  socket.on('notification',(data)=>{
+    console.log("notification data ==",data);
+    setNotifications((prevState)=>{
+      return [
+        ...prevState,
+        data
+      ]
+    })
+  })
+  return ()=>{
+    socket.off('notification')
+  }
+},[])
+
+useEffect(()=>{
+  apiServices.getNotifications(userId)
+  .then((response)=>{
+    console.log("notifications response : ",response.data.data)
+    setNotifications(response.data.data)
+  })
+  .catch((error)=>{
+    console.error(error)
+  })
+},[userId])
+
+
   const isAdminPath = location.pathname.startsWith('/admin');
   
 
@@ -39,9 +66,9 @@ const Layout = () => {
     }
     switch (userRole) {
       case 'trainer':
-        return <TrainerHeader />;
+        return <TrainerHeader notifications={notifications} />;
       case 'user':
-        return <Header />;
+        return <Header notifications={notifications} />;
       default:
         return <Header />;
     }

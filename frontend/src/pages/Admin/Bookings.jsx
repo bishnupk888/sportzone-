@@ -1,24 +1,39 @@
 import React, { useEffect, useState } from 'react';
 import { FaSearch } from 'react-icons/fa';
-import axiosInstance from '../../axiosInstance/axiosInstance';
+import BookingDetails from '../../components/admin/BookingDetails';
+import apiServices from '../../apiServices/apiServices';
+import { useNavigate } from 'react-router-dom';
 
 const Bookings = () => {
   const [bookingsData, setBookingData] = useState([]);
+  const [bookingDetails,setBookingDetails] = useState(null)
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
+  const [viewBookingDetails, setViewBookingDetails] = useState(false)
   const itemsPerPage = 10;
 
+  const userRole = localStorage.getItem('adminData');
+  
+
+  const navigate = useNavigate()
+    useEffect(()=>{
+      if(!userRole){
+        navigate('/admin/login')
+        toast.info("please login for more")       
+      }
+    },[])
+
   useEffect(() => {
-    axiosInstance.get('/api/admin/bookings')
+    apiServices.getAllBookings()
       .then((response) => {
-        console.log(response.data);
         setBookingData(response.data.data);
         setLoading(false);
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
         setError(err);
         setLoading(false);
       });
@@ -36,6 +51,11 @@ const Bookings = () => {
     setCurrentPage(newPage);
   };
 
+  const handleViewBookingDetails = (booking)=>{
+    setBookingDetails(booking)
+    setViewBookingDetails(true)
+  }
+
   const handleSort = () => {
     // Sorting logic here
   };
@@ -48,24 +68,24 @@ const Bookings = () => {
       .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
       .map((booking, index) => (
         booking.slots.map((slot, slotIndex) => (
-          <tr key={`${booking._id}-${slotIndex}`} className="border-b dark:border-gray-700">
+          <tr key={`${booking?._id}-${slotIndex}`} className="border-b dark:border-gray-700">
             {slotIndex === 0 && (
               <>
                 <td className="p-3 border border-redBorder" rowSpan={booking.slots.length}>{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                <td className="p-3 border border-redBorder" rowSpan={booking.slots.length}>{booking._id}</td>
-                <td className="p-3 border border-redBorder" rowSpan={booking.slots.length}>{booking.userId?.username || 'N/A'}</td>
-                <td className="p-3 border border-redBorder" rowSpan={booking.slots.length}>{formatDate(booking.bookingDate)}</td>
+                <td className="p-3 border border-redBorder" rowSpan={booking.slots.length}>{booking?._id}</td>
+                <td className="p-3 border border-redBorder" rowSpan={booking.slots.length}>{booking?.userId?.username || 'N/A'}</td>
+                <td className="p-3 border border-redBorder" rowSpan={booking.slots.length}>{formatDate(booking?.bookingDate)}</td>
               </>
             )}
-            <td className="p-3 border border-redBorder">{new Date(slot.date).toLocaleDateString('en-GB')}</td>
-            <td className="p-3 border border-redBorder">{`${slot.startTime}-${slot.endTime}`}</td>
-            <td className="p-3 border border-redBorder">{booking.trainerId ? booking.trainerId.username : 'N/A'}</td>
+            <td className="p-3 border border-redBorder">{booking?.trainerId ? booking?.trainerId?.username : 'N/A'}</td>
             {slotIndex === 0 && (
-              <td className={`p-3 border border-redBorder ${
-                booking.bookingStatus === 'success' ? ' text-green-600 border-green-600' : 
-                booking.bookingStatus === 'cancelled' ? ' text-red-600 border-red-600' : ''
-              }`} rowSpan={booking.slots.length}>
-                {booking.bookingStatus}
+              <td className=' flex p-3 border border-redBorder  justify-center'>
+                <button
+            onClick={() => handleViewBookingDetails(booking)}
+            className={`mr-2 px-3 py-1 rounded transition-transform duration-200 hover:scale-110 text-white border border-green-500 bg-green-900`}
+          >
+            Details
+          </button>
               </td>
             )}
           </tr>
@@ -108,10 +128,8 @@ const Bookings = () => {
                 <th className="p-3 border border-redBorder">Booking ID</th>
                 <th className="p-3 border border-redBorder">Athlete Name</th>
                 <th className="p-3 border border-redBorder">Booked On</th>
-                <th className="p-3 border border-redBorder">Session Date</th>
-                <th className="p-3 border border-redBorder">Slot Time</th>
                 <th className="p-3 border border-redBorder">Trainer Name</th>
-                <th className="p-3 border border-redBorder">Status</th>
+                <th className="p-3 border border-redBorder">More</th>
               </tr>
             </thead>
             <tbody>
@@ -148,6 +166,7 @@ const Bookings = () => {
           </button>
         </div>
       </div>
+      {viewBookingDetails && <BookingDetails booking={bookingDetails}  setViewBookingDetails={setViewBookingDetails} />}
     </div>
   );
 };

@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import axiosInstance from '../../axiosInstance/axiosInstance';
+import socket from '../../utils/socket';
+
+import apiServices from '../../apiServices/apiServices';
 
 const CheckoutPage = () => {
 
   const [paymentMethod, setPaymentMethod] = useState('online');
-  const user = useSelector((state) => state.user);
+  const userId = useSelector((state) => state.user.userId);
   const [userData,setUserData] = useState([])
   const handlePaymentMethodChange = (method) => {
     setPaymentMethod(method);
@@ -22,18 +24,18 @@ const CheckoutPage = () => {
 
 
   const checkoutData = {
-    userId: user.userId,
+    userId:userId,
     trainerId,
     slotIds,
     totalAmount
   }
     useEffect(()=>{
-      axiosInstance.get(`/api/users/${user.userId}`)
+      apiServices.getUser(userId)
       .then((response)=>{
         console.log(response.data);
         setUserData(response.data.data)
       })
-    },[user])
+    },[userId])
 
   const handlePayment = async () => {
     try {
@@ -43,24 +45,25 @@ const CheckoutPage = () => {
       } else {
 
         if (paymentMethod === 'wallet') {
-          console.log('Proceeding to payment with payment method :', paymentMethod, "   userId: ", userData._id, "   trainer ID:", trainerId, "    slotIds : ", slotIds, "    amount : ", totalAmount,);
-          axiosInstance.post('/api/bookings/wallet-payment', { checkoutData })
+          apiServices.walletPayment(checkoutData)
             .then((response) => {
               console.log(response.data);
               navigate('/user/checkout-success')
             })
         }
         if (paymentMethod === 'online') {
-          console.log('Proceeding to payment with payment method :', paymentMethod, "   userId: ", userData._id, "   trainer ID:", trainerId, "    slotIds : ", slotIds, "    amount : ", totalAmount,);
-          axiosInstance.post('/api/bookings/checkout-session', { checkoutData })
+          apiServices.onlinePayment(checkoutData)
             .then((response) => {
-              console.log(response.data);
-              const data = response.data
-              if (response.data.session.url) {
-                window.location.href = data.session.url
+              console.log('payment',response.data.data);
+              const {session,bookingDetails} = response.data.data
+
+              //  socket.emit("notification")
+               
+              if (session.url) {
+                window.location.href = session.url
               }
             })
-            .catch((err => {
+            .catch((error => {
               console.log(" error creating checkout session : ", error);
             }))
         }

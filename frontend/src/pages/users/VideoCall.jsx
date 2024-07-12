@@ -13,7 +13,7 @@ const VideoCall = () => {
    
     const userId = useSelector((state) => state.user.userId.toString());
     const {userName} = useSelector((state)=> state.user )
-    console.log("user in video",userName);
+    
 
     const newMeeting = async( element)=>{
         const appId =592111496;

@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import defaultImage from '../../assets/images/userImage.jpg';
-import axiosInstance from '../../axiosInstance/axiosInstance';
 import { toast } from 'react-toastify';
 
 
-import {setUserData} from '../../Redux/features/userSlice';
+import {setUserData} from '../../redux/features/userSlice';
+import apiServices from '../../apiServices/apiServices';
  
 export default function Example() {
     const user = useSelector((state) => state.user);
@@ -16,8 +16,9 @@ export default function Example() {
     const dispatch = useDispatch()
 
     useEffect(() => {
+        window.scrollTo(0, 0);
         if (user && user.userRole && user.userId) {
-            axiosInstance.get(`/api/users/${user.userId}`)
+            apiServices.getUser(user.userId)
                 .then((response) => {
                     setLocalUserData(response.data.data);
                 })
@@ -54,8 +55,7 @@ export default function Example() {
             setErrors(newErrors);
             return;
         }
-
-        axiosInstance.put(`/api/users/${user.userId}`, localUserData)
+        apiServices.updateUserData(user.userId,localUserData)
             .then((response) => {
                 toast.success("User data updated successfully");
                 dispatch(setUserData(localUserData));

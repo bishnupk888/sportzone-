@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import axiosInstance from '../../axiosInstance/axiosInstance';
 import { toast } from 'react-toastify';
 import logo from '../../assets/images/logo/logo.png';
 import bgImage from '../../assets/images/background/20215.jpg'; // Adjust the path accordingly

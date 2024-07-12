@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import axiosInstance from '../../axiosInstance/axiosInstance';
 import { toast } from 'react-toastify';
+import apiServices from '../../apiServices/apiServices';
 
 const Wallet = () => {
   const user = useSelector((state) => state.user);
@@ -10,11 +10,12 @@ const Wallet = () => {
   const [userCache, setUserCache] = useState({});
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     if (user.userId) {
-      axiosInstance.get(`/api/users/${user.userId}`)
+      apiServices.getUser(user.userId)
         .then((response) => {
           setUserData(response.data.data);
-          return axiosInstance.get(`/api/users/transactions/${user.userId}`);
+          return apiServices.getUserTransactions(user.userId)
         })
         .then((response) => {
           setTransactions(response.data.data);

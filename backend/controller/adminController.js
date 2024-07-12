@@ -95,29 +95,49 @@ const handleblockTrainer = async (req,res)=>{
 
 }
 
-const handleApprovalTrainer= async (req,res)=>{
+const handleApprovalTrainer = async (req, res) => {
   console.log("in handle approval");
-  const {id} = req.params
+  const { id } = req.params;
   try {
-    const user = await Trainer.findById(id)
-    if(user){
-      console.log("user found");
-      user.isVerified = !user.isVerified
-      user.save().then((data)=>{
-        console.log("data",data);
-        res.status(200).json({message:"success"})
-      }).catch((err)=>{
-        console.log("failed to save update");
-      })
-    }
-    else{
-      console.log("user not found");
-      res.status(404).json({message:"user not found"})
+    const trainer = await Trainer.findById(id);
+    if (trainer) {
+
+      trainer.isVerified = true;
+      await trainer.save();
+      res.status(200).json({ message: "Trainer approved successfully" });
+    } else {
+      res.status(404).json({ message: "Trainer not found" });
     }
   } catch (error) {
-    res.status(400).json({message:"failed to handle approval"})
+    console.error("Error approving trainer:", error);
+    res.status(400).json({ message: "Failed to approve trainer" });
   }
-}
+};
+
+const handleRejectTrainer = async (req, res) => {
+  console.log("in handle reject");
+  const { id } = req.params;
+  const { reason } = req.body;
+  try {
+    const trainer = await Trainer.findById(id);
+    if (trainer) {
+      console.log("trainer found");
+      trainer.isVerified = false;
+      trainer.rejectionReason = reason; // Assuming you have a field to store the rejection reason
+      await trainer.save();
+      console.log("trainer rejected:", trainer);
+      res.status(200).json({ message: "Trainer rejected successfully" });
+    } else {
+      console.log("trainer not found");
+      res.status(404).json({ message: "Trainer not found" });
+    }
+  } catch (error) {
+    console.error("Error rejecting trainer:", error);
+    res.status(400).json({ message: "Failed to reject trainer" });
+  }
+};
+
+
 
 const getAllTrainers = async (req, res) => {
   try {
@@ -151,6 +171,7 @@ module.exports ={
     handleblockUser,
     handleblockTrainer,
     handleApprovalTrainer,
+    handleRejectTrainer,
     getAllTrainers,
     getAllUsers
 }

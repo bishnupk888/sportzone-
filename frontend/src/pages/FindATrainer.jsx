@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useLocation, useNavigate } from 'react-router-dom';
-import TrainerCard from '../components/Trainer/TrainerCard';
-import axiosInstance from '../axiosInstance/axiosInstance';
+import TrainerCard from '../components/trainer/TrainerCard';
+import apiServices from '../apiServices/apiServices'
 
 const FindATrainer = () => {
-  const [trainers, setTrainers] = useState([]);
+  
   const [verifiedTrainers, setVerifiedTrainers] = useState([]);
   const [filteredTrainers, setFilteredTrainers] = useState([]);
   const [visibleTrainers, setVisibleTrainers] = useState(8);
@@ -17,7 +17,23 @@ const FindATrainer = () => {
   const location = useLocation()
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+    const getTrainers = async () => {
+      try {
+        const response = await apiServices.fetchAllTrainers();
+        const allTrainers = response.data.data;
+        const verified = allTrainers.filter(trainer => trainer.isVerified);
+        setVerifiedTrainers(verified);
+        setFilteredTrainers(verified);
+        setMoreAvailable(verified.length > 8);
+      } catch (error) {
+        console.error('Error fetching trainers:', error);
+        setError(error);
+        toast.error('Failed to fetch trainers');
+      }
+    };
     getTrainers();
+
   }, []);
 
   useEffect(() => {
@@ -32,22 +48,7 @@ const FindATrainer = () => {
     }
   }, [location.search, verifiedTrainers]);
 
-
-  const getTrainers = () => {
-    axiosInstance.get('/api/users/get-trainers')
-      .then((response) => {
-        const allTrainers = response.data.data;
-        setTrainers(allTrainers);
-        const verified = allTrainers.filter(trainer => trainer.isVerified);
-        setVerifiedTrainers(verified);
-        setFilteredTrainers(verified);
-        setMoreAvailable(verified.length > 8);
-      })
-      .catch((error) => {
-        console.error('Error fetching trainers:', error);
-        toast.error('Failed to fetch trainers');
-      });
-  };
+    
 
   const getDepartments = () => {
     const departments = verifiedTrainers.map(trainer => trainer.department);
@@ -64,7 +65,7 @@ const FindATrainer = () => {
     setSearchTerm('');
     setFilterDepartment('');
     setSortOption('');
-    navigate('/user/findtrainers')
+    navigate(`/user/findtrainers`)
     // Clear filters and fetch trainers with cleared state
     filterTrainers('', '', '');
   };

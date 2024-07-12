@@ -4,9 +4,10 @@ import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { BiMenu } from 'react-icons/bi';
 import { toast } from 'react-toastify';
 import { useSelector, useDispatch } from 'react-redux';
-import { clearUserData } from '../../Redux/features/userSlice'; 
-import axiosInstance from '../../axiosInstance/axiosInstance';
-import defaultImage from '../../assets/images/userImage.jpg';
+import { clearUserData } from '../../redux/features/userSlice'; 
+
+
+import apiServices from '../../apiServices/apiServices'
 
 const navLinks = [
     { path: '/admin/dashboard', display: 'Dashboard' },
@@ -43,7 +44,7 @@ const Header = () => {
 
     const handleLogout = (e) => {
         e.preventDefault();
-        axiosInstance.post('/api/admin/logout')
+        apiServices.adminLogout()
             .then((response) => {
                 localStorage.removeItem('adminData');
                 toast.success("Successfully logged out");

@@ -1,5 +1,6 @@
 const Chat = require('../model/chatModel');
-const chatController = require('../controller/chatController')
+const chatController = require('../controller/chatController');
+const Notification = require('../model/notificationModel');
   
 const connectedUsers = new Map()
 
@@ -76,6 +77,18 @@ const chatSocket = (io) => {
               console.error('Error processing new message:', error);
             }
           });
+
+        socket.on("notification",async(data)=>{
+          // const {receiverId,sender,content} = data
+          console.log('Listening to notification = ',data)
+          const notification = new Notification(data)
+          const savedNotification = await notification.save()
+          console.log('savedNotification === ', savedNotification);
+          const recieverSocketId = connectedUsers.get(data.receiverId)
+          console.log('recieverSocketId--',recieverSocketId);
+          socket.to(recieverSocketId).emit('notification',savedNotification)
+        })
+
           
     
         // Add more event listeners as needed

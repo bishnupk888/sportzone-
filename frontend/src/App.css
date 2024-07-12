@@ -56,4 +56,15 @@ body {
   }
 }
 
+.emoji{
+  position: relative;
+  .emojiPicker{
+    background-color: #0c0b0b;
+    position: absolute;
+    bottom: 60px;
+    right: 0;
+
+  }
+}
+
 

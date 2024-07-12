@@ -6,12 +6,12 @@ import Bookings from '../pages/Trainers/Bookings';
 import Experience from '../pages/Trainers/Experience';
 import Slots from '../pages/Trainers/Slots';
 import TrainerProfile from '../pages/Trainers/TrainerProfile';
-import EditTrainerProfile from '../pages/Trainers/EditTrainerProfile';
 import TrainerTransactions from '../pages/Trainers/TrainerTransactions';
 import ChatList from '../components/chat component/ChatList';
 import PageNotFound from '../404';
 import CreateVideocallSession from '../pages/Trainers/CreateVideocallSession';
 import VideoCall from '../pages/Trainers/VideoCall';
+import AllNotifications from '../pages/AllNotifications';
 
 const TrainerRoutes = () => {
     return (
@@ -22,11 +22,13 @@ const TrainerRoutes = () => {
                 <Route path='experience' element={<Experience />} />
                 <Route path='slots' element={<Slots />} />
                 <Route path='profile' element={<TrainerProfile />} />
-                <Route path='edit-profile' element={<EditTrainerProfile />} />
                 <Route path='transactions' element={<TrainerTransactions />} />
                 <Route path='messages' element={<ChatList />} />
                 <Route path='create-videocall' element={<CreateVideocallSession />} />
                 <Route path='videocall' element={<VideoCall />} />
+                <Route path='notifications' element={< AllNotifications/>} />
+
+
 
 
 

@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import axiosInstance from '../../axiosInstance/axiosInstance';
 import { FaSearch } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import CustomModal from '../../components/popupComponents/imageViewerModal';
 import { useNavigate } from 'react-router-dom';
+import TrainerDetails from '../../components/admin/TrainerDetails';
+import apiServices from '../../apiServices/apiServices';
+import socket from '../../utils/socket';
 
 const Trainers = () => {
   const [trainersData, setTrainersData] = useState([]);
@@ -11,6 +13,8 @@ const Trainers = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [modalImageUrl, setModalImageUrl] = useState('');
   const [isOpen, setIsOpen] = useState(false);
+  const [viewDetails,setViewDetails] = useState(false)
+  const [trainerData, setTrainerData] = useState(null)
   const trainersPerPage = 10;
 
   const userRole = localStorage.getItem('adminData');
@@ -21,10 +25,10 @@ const Trainers = () => {
       navigate('/admin/login');
       toast.info("Please login to continue.");
     }
-  }, [userRole, navigate]);
+  }, []);
 
   useEffect(() => {
-    axiosInstance.get('/api/admin/trainers')
+    apiServices.getAllTrainers()
       .then(response => {
         setTrainersData(response.data.data);
       })
@@ -34,23 +38,48 @@ const Trainers = () => {
   }, []);
 
   const handleApprove = (id) => {
-    axiosInstance.patch(`/api/admin/${id}/trainer-approval`)
-      .then((response) => {
-        setTrainersData(prevTrainersData => {
-          return prevTrainersData.map(trainer =>
-            trainer._id === id ? { ...trainer, isVerified: !trainer.isVerified } : trainer
-          );
-        });
-        toast.success(`Trainer ${trainersData.find(trainer => trainer._id === id).isVerified ? 'Unapproved' : 'Approved'} successfully!`);
-      })
-      .catch((err) => {
-        console.error("Failed to handle approval", err);
-        toast.error(`Failed to ${trainersData.find(trainer => trainer._id === id).isVerified ? 'Approve' : 'Unapprove'} trainer ${id}`);
+    apiServices.trainerAproval(id)
+    .then((response) => {
+      const content = `your verification Approved`
+      socket.emit("notification",({content,receiverId:id,sender:'Admin' }))
+      setTrainersData(prevTrainersData => {
+        return prevTrainersData.map(trainer =>
+          trainer._id === id ? { ...trainer, isVerified: true } : trainer
+        );
       });
-  };
+      toast.success(`Trainer approved successfully!`);
+      setViewDetails(false)
+    })
+    .catch((err) => {
+      console.error("Failed to approve trainer", err);
+      toast.error(`Failed to approve trainer ${id}`);
+    });
+};
 
-  const handleBlock = (id) => {
-    axiosInstance.patch(`/api/admin/block-trainer/${id}`)
+const handleRejectTrainer = (id,reason)=>{
+  apiServices.trainerRejection(id,reason)
+  .then((response) => {
+    const content = `you verification failed due to ${reason}`
+    socket.emit("notification",({content,receiverId:id,sender:'Admin' }))
+    setTrainersData(prevTrainersData => {
+      return prevTrainersData.map(trainer =>
+        trainer._id === id ? { ...trainer, isVerified: false } : trainer
+      );
+      
+    });
+    toast.success(`Trainer rejected successfully!`);
+    setViewDetails(false)
+  })
+  .catch((err) => {
+    console.error("Failed to reject trainer", err);
+    toast.error(`Failed to reject trainer ${id}`);
+  });
+};
+
+
+const handleBlock = (id) => {
+  apiServices.manageBlockTrainer(id)
+    
       .then(response => {
         setTrainersData(prevTrainersData => {
           return prevTrainersData.map(trainer =>
@@ -64,6 +93,13 @@ const Trainers = () => {
         toast.error(`Failed to ${trainersData.find(trainer => trainer._id === id).isBlocked ? 'Unblocked' :'Blocked'} trainer`);
       });
   };
+
+  const handleViewTrainerDetails = (trainer)=>{
+    setTrainerData(trainer)
+    setViewDetails(true)
+  }
+
+  
 
   const openModal = (imageUrl) => {
     setModalImageUrl(imageUrl);
@@ -88,7 +124,7 @@ const Trainers = () => {
       return a.username.localeCompare(b.username);
     });
     setTrainersData(sorted);
-    console.log('Sorted data:', sorted);
+   
   };
 
   const renderTrainers = () => {
@@ -104,13 +140,6 @@ const Trainers = () => {
           <p>{trainer.email}</p>
         </td>
         <td className="p-3 border border-redBorder text-center">
-          {trainer.certificate ? (
-            <button onClick={() => openModal(trainer.certificate)} className='mr-2 px-3 py-1 rounded transition-transform duration-200 hover:scale-110 hover:border-b hover:border-redBorder hover:text-redBorder'>View Certificate</button>
-          ) : (
-            <span className='text-redBorder'>No certificate added</span>
-          )}
-        </td>
-        <td className="p-3 border border-redBorder text-center">
           <button
             onClick={() => handleBlock(trainer._id)}
             className={`mr-2 px-3 py-1 rounded transition-transform duration-200 hover:scale-110 ${trainer.isBlocked ? 'text-white border border-green-500 bg-green-900' : 'text-white border border-red-500 bg-red-900'}`}
@@ -119,11 +148,11 @@ const Trainers = () => {
           </button>
         </td>
         <td className="p-3 border border-redBorder text-center">
-          <button
-            onClick={() => handleApprove(trainer._id)}
-            className={`px-3 py-1 rounded transition-transform duration-200 hover:scale-110 ${trainer.certificate !== '' ? (trainer.isVerified ? 'text-white border border-green-500 bg-green-900' : 'text-white border border-blue-500 bg-blue-900') : 'text-white border border-yellow-500 bg-yellow-900'}`}
+        <button
+            onClick={() => handleViewTrainerDetails(trainer)}
+            className={`mr-2 px-3 py-1 rounded transition-transform duration-200 hover:scale-110 text-white border border-green-500 bg-green-900`}
           >
-            <span>{trainer.certificate !== '' ? (trainer.isVerified ? 'Approved' : 'Approve') : 'Pending'}</span>
+            Details
           </button>
         </td>
       </tr>
@@ -162,9 +191,8 @@ const Trainers = () => {
               <th className="p-3 border border-redBorder">sl.no</th>
               <th className="p-3 border border-redBorder">Trainer Name</th>
               <th className="p-3 border border-redBorder">Email</th>
-              <th className="p-3 border border-redBorder">Certificate</th>
               <th className="p-3 border border-redBorder">Action</th>
-              <th className="p-3 border border-redBorder">Approval</th>
+              <th className="p-3 border border-redBorder">More</th>
             </tr>
           </thead>
           <tbody>
@@ -202,6 +230,7 @@ const Trainers = () => {
       </div>
 
       <CustomModal isOpen={isOpen} onClose={closeModal} imageUrl={modalImageUrl} />
+      {viewDetails && <TrainerDetails trainer={trainerData} approveTrainer={handleApprove} setViewTrainerDetails={setViewDetails} rejectTrainer={handleRejectTrainer} />}
     </div>
   );
 };

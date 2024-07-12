@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ChatComponent from "../../components/chat component/ChatComponent";
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import axiosInstance from '../../axiosInstance/axiosInstance';
+import apiServices from '../../apiServices/apiServices';
 
 const ChatToTrainer = () => {
     const navigate = useNavigate();
@@ -22,7 +22,7 @@ const ChatToTrainer = () => {
     useEffect(() => {
         const fetchChat = async () => {
             try {
-                const response = await axiosInstance.get(`/api/chat/getchat/${trainer._id}/${userId}`);
+                const response = await apiServices.getChatByUserIdAndTrainerId(trainer._id,userId) 
                 console.log("response when direct message", response);
 
                 if (response.data.chatId) {
@@ -46,7 +46,7 @@ const ChatToTrainer = () => {
         }
     }, [userId, trainer]);
 
-    console.log('receiverData tr: ', trainerData);
+
 
     return (
         <div className='mx-10 mb-10'>

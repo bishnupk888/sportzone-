@@ -13,6 +13,8 @@ const authRoute = require('./routes/authRoute');
 const bookingRoute = require('./routes/bookingRoutes');
 const chatSocket = require('./sockets/chatSocket');
 const chatRoute = require('./routes/chatRoute');
+const notificationRoute = require('./routes/notificationRoute')
+
 
 if (process.env.NODE_ENV != "production") {
     require('dotenv').config();
@@ -33,6 +35,7 @@ app.use('/api/admin', adminRoute);
 app.use('/api/trainers', trainerRoute);
 app.use('/api/bookings', bookingRoute);
 app.use('/api/chat',chatRoute)
+app.use('/api/notifications',notificationRoute)
 
 // connect database
 connectDb();

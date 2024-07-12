@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import axiosInstance from '../../axiosInstance/axiosInstance';
 import { useSelector } from 'react-redux';
 import { FaSearch } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import BookingDetails from '../../components/bookingDetails/BookingDetails';
+import apiServices from '../../apiServices/apiServices';
 
 const MyBookings = () => {
   const [bookingData, setBookingData] = useState([]);
@@ -28,9 +28,8 @@ const MyBookings = () => {
   };
 
   useEffect(() => {
-    axiosInstance.get(`/api/users/mybookings/${userId}`)
+    apiServices.getUserBookings(userId)
       .then((response) => {
-        console.log(response.data);
         const transformedData = response.data.data.map((booking) => ({
           ...booking,
           bookingDate: formatDate(booking.bookingDate),
@@ -39,7 +38,7 @@ const MyBookings = () => {
 
       })
       .catch((err) => {
-        console.log(err);
+        console.error();(err);
       });
   }, [userId]);
 
@@ -51,14 +50,17 @@ const MyBookings = () => {
     }
   };
 
-  const compareCurrentTimeWithSlot = (slotTime) => {
+  const compareCurrentTimeWithSlot = (slotEndTime) => {
     const currentTime = new Date();
-    const [slotHours, slotMinutes] = slotTime.split(':');
-    const slotTotalMinutes = parseInt(slotHours, 10) * 60 + parseInt(slotMinutes, 10);
-    const currentTotalMinutes = currentTime.getHours() * 60 + currentTime.getMinutes();
+    const [endHours, endMinutes] = slotEndTime.split(':');
+    const slotEndDateTime = new Date(currentTime);
+    slotEndDateTime.setHours(parseInt(endHours, 10));
+    slotEndDateTime.setMinutes(parseInt(endMinutes, 10));
+    slotEndDateTime.setSeconds(0);
+    slotEndDateTime.setMilliseconds(0);
 
-    return slotTotalMinutes > currentTotalMinutes;
-  };
+    return slotEndDateTime > currentTime;
+};
 
   const isSlotUpcoming = (slotDate, slotEndTime) => {
     const currentDate = new Date();
@@ -109,17 +111,19 @@ const MyBookings = () => {
 
 
   const handleCancelBooking = (bookingId) => {
-    axiosInstance.post(`/api/users/cancel-booking/${bookingId}`)
+    window.scrollTo(0, 0);
+    apiServices.cancelUserBooking(bookingId) 
       .then((response) => {
         console.log(response);
         if (response.data.success) {
           setBookingData(prevData => prevData.map(booking =>
             booking._id === bookingId ? { ...booking, bookingStatus: 'cancelled' } : booking
           ));
+          toast.success('booking cancelled successfully')
         }
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
       });
   };
 

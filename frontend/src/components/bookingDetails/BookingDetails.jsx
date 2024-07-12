@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import axiosInstance from '../../axiosInstance/axiosInstance';
 import { FaArrowLeft } from 'react-icons/fa';
 import ConfirmationModal from '../popupComponents/ConfirmationModal';
 import { toast } from 'react-toastify';
+import apiServices from '../../apiServices/apiServices';
 
 const BookingDetails = ({cancelBooking , bookingId , setViewBookingDetails ,bookingData}) => {
 
@@ -39,7 +39,7 @@ const BookingDetails = ({cancelBooking , bookingId , setViewBookingDetails ,book
   };
 
   useEffect(() => {
-    axiosInstance.get(`/api/users/booking-details/${bookingId}`)
+    apiServices.getUserBookingDetails(bookingId)
       .then((response) => {
         console.log(response.data);
         setBookingDetails(response.data.data);
@@ -109,7 +109,7 @@ const BookingDetails = ({cancelBooking , bookingId , setViewBookingDetails ,book
         onClose={handleCloseModal}
         onConfirm={handleConfirmAction}
         question={" Need To Cancel Your Order ? "}
-        message={"!! cancellation cannot be undone"}
+        message={"!! cancellation cannot be undone and 20% of total amount will be deducted"}
       />}
         
     </div>

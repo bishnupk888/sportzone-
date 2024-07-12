@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux'
 
 
 const Contact = () => {
+  window.scrollTo(0, 0);
   const userRole = useSelector((state)=>state.user.userRole)    
   const navigate = useNavigate()
   useEffect(()=>{

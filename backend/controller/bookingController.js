@@ -11,10 +11,11 @@ const getCheckoutSession = async (req, res) => {
     console.log(req.body.checkoutData);
     const { userId, trainerId, totalAmount, slotIds } = req.body.checkoutData;
     try {
+        const slotsQuantity = slotIds.length
         if (!userId || !trainerId || !totalAmount || !slotIds || slotsQuantity === 0) {
             return res.status(400).json({ success: false, message: "Missing required checkout data" });
         }
-        const slotsQuantity = slotIds.length
+       
         const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ success: false, message: "User not found while creating checkout session" });
@@ -84,8 +85,8 @@ const getCheckoutSession = async (req, res) => {
             status:'success'
           })
           await transaction.save()
-
-       return res.status(200).json({ success: true, message: "Successfully booked and paid", session });
+       const bookingDetails = {slotId:slotIds,userId:user._id}
+       return res.status(200).json({ success: true, message: "Successfully booked and paid", data:{session,bookingDetails} });
     }
     else{
         res.status(500).json({ success: false, message: "Error creating checkout session" });

@@ -48,10 +48,36 @@ const addSlots = async (req, res) => {
     }
   };
 
+  const editSlot = async (req, res) => {
+    try {
+      console.log("editing slot..");
+      
+      const { slotId } = req.params; // Assuming slotId is passed as a URL parameter
+      const { date, startTime, endTime } = req.body // Extracting the fields to be updated
+      console.log(date, startTime, endTime, slotId);
+
+      const updatedSlot = await Slot.findByIdAndUpdate(
+        slotId,
+        { date, startTime, endTime },
+        { new: true } 
+      );
+  
+      if (!updatedSlot) {
+        return res.status(404).json({ message: 'Slot not found' });
+      }
+  
+      console.log("updated slot = ", updatedSlot);
+      res.status(200).json(updatedSlot);
+    } catch (error) {
+      res.status(500).json({ message: 'Error editing slot', error });
+    }
+  };
+
 
   module.exports ={
     addSlots,
     deleteSlot,
-    getTrainerSlots
+    getTrainerSlots,
+    editSlot
 
   }

@@ -3,6 +3,8 @@ import React, { useRef, useEffect } from 'react';
 const UploadWidget = ({ onUpload }) => {
   const cloudinaryRef = useRef();
   const widgetRef = useRef();
+  const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
+  const uploadPreset= import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
 
   useEffect(() => {
     console.log('Setting up Cloudinary widget');
@@ -11,8 +13,8 @@ const UploadWidget = ({ onUpload }) => {
 
       widgetRef.current = cloudinaryRef.current.createUploadWidget(
         {
-          cloudName: 'sportzone-sportsapp',
-          uploadPreset: 'es4pdmbw',
+          cloudName:cloudName ,
+          uploadPreset: uploadPreset, 
         },
         (error, result) => {
           if (error) {

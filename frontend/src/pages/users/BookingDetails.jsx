@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axiosInstance from '../../axiosInstance/axiosInstance';
 import { FaArrowLeft } from 'react-icons/fa';
+import apiServices from '../../apiServices/apiServices';
 
 const BookingDetails = ({cancelBooking , bookingId}) => {
 
@@ -20,14 +20,15 @@ const BookingDetails = ({cancelBooking , bookingId}) => {
   };
 
   useEffect(() => {
-    axiosInstance.get(`/api/users/booking-details/${bookingId}`)
+    window.scrollTo(0, 0);
+    apiServices.getUserBookingDetails(bookingId)
       .then((response) => {
         console.log(response.data);
         setBookingDetails(response.data.data);
         setLoading(false);
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
         setLoading(false);
       });
   }, [bookingId]);

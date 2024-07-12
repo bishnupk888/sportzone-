@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import TimePicker from 'react-time-picker';
-import CustomDatePicker from '../../components/DatePicker/CustomDatePicker';
+import CustomDatePicker from '../../components/datePicker/CustomDatePicker';
 import 'react-time-picker/dist/TimePicker.css';
 import 'react-clock/dist/Clock.css';
 import { toast } from 'react-toastify';
-import axiosInstance from '../../axiosInstance/axiosInstance';
 import { useSelector } from 'react-redux';
+import EditSlot from '../../components/popupComponents/EditSlot';
+import apiServices from '../../apiServices/apiServices';
+
 
 const Slots = () => {
   const trainerId = useSelector((state) => state.user.userId);
@@ -13,23 +15,29 @@ const Slots = () => {
   const [startTime, setStartTime] = useState('10:00');
   const [endTime, setEndTime] = useState('11:00');
   const [slots, setSlots] = useState([]);
-  const [count, setCount] = useState(0)
+
+  const [count, setCount] = useState(0)  
   const [currentPage, setCurrentPage] = useState(1);
   const [slotsPerPage] = useState(10); // Number of slots per page
   const [sortByDateAsc, setSortByDateAsc] = useState(true); // State for sorting by date
+  const [viewEditSlot, setViewEditSlot] = useState(false)
+  const [slotToEdit, setSlotToEdit] = useState([])
+
 
   useEffect(() => {
-    if (!trainerId) return;
-
-    axiosInstance.get(`/api/trainers/${trainerId}/slots`)
-      .then((response) => {
+    const fetchData = async () => {
+      try {
+        if (!trainerId) return;
+        const response = await apiServices.getAllSlots(trainerId);
         console.log("response", response);
         setSlots(response.data.data); // Assuming response.data.slots is the array of slots
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error('Error fetching slots:', error);
-      });
-  }, [trainerId, count]);
+      }
+    };
+
+    fetchData();
+  }, [trainerId, count, setSlots]);
 
   const isValidDate = (date) => {
     const today = new Date();
@@ -37,9 +45,6 @@ const Slots = () => {
     return date >= today;
   };
 
-  const isExistingSlot = (newSlot) => {
-
-  }
   const isOverlapping = (newSlot) => {
     return slots.some(slot => {
       if (new Date(slot.date).toDateString() === new Date(newSlot.date).toDateString()) {
@@ -91,43 +96,89 @@ const Slots = () => {
       toast.warning('Already have slots in the selected time period.');
       return;
     }
-
-    axiosInstance.post('/api/trainers/slots/add-slot', newSlot)
-      .then((response) => {
-        setSlots([ newSlot, ...slots]);
-        setCount(count + 1)
-        toast.success('Slot added successfully!');
-      })
-      .catch((error) => {
-        toast.error('Error adding slot. Please try again.');
-        console.error('Failed to add slots', error);
-      });
-
+    apiServices.addNewSlot(newSlot)
+    .then((addedSlot) => {
+      setSlots([addedSlot, ...slots]);
+      setCount((prevCount) => prevCount + 1);
+      toast.success('Slot added successfully!');
+    })
+    .catch((error) => {
+      toast.error('Error adding slot. Please try again.');
+      console.error('Failed to add slot', error);
+    });
     // Clear the form fields after adding the slot
     setSelectedDate(new Date());
     setStartTime('10:00');
     setEndTime('11:00');
   };
-
-
   const handleDeleteSlot = (slotId) => {
-    axiosInstance.delete(`/api/trainers/slots/delete-slot/${slotId}`)
-      .then((response) => {
-        // Assuming you might want to update the UI or perform additional actions upon successful deletion
-        console.log('Slot deleted:', response.data);
-        setSlots(slots.filter(slot => slot._id !== slotId));
-        setCount(count + 1)
-        toast.success('Slot deleted successfully!');
-      })
-      .catch((error) => {
-        toast.error('Error deleting slot. Please try again.');
-        console.error('Failed to delete slot', error);
-      });
+    try {
+      const response =  apiServices.deleteSlot(slotId);
+      console.log('Slot deleted:', response.data);
+      setSlots(slots.filter(slot => slot._id !== slotId));
+      setCount(count+1);
+      toast.success('Slot deleted successfully!');
+    } catch (error) {
+      toast.error('Error deleting slot. Please try again.');
+      console.error('Failed to delete slot', error);
+    }
   };
-
-  const handleDeleteBookedSlot =()=>{
+  const handleDeleteBookedSlot = () => {
     toast.warning('cannot delete already booked slot')
   }
+  const handleCloseEditSlot = () =>{
+    setViewEditSlot(false)
+  }
+  const handleEditClick =(slot)=>{
+    setSlotToEdit(slot)
+    setViewEditSlot(true)
+  }
+  const handleEditSlot = (slotId, updatedSlotData) => {
+    const now = new Date();
+    const selectedDateTime = new Date(updatedSlotData.date);
+    const [startHour, startMinute] = updatedSlotData.startTime.split(':').map(Number);
+    const [endHour, endMinute] = updatedSlotData.endTime.split(':').map(Number);
+    selectedDateTime.setHours(startHour, startMinute);
+  
+    if (!isValidDate(updatedSlotData.date)) {
+      toast.warning('Please select a date in the future.');
+      return;
+    }
+  
+    if (selectedDateTime <= now) {
+      toast.warning('Please select a time in the future.');
+      return;
+    }
+  
+    if (!isValidTime(updatedSlotData.startTime, updatedSlotData.endTime)) {
+      toast.warning('Start time should be less than end time.');
+      return;
+    }
+  
+    if (isOverlapping(updatedSlotData)) {
+      toast.warning('Already have slots in the selected time period.');
+      return;
+    }
+  
+    apiServices.editSlot(slotId, updatedSlotData)
+      .then((response) => {
+        const updatedSlots = slots.map(slot =>
+          slot._id === slotId ? { ...slot, ...updatedSlotData } : slot
+        );
+        setSlots(updatedSlots);
+        toast.success('Slot edited successfully!');
+      })
+      .catch((error) => {
+        toast.error('Error editing slot. Please try again.');
+        console.error('Failed to edit slot', error);
+      });
+  
+    // Clear the form fields after editing the slot
+    setSelectedDate(new Date());
+    setStartTime('10:00');
+    setEndTime('11:00');
+  };
+  
 
   // Sorting function for dates
   const sortSlotsByDate = () => {
@@ -153,50 +204,51 @@ const Slots = () => {
   };
 
   return (
+    <>
     <div className="mx-10 mt-10">
       <h1 className="text-white text-3xl mb-5">Time Slots</h1>
       <div className="p-5 rounded-lg bg-buttonBgColor">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mb-5">
-  <div>
-    <p className="text-white mb-1">Select Date</p>
-    <CustomDatePicker
-      selectedDate={selectedDate}
-      setSelectedDate={setSelectedDate}
-    />
-  </div>
-  <div>
-    <p className="text-white mb-2">Starting Time</p>
-    <TimePicker
-      onChange={setStartTime}
-      value={startTime}
-      className="w-full h-10 text-white bg-black"
-      clockClassName="bg-black text-white"
-      format="hh:mm a"
-      clearIcon={null}
-      disableClock
-    />
-  </div>
-  <div>
-    <p className="text-white mb-2">Ending Time</p>
-    <TimePicker
-      onChange={setEndTime}
-      value={endTime}
-      className="w-full h-10 text-white bg-black"
-      clockClassName=" "
-      format="hh:mm a"
-      clearIcon={null}
-      disableClock
-    />
-  </div>
-  <div className="flex items-center justify-center pt-7">
-    <button
-      onClick={handleAddSlot}
-      className="bg-green-800 text-white py-2 px-4 rounded-md hover:bg-green-700 hover:scale-95"
-    >
-      Add Slot
-    </button>
-  </div>
-</div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mb-5">
+          <div>
+            <p className="text-white mb-1">Select Date</p>
+            <CustomDatePicker
+              selectedDate={selectedDate}
+              setSelectedDate={setSelectedDate}
+            />
+          </div>
+          <div>
+            <p className="text-white mb-2">Starting Time</p>
+            <TimePicker
+              onChange={setStartTime}
+              value={startTime}
+              className="w-full h-10 text-white bg-black"
+              clockClassName="bg-black text-white"
+              format="hh:mm a"
+              clearIcon={null}
+              disableClock
+            />
+          </div>
+          <div>
+            <p className="text-white mb-2">Ending Time</p>
+            <TimePicker
+              onChange={setEndTime}
+              value={endTime}
+              className="w-full h-10 text-white bg-black"
+              clockClassName=" "
+              format="hh:mm a"
+              clearIcon={null}
+              disableClock
+            />
+          </div>
+          <div className="flex items-center justify-center pt-7">
+            <button
+              onClick={handleAddSlot}
+              className="bg-green-800 text-white py-2 px-4 rounded-md hover:bg-green-700 hover:scale-95"
+            >
+              Add Slot
+            </button>
+          </div>
+        </div>
 
         {currentSlots.length > 0 && (
           <div className="mt-5">
@@ -216,7 +268,6 @@ const Slots = () => {
                   <th className="px-6 py-4 text-left text-sm font-medium tracking-wider uppercase">Time Slot</th>
                   <th className="px-6 py-4 text-left text-sm font-medium tracking-wider uppercase">Status</th>
                   <th className="px-6 py-4 text-sm font-medium tracking-wider uppercase"></th>
-
                 </tr>
               </thead>
               <tbody>
@@ -226,29 +277,42 @@ const Slots = () => {
                     <td className="px-6 py-4 text-sm font-medium">{slot.startTime} - {slot.endTime}</td>
                     <td className="px-6 py-4">
                       <span
-                        className= {`inline-flex items-center gap-1 rounded-full bg-black px-2 py-1 text-xs font-semibold ${slot.isBooked ? ' text-red-600 border border-red-600' : 'text-green-600 border border-green-600' } `}
+                        className={`inline-flex items-center gap-1 rounded-full bg-black px-2 py-1 text-xs font-semibold ${slot.isBooked ? ' text-red-600 border border-red-600' : 'text-green-600 border border-green-600'} `}
                       >
-                        <span className={`h-1.5 w-1.5 rounded-full ${slot.isBooked ?'bg-red-500': 'bg-green-400 '}`}></span>
-                        {slot.isBooked ? 'Booked' : 'available' }
+                        <span className={`h-1.5 w-1.5 rounded-full ${slot.isBooked ? 'bg-red-500' : 'bg-green-400 '}`}></span>
+                        {slot.isBooked ? 'Booked' : 'Available'}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-sm font-medium text-right">
-                      {!slot.isBooked?<button
-                        onClick={() => handleDeleteSlot(slot._id)}
-                        className="bg-red-500 hover:bg-red-700 text-white py-2 px-4 rounded transition duration-300 ease-in-out"
-                      >
-                        Delete
-                      </button>:<button
-                        onClick={() => handleDeleteBookedSlot()}
-                        className="bg-red-500 hover:bg-red-700 text-white py-2 px-4 rounded transition duration-300 ease-in-out"
-                      >
-                        Delete
-                      </button>}
+                      {!slot.isBooked ? (
+                        <>
+                          <button
+                            onClick={() => handleDeleteSlot(slot._id)}
+                            className="bg-red-500 hover:bg-red-700 text-white py-2 px-4 rounded transition duration-300 ease-in-out"
+                          >
+                            Delete
+                          </button>
+                          <button
+                            onClick={() => handleEditClick(slot)}
+                            className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded transition duration-300 ease-in-out ml-2"
+                          >
+                            Edit
+                          </button>
+                        </>
+                      ) : (
+                        <button
+                          onClick={() => handleDeleteBookedSlot()}
+                          className="bg-red-500 hover:bg-red-700 text-white py-2 px-4 rounded transition duration-300 ease-in-out"
+                        >
+                          Delete
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+
 
             {/* Pagination component */}
             <div className="mt-5 flex justify-center">
@@ -279,7 +343,12 @@ const Slots = () => {
           </div>
         )}
       </div>
+
     </div>
+    <div>
+    {viewEditSlot?<EditSlot isOpen={viewEditSlot} onRequestClose={handleCloseEditSlot}  slot={slotToEdit} onSave={handleEditSlot}  />:''}
+    </div>
+    </>
   );
 };
 

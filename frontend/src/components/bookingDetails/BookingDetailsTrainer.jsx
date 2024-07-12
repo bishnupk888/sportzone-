@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import axiosInstance from '../../axiosInstance/axiosInstance';
 import { FaArrowLeft } from 'react-icons/fa';
 import ConfirmationModal from '../popupComponents/ConfirmationModal';
 import { toast } from 'react-toastify';
+import apiServices from '../../apiServices/apiServices';
 
 const BookingDetailsTrainer = ({ cancelBooking, bookingId, setViewBookingDetails, bookingData }) => {
   const [bookingDetails, setBookingDetails] = useState(null);
@@ -31,7 +31,7 @@ const BookingDetailsTrainer = ({ cancelBooking, bookingId, setViewBookingDetails
   };
 
   useEffect(() => {
-    axiosInstance.get(`/api/trainers/booking-details/${bookingId}`)
+    apiServices.getTrainerBookingDetails(bookingId)
       .then((response) => {
         console.log(response.data);
         setBookingDetails(response.data.data);

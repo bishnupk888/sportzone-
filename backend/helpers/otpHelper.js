@@ -86,7 +86,6 @@ const verifyOtp = async (req, res) => {
     res.status(400).json({ message: "Invalid OTP" });
   }
 };
-
 const resendOtp = async (req,res)=>{
   try {
    

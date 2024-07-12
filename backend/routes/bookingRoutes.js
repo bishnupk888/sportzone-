@@ -9,8 +9,4 @@ bookingRouter.post('/checkout-session',authenticate,bookingController.getCheckou
 bookingRouter.post('/wallet-payment',authenticate,bookingController.walletBooking)
 
 
-
-
-
-
 module.exports = bookingRouter

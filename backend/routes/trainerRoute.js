@@ -17,15 +17,10 @@ trainerRouter.patch('/:id/certificate',authTrainer,checkBlocked,trainerControlle
 trainerRouter.post('/slots/add-slot',authTrainer,checkBlocked,trainerSlotHelper.addSlots)
 trainerRouter.get('/:id/slots',authTrainer,checkBlocked,trainerSlotHelper.getTrainerSlots)
 trainerRouter.delete('/slots/delete-slot/:id',authTrainer,checkBlocked,trainerSlotHelper.deleteSlot)
+trainerRouter.put('/slots/edit-slot/:slotId',authTrainer,checkBlocked,trainerSlotHelper.editSlot)
 trainerRouter.get('/bookings/:id',authTrainer,checkBlocked,trainerBookingHelper.getAllBookings)
 trainerRouter.get('/booking-details/:bookingId',authTrainer,checkBlocked,trainerBookingHelper.getBookingDetails)
 trainerRouter.get('/transactions/:userId',authTrainer,checkBlocked,trainerTransactionHelper.getAllTransactions)
-
-
-
-
-
-
 
 
 

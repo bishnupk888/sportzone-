@@ -5,7 +5,11 @@ const Trainer = require('../model/trainerModel')
 const updateUser = async (req,res)=>{
     const {id} =req.params
     try {
-    const updatedUser = await User.findByIdAndUpdate(id,{$set:req.body},{new:true}) 
+      const updatedUser = await User.findByIdAndUpdate(
+        id,
+        { $set: req.body },
+        { new: true, select: '-password' }
+      ); 
     res.status(200).json({data:updatedUser, message:"successfully updated"})
 
     } catch (error) {

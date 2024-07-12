@@ -7,6 +7,7 @@ const customStyles = {
   overlay: {
     backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent black background
     backdropFilter: 'blur(5px)', // Blur effect
+    zIndex: 100
   },
   content: {
     top: '50%',

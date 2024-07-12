@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
     },
     profileImage:{
         type:String,
-        default:''
+        default:'https://res.cloudinary.com/sportzone-sportsapp/image/upload/v1720269805/userImage_qnxetg.jpg'
     },
     age:{
         type:Number,

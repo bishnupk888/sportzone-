@@ -7,8 +7,9 @@ import { RiDashboardLine } from "react-icons/ri";
 import { GiTeacher } from "react-icons/gi";
 import axiosInstance from '../../axiosInstance/axiosInstance';
 import { toast } from 'react-toastify';
-import { clearAdminData } from '../../Redux/features/adminSlice';
+import { clearAdminData } from '../../redux/features/adminSlice';
 import { useDispatch, useSelector } from 'react-redux';
+import apiServices from '../../apiServices/apiServices';
 
 const navLinks = [
     { path: '/admin/dashboard', display: 'Dashboard', icon: <RiDashboardLine /> },
@@ -34,7 +35,7 @@ const AdminSidebar = ({ setIsSidebarOpen, isSidebarOpen }) => {
     };
 
     const handleLogout = () => {
-        axiosInstance.post('/api/admin/logout')
+        apiServices.adminLogout()
             .then(() => {
                 setUserLoggedin(false); // Update state
                 toast.success("Successfully logged out");

@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import defaultImage from '../../assets/images/userImage.jpg';
-import axiosInstance from '../../axiosInstance/axiosInstance';
 import { toast } from 'react-toastify';
 import UploadWidget from '../../components/popupComponents/UploadWidget';
-import { setUserData } from '../../Redux/features/userSlice';
+import { setUserData } from '../../redux/features/userSlice';
+import apiServices from '../../apiServices/apiServices';
 
 export default function EditTrainerProfile() {
     const user = useSelector((state) => state.user);
@@ -36,7 +36,7 @@ export default function EditTrainerProfile() {
         if (user && user.userRole && user.userId) {
             const fetchTrainerData = async () => {
                 try {
-                    const response = await axiosInstance.get(`/api/trainers/${user.userId}`);
+                    const response = await apiServices.getTrainerData(user.userId) 
                     setTrainerData(response.data.data);
                     setInintialTrainerData(response.data.data)
 
@@ -52,7 +52,7 @@ export default function EditTrainerProfile() {
 
     const handleCertificateUpload = async (certificateUrl) => {
         try {
-            const response = await axiosInstance.patch(`/api/trainers/${user.userId}/certificate`, { certificateUrl });
+            const response = await apiServices.uploadTrainerCertificate(user.userId,certificateUrl) 
             console.log('Certificate uploaded:', response.data);
 
             setTrainerData((prevData) => ({
@@ -74,7 +74,7 @@ export default function EditTrainerProfile() {
 
     const handleImageUpload = async (url) => {
         try {
-            const response = await axiosInstance.patch(`/api/trainers/${user.userId}/profile-image`, { imageUrl: url });
+            const response = await apiServices.uploadTrainerImage(user.userId,url) 
             console.log('Profile image updated:', response.data);
 
             setTrainerData((prevData) => ({
@@ -138,8 +138,7 @@ export default function EditTrainerProfile() {
         }
 
         try {
-            const response = await axiosInstance.put(`/api/trainers/${user.userId}`, trainerData);
-            console.log("API call successful:", response.data);
+            const response = await apiServices.updateTrainerData(user.userId,trainerData) 
             setTrainerData(response.data.data);
             dispatch(setUserData(trainerData));
             toast.success("Trainer data updated successfully");

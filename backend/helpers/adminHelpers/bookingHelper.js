@@ -5,7 +5,7 @@ const Trainer = require('../../model/trainerModel'); // Ensure the Trainer model
 
 const getAllBookings = async (req, res) => {
   try {
-    let bookings = await Booking.find({})
+    const bookings = await Booking.find({})
       .populate('userId', 'username')
       .populate('trainerId','username') // Populate userId with username
       .exec();
