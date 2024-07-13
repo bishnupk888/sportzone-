@@ -85,36 +85,33 @@ const Signup = () => {
       toast.error("Name is required.");
       setLoaderActive(false);
     }
-
-    if (!emailRegex.test(formData.email)) {
+    else if (!emailRegex.test(formData.email)) {
       toast.error("Enter a valid email address.");
       setLoaderActive(false);
     }
-    if (!usernameRegx.test(formData.username)) {
+    else if (!usernameRegx.test(formData.username)) {
       toast.error("Enter a valid user name");
       setLoaderActive(false);
     }
-
-
-    if (!passwordRegex.test(formData.password)) {
+    else if (!passwordRegex.test(formData.password)) {
       toast.error("Password must be at least 8 characters and include 1 uppercase, 1 lowercase, 1 digit, and 1 special character.");
       setLoaderActive(false);
     }
-
-    if (formData.password !== formData.confirmPassword) {
+    else if (formData.password !== formData.confirmPassword) {
       toast.error("Passwords do not match.");
       setLoaderActive(false);
     }
 
-    if (!formData.role) {
+    else if (!formData.role) {
       toast.error("Please select a role.");
       setLoaderActive(false);
     }
 
-    if (
+    else if (
       formData.name &&
       emailRegex.test(formData.email) &&
       passwordRegex.test(formData.password) &&
+      usernameRegx.test(formData.username) &&
       formData.password === formData.confirmPassword &&
       formData.role
     ) {

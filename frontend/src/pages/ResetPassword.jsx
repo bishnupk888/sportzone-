@@ -10,8 +10,8 @@ const ResetPassword = () => {
     const [formData, setFormData] = useState({
         email: '',
         password: '',
-        confirmPassword: '',
-        role: 'user', // Default role set to 'user'
+        confirmPassword:'',
+        role: '', 
     });
 
     const handleInputChange = (e) => {
@@ -33,10 +33,11 @@ const ResetPassword = () => {
         } else if (!formData.role) {
             toast.error('Please select a role.');
         } else {
+            
             apiServices.resetPassword(formData)
                 .then((response) => {
-                    toast.success('Password successfully reset', response.data);
-                    navigate('/login');
+                    toast.success( response.data.message); 
+                    navigate('/reset-password/verify-otp',{state:{ ...formData }} )
                 })
                 .catch((error) => {
                     toast.error('Error resetting password');
@@ -165,7 +166,6 @@ const ResetPassword = () => {
                                 </div>
                             </div>
                             <div className="">
-                                <label className="text-sm">Register as:</label>
                                 <div className="radio-container">
                                     <label className="radio-label">
                                         <input type="radio" name="role" value="user" checked={formData.role === 'user'} onChange={handleInputChange} />

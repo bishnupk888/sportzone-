@@ -16,6 +16,8 @@ authRouter.post('/verify-otp',otpHelper.verifyOtp)
 authRouter.post('/re-send-otp',otpHelper.resendOtp)
 authRouter.post('/logout',authController.logout)
 authRouter.post('/reset-password',authController.resetPassword)
+authRouter.post('/reset-password/verify-otp',otpHelper.verifyOtpResetPassword)
 
 
 module.exports = authRouter
+     

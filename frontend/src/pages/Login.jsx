@@ -147,10 +147,10 @@ const Login = ({Role}) => {
                   <input type="email" name="email" id="email" placeholder="Enter Your Email" value={formData.email} onChange={handleInputChange} className="w-full px-3 py-2 border rounded-md bg-black text-white hover:scale-95 focus:scale-100" />
                 </div>
                 <div className="space-y-2">
-                  {/* <div className="flex justify-between">
+                  <div className="flex justify-between">
                     <label htmlFor="password" className="text-sm">Password</label>
                     <a rel="noopener noreferrer" href="/reset-password" className="text-xs hover:underline dark:text-textColor">Forgot password?</a>
-                  </div> */}
+                  </div>
                   <input type="password" name="password" id="password" placeholder="Enter Your Password" value={formData.password} onChange={handleInputChange} className="w-full px-3 py-2 border rounded-md bg-black text-white hover:scale-95 focus:scale-100" />
                 </div>
               </div>

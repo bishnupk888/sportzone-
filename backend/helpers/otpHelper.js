@@ -4,11 +4,13 @@ const OTP = require('../model/otpSchema')
 const User = require('../model/userModel')
 const Trainer =require('../model/trainerModel')
 const nodemailer = require('nodemailer')
+const bcrypt = require('bcrypt')
+
+
 const generateOtp = async (email) => {
  
   const otp = crypto.randomInt(100000, 999999).toString();
   
-  console.log("generated otp");
   const otpDocument = new OTP({
     otp,
     email,
@@ -17,6 +19,7 @@ const generateOtp = async (email) => {
   try {
     // Save the OTP document to the database
     const savedOtp = await otpDocument.save();
+  console.log("generated otp : ",savedOtp);
   } catch (err) {
     console.error("Error saving OTP:", err);
     throw new Error('Failed to save OTP');
@@ -86,6 +89,44 @@ const verifyOtp = async (req, res) => {
     res.status(400).json({ message: "Invalid OTP" });
   }
 };
+
+
+const verifyOtpResetPassword = async (req, res) => {
+  
+  const { otp, email, role, password } = req.body.data;
+  let user = null;
+  if(role === 'user') {
+    user = await User.findOne({ email:email })
+  }
+  if(role === 'trainer') {
+    user = await Trainer.findOne({ email:email })
+  }   
+  if(!user){
+    return res.status(404).json({ message: "user not found" });
+  }
+  const otpDocument = await OTP.findOne({ email:email })
+  if (!otpDocument) {
+    return res.status(400).json({ message: "OTP has expired or is invalid" });
+  }
+  if (otpDocument.otp === otp) {
+   
+    // Save the user document with the updated flag
+    try {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+      user.password = hashedPassword
+      const data = await user.save();
+      console.log("saved.. reset password");
+      return res.status(200).json({ message: "OTP verified successfully and password reset successfully", data });
+    } catch (error) {
+      console.error("Error updating user document:", error);
+      return res.status(500).json({ message: "Server error, OTP verification failed" });
+    }
+  } else {
+    res.status(400).json({ message: "Invalid OTP" });
+  }
+};
+
 const resendOtp = async (req,res)=>{
   try {
    
@@ -104,5 +145,6 @@ module.exports ={
   generateOtp,
   sendOtp,
   verifyOtp,
-  resendOtp
+  resendOtp,
+  verifyOtpResetPassword
 }

@@ -32,11 +32,12 @@ const VideoCall = () => {
                 mode:ZegoUIKitPrebuilt.OneONoneCall,
             },
             showScreenSharingButton:false,
+            showRoomTimer: true,
         })
 
     }
   return (
-    <div className='px-40 '>
+    <div className='videocall px-40 '>
         <div ref={newMeeting}/>
     </div>
   )

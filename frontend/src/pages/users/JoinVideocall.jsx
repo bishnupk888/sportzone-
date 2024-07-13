@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import logo from '../../assets/images/logo/logo.png';
@@ -9,13 +9,19 @@ const JoinVideocall = () => {
   const navigate = useNavigate();
   const [roomId, setRoomId] = useState('');
 
+
   const handleInputChange = (e) => {
     setRoomId(e.target.value);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    navigate('/user/videocall',{state:roomId})
+    if(!roomId.length){
+      toast.error("enter room Id")
+    }
+    else{
+      navigate('/user/videocall',{state:roomId})
+    }
     // axiosInstance.post('/api/videocall/join-room', { roomId: roomId })
     //   .then((response) => {
     //     toast.success("Successfully joined the room");

@@ -84,6 +84,7 @@ const googleSignUp = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
     const otp = await otpHelper.generateOtp(email)
     console.log(" in authcontroller send otp: ",otp);
+
     await otpHelper.sendOtp(email, otp); //sends email with otp
     if (role === 'user') {
       user = new User({
@@ -206,10 +207,15 @@ const googleSignIn = async (req, res) => {
  
 
 const resetPassword = async(req,res)=>{
-  res.status(200).json({message:"reset password"})
-  console.log("reset password");
+  const {email} = req.body
+  try {
+  console.log("reset password : ",email );
   const otp = await otpHelper.generateOtp(email)
   await otpHelper.sendOtp(email, otp);
+  res.status(200).json({message:"OTP send to your registered email" })
+  } catch (error) {
+    res.status(400).json({message:"failed to reset password"})
+  }
 }
 
 

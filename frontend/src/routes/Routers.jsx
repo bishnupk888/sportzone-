@@ -11,6 +11,7 @@ import { clearUserData } from '../redux/features/userSlice';
 import UserRoutes from './UserRoutes';
 import TrainerRoutes from './TrainerRoutes';
 import AdminRoutes from './AdminRoutes';
+import VerifyForResetPassword from '../pages/VerifyForResetPassword';
 
 const Routers = () => {
   // const isBlocked = useSelector((state) => state.user.isBlocked);
@@ -41,6 +42,8 @@ const Routers = () => {
       <Route path='/register' element={<Signup />} />
       <Route path='/verify-otp' element={<VerifyOtp />} />
       <Route path='/reset-password' element={<ResetPassword />} />
+      <Route path='/reset-password/verify-otp' element={<VerifyForResetPassword />} />
+
 
       {/* User Routes */}
       <Route path='/user/*' element={<UserRoutes />} />

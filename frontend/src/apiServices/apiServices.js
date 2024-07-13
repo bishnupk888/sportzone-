@@ -28,6 +28,9 @@ const resetPassword = async(formData)=>{
 const googleSignUp = async(name,email,password,role)=>{
     return await axiosInstance.post('/api/auth/google-sign-up', {name, email , password,role })
 }
+const VerifyOtpForResetPassword =async(data)=>{
+    return await axiosInstance.post('/api/auth/reset-password/verify-otp', {data })
+}
 
 // user api calls
 const getUser = async(userId)=>{
@@ -40,7 +43,7 @@ const getUserBookingDetails = async(bookingId) => {
     return await axiosInstance.get(`/api/users/booking-details/${bookingId}`)
 }
 const updateUserData = async(userId, userData)=>{
-    return await axiosInstance.put(`/api/users/${userId}`, userData)
+    return await axiosInstance.put(`/api/users/${userId}`, userData)   
 }
 const getUserBookings = async(userId)=>{
     return await axiosInstance.get(`/api/users/mybookings/${userId}`)
@@ -164,6 +167,7 @@ const onlinePayment = async(checkoutData)=>{
     adminLogout,
     resetPassword,
     googleSignUp,
+    VerifyOtpForResetPassword,
 
 
     getUser,
