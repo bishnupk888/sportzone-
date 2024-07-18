@@ -19,12 +19,12 @@ const navLinks = [
   { path: '/user/contact', display: 'Contact' },
 ];
 
-const Header = ({notifications}) => {
+const Header = ({notifications,unreadNotificationCount, setUnreadNotificationCount}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [viewNotification, setViewNotification] = useState(false)
   const userRole = useSelector((state) => state.user.userRole);
-  const userImage = useSelector((state) => state.user.userImage);
+  const userId = useSelector((state) => state.user.userId);
   const userName = useSelector((state) => state.user.userName);
   // const isBlocked = useSelector((state) => state.user.isBlocked);
 
@@ -134,17 +134,36 @@ const Header = ({notifications}) => {
             <div className="flex items-center gap-4">
               {userRole !== '' && (
                 <>
-                  <div className="hidden lg:flex md:flex items-center gap-8  mr-4">
-                    {/* Notification Icon */}
-                    <BiBell
-                      onClick={handleNotificationClick}
-                      className={`w-6 h-6 cursor-pointer hover:scale-125 ${viewNotification ? 'text-redBorder scale-125' : 'text-white'}`}
-                      aria-label="Notifications"
-                    />
+                  <div className="hidden lg:flex md:flex items-center gap-8 mr-4">
+  {/* Notification Icon */}
+  <div className="relative">
+    <BiBell
+      onClick={handleNotificationClick}
+      className={`w-6 h-6 cursor-pointer hover:scale-125 ${viewNotification ? 'text-redBorder scale-125' : 'text-white'}`}
+      aria-label="Notifications"
+    />
+    {unreadNotificationCount > 0 && (
+      <span className="absolute top-[-4px] right-[-4px] bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+        {unreadNotificationCount}
+      </span>
+    )}
+  </div>
 
-                    {/* Chat Icon */}
-                    <BiMessage onClick={() => { navigate('/user/messages') }} className={`w-6 h-6 cursor-pointer text-white hover:scale-125 hover:text-redBorder`} aria-label="Chat" />
-                  </div>
+  {/* Chat Icon */}
+  <div className="relative">
+    <BiMessage
+      onClick={() => navigate(`/${userRole}/messages`)}
+      className={`w-6 h-6 cursor-pointer text-white hover:scale-125 hover:text-redBorder`}
+      aria-label="Chat"
+    />
+    {/* {chatNotificationCount > 0 && (
+      <span className="absolute top-[-4px] right-[-4px] bg-red-600 text-white text-xs font-semibold rounded-full h-4 w-4 flex items-center justify-center">
+        {chatNotificationCount}
+      </span>
+    )} */}
+  </div>
+</div>
+
                   <UserProfileDropDown />
                 </>
               )}
@@ -165,7 +184,8 @@ const Header = ({notifications}) => {
           </div>
         </div>
       </header>
-      {viewNotification && <NotificationsPanel notifications={notifications} setViewNotification={setViewNotification} viewNotification={viewNotification}  userRole={userRole}/> }
+      {viewNotification && <NotificationsPanel notifications={notifications} setViewNotification={setViewNotification} viewNotification={viewNotification}  userRole={userRole} userId={userId} setUnreadNotificationCount={setUnreadNotificationCount}/>}
+
     </>
   );
 };

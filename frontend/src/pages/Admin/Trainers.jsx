@@ -59,7 +59,7 @@ const Trainers = () => {
 const handleRejectTrainer = (id,reason)=>{
   apiServices.trainerRejection(id,reason)
   .then((response) => {
-    const content = `you verification failed due to ${reason}`
+    const content = `you verification rejected due to ${reason}`
     socket.emit("notification",({content,receiverId:id,sender:'Admin' }))
     setTrainersData(prevTrainersData => {
       return prevTrainersData.map(trainer =>

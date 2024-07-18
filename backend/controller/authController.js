@@ -119,8 +119,6 @@ const googleSignUp = async (req, res) => {
 
 const login = async (req, res) => {
 
-  console.log("body  :  ",req.body);
-
   const { email, password, role  } = req.body
 
   try {
@@ -132,7 +130,6 @@ const login = async (req, res) => {
     } else if (role === 'trainer') {
       user = await Trainer.findOne({email:email})
     } 
-    console.log("user in login:",user);
     if (!user) {
       return res.status(404).json({ message: "User not found" });   
     }
@@ -166,27 +163,18 @@ const login = async (req, res) => {
 
 const googleSignIn = async (req, res) => {
   const { email,role  } = req.body;
-  console.log( "in google sign in, role : ",role, email);
+  let user
   try {
     if (role === 'user') {
-
       user = await User.findOne({email:email});
-
-      console.log("user found :",user);
-
     } else if (role === 'trainer') {
-
       user = await Trainer.findOne({email:email})
-
-      console.log("trainer found :",user);
     } 
-    console.log("user in login:",user);
     if (!user) {
       return res.status(404).json({ message: "User not found" });   
     }
-    
     if (user.isBlocked) {
-      return res.status(400).json({ message: "Blocked user" });  
+      return res.status(403).json({ message: "Blocked user" });  
     }
     
     const expireIn = Date.now() + (1000 * 60 * 60 * 24 * 10);
@@ -209,7 +197,6 @@ const googleSignIn = async (req, res) => {
 const resetPassword = async(req,res)=>{
   const {email} = req.body
   try {
-  console.log("reset password : ",email );
   const otp = await otpHelper.generateOtp(email)
   await otpHelper.sendOtp(email, otp);
   res.status(200).json({message:"OTP send to your registered email" })

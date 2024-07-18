@@ -17,6 +17,8 @@ const Layout = () => {
   const {userId,userRole} = useSelector((state) => state.user);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [notifications,setNotifications] = useState([])
+  const [unreadNotificationCount, setUnreadNotificationCount] = useState(0)
+  const [chatNotification, setChatNotification] = useState([])
 
   useEffect(() => {
     if (userId && userRole) {
@@ -30,45 +32,49 @@ const Layout = () => {
     }
 }, [userId, userRole]);
 
-useEffect(()=>{
-  socket.on('notification',(data)=>{
-    console.log("notification data ==",data);
-    setNotifications((prevState)=>{
-      return [
-        ...prevState,
-        data
-      ]
-    })
-  })
-  return ()=>{
-    socket.off('notification')
-  }
-},[])
+useEffect(() => {
+  socket.on('notification', (data) => {
+    setNotifications((prevState) => [data, ...prevState]);
+    setUnreadNotificationCount((prevCount) => prevCount + 1);
+  });
+
+  return () => {
+    socket.off('notification');
+  };
+}, []);
 
 useEffect(()=>{
+  if(userId && userRole){
   apiServices.getNotifications(userId)
   .then((response)=>{
-    console.log("notifications response : ",response.data.data)
     setNotifications(response.data.data)
   })
   .catch((error)=>{
     console.error(error)
   })
+  }
 },[userId])
 
+useEffect(() => {
+   const unreadCount = notifications.filter(notification => !notification.isRead).length;
+   setUnreadNotificationCount(unreadCount)
+}, [notifications,userId])
 
-  const isAdminPath = location.pathname.startsWith('/admin');
+
+// const unreadNotificationCount = notifications.filter(notification => !notification.isRead).length;
+
+const isAdminPath = location.pathname.startsWith('/admin');
   
 
   const renderHeader = () => {
     if (isAdminPath) {
-      return <AdminSidebar setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} />;
+      return <AdminSidebar setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen}  />;
     }
     switch (userRole) {
       case 'trainer':
-        return <TrainerHeader notifications={notifications} />;
+        return <TrainerHeader notifications={notifications} unreadNotificationCount={unreadNotificationCount} setUnreadNotificationCount={setUnreadNotificationCount}/>;
       case 'user':
-        return <Header notifications={notifications} />;
+        return <Header notifications={notifications} unreadNotificationCount={unreadNotificationCount} setUnreadNotificationCount={setUnreadNotificationCount} />;
       default:
         return <Header />;
     }

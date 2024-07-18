@@ -14,7 +14,6 @@ const createNotification = async(req,res)=>{
         });
     
         const savedNotification = await newNotification.save();
-        console.log('Notification saved:', savedNotification);
         return savedNotification;
       } catch (error) {
         console.error('Error creating notification:', error);
@@ -33,13 +32,9 @@ const createNotification = async(req,res)=>{
 
 const getNotifications = async (req, res) => {
   const { userId } = req.params;
-  console.log('get notifications ', userId);
   try {
    
-    const notifications = await Notification.find({ receiverId: userId });
-
-    console.log('notifications : ', notifications);
-
+    const notifications = await Notification.find({ receiverId: userId }).sort({ createdAt: -1 });
 
     res.status(200).json({
       success: true,
@@ -54,10 +49,25 @@ const getNotifications = async (req, res) => {
   }
 };
 
+const markAsReadNotifications = async (req, res) => {
+  const { userId } = req.params;
+  
+  try {
+      const updatedNotifications = await Notification.updateMany(
+          { receiverId: userId, isRead: false },
+          { $set: { isRead: true } }
+      );
+      res.status(200).json({ message: 'Notifications marked as read', updatedNotifications });
+  } catch (error) {
+      res.status(500).json({ message: 'Error marking notifications as read', error });
+  }
+};
+
 
 
 module.exports = {
     createNotification,
     getNotifications,
+    markAsReadNotifications,
     
 }

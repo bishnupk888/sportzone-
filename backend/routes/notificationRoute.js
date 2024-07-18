@@ -6,7 +6,9 @@ const notificationRouter = express.Router()
 
 
 notificationRouter.get('/:userId',authenticate,notificationController.getNotifications)
-// notificationRouter.post('/wallet-payment',authenticate,notificationController.walletBooking)
+notificationRouter.put('/:userId',authenticate,notificationController.markAsReadNotifications)
+
+
 
 
 module.exports = notificationRouter

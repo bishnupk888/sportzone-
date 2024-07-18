@@ -79,7 +79,8 @@ const Signup = () => {
     setLoaderActive(true);
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/;
-    const usernameRegx = /^(?=.*[a-z])(?=.*[A-Z])/
+    const usernameRegx = /^[A-Za-z\s]+$/;
+
 
     if (!formData.name) {
       toast.error("Name is required.");

@@ -79,7 +79,6 @@ const verifyOtp = async (req, res) => {
       const data = await user.save();
       res.clearCookie('email');
       res.clearCookie('role');
-      console.log("save");
       return res.status(200).json({ message: "OTP verified successfully", data });
     } catch (error) {
       console.error("Error updating user document:", error);
@@ -116,7 +115,6 @@ const verifyOtpResetPassword = async (req, res) => {
       const hashedPassword = await bcrypt.hash(password, salt);
       user.password = hashedPassword
       const data = await user.save();
-      console.log("saved.. reset password");
       return res.status(200).json({ message: "OTP verified successfully and password reset successfully", data });
     } catch (error) {
       console.error("Error updating user document:", error);

@@ -40,6 +40,7 @@ const ViewTrainerDetails = () => {
         return slotDate >= now;
     });
     useEffect(() => {
+        window.scrollTo(0, 0);
         try {
             apiServices.getTrainerProfile(id)
             .then((response) => {

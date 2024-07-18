@@ -56,12 +56,17 @@ const CheckoutPage = () => {
             .then((response) => {
               console.log('payment',response.data.data);
               const {session,bookingDetails} = response.data.data
+              console.log('bookingDetails : ',bookingDetails)
+              const bookingDataString = JSON.stringify(bookingDetails)
+              console.log('bookingDataString : ',bookingDataString)
+              localStorage.setItem('bookingNotificationData',bookingDataString)
 
-              //  socket.emit("notification")
-               
               if (session.url) {
-                window.location.href = session.url
+               window.location.href = session.url
               }
+              // else{
+
+              // }
             })
             .catch((error => {
               console.log(" error creating checkout session : ", error);

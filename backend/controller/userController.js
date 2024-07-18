@@ -1,5 +1,6 @@
 const User = require('../model/userModel')
 const Trainer = require('../model/trainerModel')
+const nodemailer = require('nodemailer')
 
 
 const updateUser = async (req,res)=>{
@@ -30,7 +31,6 @@ const getUser = async (req,res)=>{
 }
 
 const updateProfileImage = async (req, res) => {
-  console.log("in update profile");
     const { id } = req.params;
     const { imageUrl } = req.body; 
     try {
@@ -79,7 +79,7 @@ const getTrainer = async (req, res) => {
 }
 
 const getServices =  async (req, res) => {
-  console.log("in services");
+ 
   try {
     const departments = await Trainer.distinct('department', { isVerified: true });
 
@@ -89,6 +89,33 @@ const getServices =  async (req, res) => {
       res.status(500).json({ success: false, message: 'Server error' });
   }
 };
+
+const sendEmail = async(req,res)=>{
+  const {fullname, email, message} = req.body
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.SENDER_EMAIL,
+      pass: process.env.SENDER_EMAIL_PASS,
+    },
+  });
+
+  const mailOptions = {
+    from: process.env.SENDER_EMAIL,
+    to: process.env.SENDER_EMAIL,  
+    subject: 'New Contact Form Submission',
+    text: `You have received a new message from ${fullname}:\n\nEmail: ${email}\n\nMessage:\n${message}`,
+  };
+
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    return res.status(200).json({ message: 'Your Message sent successfully' });
+  } catch (error) {
+    console.error('Error sending email:', error);
+    return res.status(400).json( { message: 'Failed to send email' });
+  }
+
+}
 
 
 
@@ -100,4 +127,5 @@ module.exports={
     getAllTrainers,
     getTrainer,  
     getServices,
+    sendEmail,
 }   

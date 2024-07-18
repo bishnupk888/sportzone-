@@ -28,8 +28,6 @@ const CustomDatePicker = ({ selectedDate, setSelectedDate }) => {
     datepickerValue.current = today.toDateString();
   };
 
-
-
   const getNoOfDays = () => {
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const dayOfWeek = new Date(year, month).getDay();
@@ -47,6 +45,9 @@ const CustomDatePicker = ({ selectedDate, setSelectedDate }) => {
 
   const getDateValue = (date) => {
     const selectedDate = new Date(year, month, date);
+    if (selectedDate < new Date()) {
+      return; // Do nothing if the selected date is in the past
+    }
     datepickerValue.current = selectedDate.toDateString();
     setSelectedDate(selectedDate);
     setShowDatepicker(false);
@@ -58,6 +59,12 @@ const CustomDatePicker = ({ selectedDate, setSelectedDate }) => {
     return today.toDateString() === d.toDateString();
   };
 
+  const isPastDate = (date) => {
+    const today = new Date();
+    const d = new Date(year, month, date);
+    return d < today;
+  };
+
   return (
     <div className="relative">
       <input
@@ -67,7 +74,6 @@ const CustomDatePicker = ({ selectedDate, setSelectedDate }) => {
         onClick={() => setShowDatepicker(!showDatepicker)}
         className="w-full pl-4 pr-10 py-3 leading-none rounded-lg shadow-sm focus:outline-none focus:shadow-outline text-white font-medium bg-black"
         placeholder="Select date"
-       
       />
       <div className="absolute top-0 right-0 px-3 py-2">
         <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -123,7 +129,7 @@ const CustomDatePicker = ({ selectedDate, setSelectedDate }) => {
                 <div
                   onClick={() => getDateValue(date)}
                   className={`cursor-pointer text-center text-sm leading-none rounded-full leading-loose transition ease-in-out duration-100 ${
-                    isToday(date) ? 'bg-blue-500 text-white' : 'text-white hover:bg-blue-200'
+                    isToday(date) ? 'bg-blue-500 text-white' : isPastDate(date) ? 'text-gray-500 cursor-not-allowed' : 'text-white hover:bg-blue-200'
                   }`}
                 >
                   {date}

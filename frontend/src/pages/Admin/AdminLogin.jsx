@@ -10,7 +10,6 @@ import apiServices from '../../apiServices/apiServices';
 const AdminLogin = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
   const userRole = useSelector((state) => state.admin.adminRole);
 
   useEffect(() => {

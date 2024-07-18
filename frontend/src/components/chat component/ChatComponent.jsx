@@ -1,13 +1,14 @@
 // src/components/Chat/ChatComponent.js
 import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { format } from 'date-fns';
 import socket from '../../utils/socket.js';
 import { useSocket } from '../../context/SocketContext.jsx';
 import apiServices from '../../apiServices/apiServices.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faImage, faSmile, faMicrophone, faVideo } from '@fortawesome/free-solid-svg-icons';
 import EmojiPicker from 'emoji-picker-react';
+import { format, isBefore, subDays } from 'date-fns';
+
 
 
 const ChatComponent = ({ handleClose, receiverData, chatId }) => {
@@ -21,7 +22,20 @@ const ChatComponent = ({ handleClose, receiverData, chatId }) => {
     messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
   };
 
+
+const formatDate = (date) => {
+  const now = new Date();
+  const messageDate = new Date(date);
+
+  if (isBefore(messageDate, subDays(now, 1))) {
+    return format(messageDate, 'MM/dd/yyyy');
+  } else {
+    return format(messageDate, 'hh:mm a');
+  }
+};
+
   const fetchChatMessages = () => {
+
     if (chatId) {
       apiServices.getChat(chatId)
         .then((response) => {
@@ -36,6 +50,7 @@ const ChatComponent = ({ handleClose, receiverData, chatId }) => {
   };
 
   useEffect(() => {
+    setNewMessage('')
     fetchChatMessages();
   }, [chatId]);
 
@@ -135,7 +150,7 @@ const ChatComponent = ({ handleClose, receiverData, chatId }) => {
                       className='absolute right-2 bottom-1 text-white text-[8px]'
                       style={{ transform: 'translateY(100%)' }}
                     >
-                      {format(new Date(message.createdAt), 'hh:mm a')}
+                      {formatDate(new Date(message.createdAt))}
                     </span>
                   </span>
                 </div>

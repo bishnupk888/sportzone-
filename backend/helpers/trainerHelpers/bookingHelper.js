@@ -10,7 +10,6 @@ const getAllBookings = async (req, res) => {
       .populate('userId', 'username email profileImage')
       .exec();
 
-      console.log("bookings:",bookings);
 
     // Manually populate slots
     for (let booking of bookings) {
@@ -29,7 +28,6 @@ const getAllBookings = async (req, res) => {
       booking.bookingDate = new Date(booking.bookingDate).toLocaleDateString('en-GB');
     });
 
-    console.log(bookings);
 
     if (bookings.length) {
       return res.status(200).json({ message: "bookings found", data: bookings });
@@ -43,12 +41,10 @@ const getAllBookings = async (req, res) => {
 };
 
 const getBookingDetails = async (req, res) => {
-  console.log("get booking details...");
   const { bookingId } = req.params;
 
   try {
     const booking = await Booking.findById(bookingId);
-    console.log(booking.slots);
 
     if (!booking) {
       return res.status(400).json({ message: 'failed to get booking details' });
@@ -62,7 +58,6 @@ const getBookingDetails = async (req, res) => {
 
       const userDetails = await User.findById(booking.userId)
 
-      console.log("user :",userDetails);
 
       // Include the slot details in the booking object
       booking.slots = slotDetails;

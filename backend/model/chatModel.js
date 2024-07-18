@@ -25,20 +25,17 @@ const chatSchema = new Schema({
         required: true
       },
       content: {
-        // text:{
-      //   type: String,
-      //   default:''
-      // },
-      // image:{
-      //   type: String,
-      //   default:''
-      // },
-      // video:{
-      //   type: String,
-      //   default:''
-      // }
         type: String,
-        required: true
+        // required: true
+        default:''
+      },
+      image:{
+        type: String,
+        default:''
+      },
+      video:{
+        type: String,
+        default:''
       },
       isRead:{
         type:Boolean,

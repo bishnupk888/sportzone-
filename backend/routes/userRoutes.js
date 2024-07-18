@@ -22,6 +22,7 @@ userRouter.get('/mybookings/:id',authUser,checkBlocked,userBookingHelper.getAllU
 userRouter.post('/cancel-booking/:bookingId',authUser,checkBlocked,userBookingHelper.cancelUserBooking)
 userRouter.get('/booking-details/:bookingId',authUser,checkBlocked,userBookingHelper.getBookingDetails)
 userRouter.get('/transactions/:userId',authUser,checkBlocked,userTransactionHelper.getAllTransactions)
+userRouter.post('/contact-us/send-email',authUser,checkBlocked,userController.sendEmail)
 
 
 

@@ -1,14 +1,13 @@
 const User = require('../model/userModel');
 const Trainer = require('../model/trainerModel');
 const Booking = require('../model/bookingModel');
-const Slots = require('../model/slotModel');
+const Slot = require('../model/slotModel')
 const Stripe = require('stripe');
 
 const slotController = require('../controller/slotControllers');
 const Transaction = require('../model/transactionModel');
 
 const getCheckoutSession = async (req, res) => {
-    console.log(req.body.checkoutData);
     const { userId, trainerId, totalAmount, slotIds } = req.body.checkoutData;
     try {
         const slotsQuantity = slotIds.length
@@ -24,7 +23,8 @@ const getCheckoutSession = async (req, res) => {
         if (!trainer) {
             return res.status(404).json({ success: false, message: "Trainer not found while creating checkout session" });
         }
-        // Initialize Stripe correctly with your secret key
+        const slot = await Slot.findById(slotIds[0])
+
         const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
         // stripe session
@@ -57,7 +57,6 @@ const getCheckoutSession = async (req, res) => {
                 paymentMethod: 'online',
                 transactionType: 'payment',
                 status: 'failed',
-                failureReason: 'Error creating checkout session'
             });
             await transaction.save();
             return res.status(500).json({ success: false, message: "Error creating checkout session" });
@@ -84,8 +83,8 @@ const getCheckoutSession = async (req, res) => {
             transactionType:'payment',
             status:'success'
           })
-          await transaction.save()
-       const bookingDetails = {slotId:slotIds,userId:user._id}
+        await transaction.save()
+        const bookingDetails = {slot , user, trainer,}
        return res.status(200).json({ success: true, message: "Successfully booked and paid", data:{session,bookingDetails} });
     }
     else{
@@ -94,12 +93,10 @@ const getCheckoutSession = async (req, res) => {
         
     } catch (error) {
        console.error("Error creating checkout session:", error);
-
         if (error.type === 'StripeCardError') {
             return res.status(400).json({ success: false, message: "Card error: " + error.message });
         }
-
-        res.status(500).json({ success: false, message: "Error creating checkout session" });
+        res.status(500).json({ success: false, message: "Error!! booking failed try again." });
     }
 };
 
@@ -147,8 +144,8 @@ const walletBooking = async(req,res)=>{
 
                 return res.status(200).json({ success: true, message: "Successfully booked and paid"});
         } catch (error) {
-            console.log(error);
-            res.status(500).json({message:"server error booking failed"})
+            console.error(error);
+            res.status(500).json({message:"server error booking failed retry"})
         }
 }
 

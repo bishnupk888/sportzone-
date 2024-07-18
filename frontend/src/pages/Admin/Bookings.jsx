@@ -24,7 +24,7 @@ const Bookings = () => {
         navigate('/admin/login')
         toast.info("please login for more")       
       }
-    },[])
+    },[userRole])
 
   useEffect(() => {
     apiServices.getAllBookings()
@@ -78,6 +78,8 @@ const Bookings = () => {
               </>
             )}
             <td className="p-3 border border-redBorder">{booking?.trainerId ? booking?.trainerId?.username : 'N/A'}</td>
+            <td className={`p-3 border border-redBorder ${booking?.bookingStatus === 'success' ? 'text-green-500' : 'text-red-500'}`}>{booking?.bookingStatus ? booking?.bookingStatus : 'N/A'}</td>
+
             {slotIndex === 0 && (
               <td className=' flex p-3 border border-redBorder  justify-center'>
                 <button
@@ -129,6 +131,8 @@ const Bookings = () => {
                 <th className="p-3 border border-redBorder">Athlete Name</th>
                 <th className="p-3 border border-redBorder">Booked On</th>
                 <th className="p-3 border border-redBorder">Trainer Name</th>
+                <th className="p-3 border border-redBorder">status</th>
+
                 <th className="p-3 border border-redBorder">More</th>
               </tr>
             </thead>

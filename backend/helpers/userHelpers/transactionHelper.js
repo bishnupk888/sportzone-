@@ -4,7 +4,6 @@ const getAllTransactions = async(req,res)=>{
   const {userId} = req.params
     try {
         const transactions = await Transaction.find({userId:userId}).populate('userId','username')
-    console.log(transactions);
     if (!transactions) {
         return res.status(400).json({message:"failed to fetch transactions"})
     }

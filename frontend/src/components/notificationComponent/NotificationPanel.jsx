@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BiBell } from 'react-icons/bi';
+import apiServices from '../../apiServices/apiServices';
 
 
-const NotificationsPanel = ({ notifications, setViewNotification, viewNotification, userRole }) => {
+const NotificationsPanel = ({ notifications, setViewNotification, viewNotification, userRole, userId , setUnreadNotificationCount }) => {
   const navigate = useNavigate()
   console.log('notifications ++ ', notifications);
   const transformDate = (inputDateString) => {
     const inputDate = new Date(inputDateString);
     const today = new Date();
-
     const inputDateFormatted = inputDate.toISOString().split('T')[0];
     const todayFormatted = today.toISOString().split('T')[0];
 
@@ -25,12 +25,17 @@ const NotificationsPanel = ({ notifications, setViewNotification, viewNotificati
       return inputDateFormatted;
     }
   };
+  useEffect(() => {
+    setUnreadNotificationCount(0)
+    apiServices.markNotificationsAsRead(userId)
+  },[])
+  
 
   return (
     <div className="relative inline-block text-left z-1000 mr-[10%] cursor-pointer">
       {viewNotification && (
         <div
-          className="absolute right-0 w-80 rounded-md shadow-lg bg-black ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 z-50 max-h-[400px] overflow-y-auto"
+          className="fixed right-10 w-80 rounded-md shadow-lg bg-black ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 z-50 max-h-[400px] overflow-y-auto"
           role="menu"
           aria-orientation="vertical"
           aria-labelledby="menu-button"
@@ -73,8 +78,12 @@ const NotificationsPanel = ({ notifications, setViewNotification, viewNotificati
               notifications.map((notification, index) => (
                 <div
                   key={index}
+                  onClick={() =>{
+                    navigate(`/${userRole}/notifications`)
+                    setViewNotification(false)
+                  }}
                   id={`toast-notification-${index}`}
-                  className="w-full max-w-xs p-2 text-textColor bg-buttonBgColor rounded-lg shadow mb-2"
+                  className="w-full max-w-xs p-2 text-textColor bg-buttonBgColor rounded-lg shadow mb-2 hover:bg-neutral-950 hover:border-b-2  border-redBorder hover:border "
                   role="alert"
                 >
                   <div className="flex items-center mb-1">

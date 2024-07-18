@@ -13,8 +13,8 @@ const MyBookings = () => {
   const [sortOrder, setSortOrder] = useState('asc');
   const [viewBookingDetails, setViewBookingDetails] = useState(false);
   const [selectedBookingId, setSelectedBookingId] = useState(null);
-  const [paginatedData, setPaginatedData] = useState([])
-  const [filteredData, setFilteredData] = useState([])
+  const [paginatedData, setPaginatedData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
 
   const itemsPerPage = 10;
   const userId = useSelector((state) => state.user.userId);
@@ -28,6 +28,7 @@ const MyBookings = () => {
   };
 
   useEffect(() => {
+  window.scrollTo(0, 0);
     apiServices.getUserBookings(userId)
       .then((response) => {
         const transformedData = response.data.data.map((booking) => ({
@@ -35,10 +36,9 @@ const MyBookings = () => {
           bookingDate: formatDate(booking.bookingDate),
         }));
         setBookingData(transformedData);
-
       })
       .catch((err) => {
-        console.error();(err);
+        console.error(err);
       });
   }, [userId]);
 
@@ -60,7 +60,7 @@ const MyBookings = () => {
     slotEndDateTime.setMilliseconds(0);
 
     return slotEndDateTime > currentTime;
-};
+  };
 
   const isSlotUpcoming = (slotDate, slotEndTime) => {
     const currentDate = new Date();
@@ -82,18 +82,17 @@ const MyBookings = () => {
     return timeDifference <= 30; // Check if within 30 minutes
   };
 
-
   const handleSort = () => {
     const sortedData = [...bookingData].sort((a, b) => {
-      const dateA = new Date(a.bookingDate);
-      const dateB = new Date(b.bookingDate);
+      const dateA = new Date(a.slots[0].date); // Accessing the first slot's date
+      const dateB = new Date(b.slots[0].date);
       return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
     });
+    
     setBookingData(sortedData);
     setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
   };
-
-
+  
 
   useEffect(() => {
     const fData = bookingData.filter(booking =>
@@ -103,15 +102,12 @@ const MyBookings = () => {
 
     const pData = fData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
-    setFilteredData(fData)
-    setPaginatedData(pData)
-
-  }, [bookingData])
-
-
+    setFilteredData(fData);
+    setPaginatedData(pData);
+  }, [bookingData, searchQuery, currentPage]);
 
   const handleCancelBooking = (bookingId) => {
-    window.scrollTo(0, 0);
+   
     apiServices.cancelUserBooking(bookingId) 
       .then((response) => {
         console.log(response);
@@ -119,7 +115,8 @@ const MyBookings = () => {
           setBookingData(prevData => prevData.map(booking =>
             booking._id === bookingId ? { ...booking, bookingStatus: 'cancelled' } : booking
           ));
-          toast.success('booking cancelled successfully')
+          
+          toast.success('booking cancelled successfully');
         }
       })
       .catch((err) => {
@@ -127,14 +124,13 @@ const MyBookings = () => {
       });
   };
 
-
   return (
     <>
       <div className='m-10'>
         <div className="flex justify-between items-center mb-4">
           <h1 className='text-white text-2xl my-4'>MY BOOKING</h1>
           <div className="flex items-center">
-            <div className="flex mr-4 " >
+            <div className="flex mr-4">
               <FaSearch className="relative left-7 top-3 text-textColor" />
               <input
                 type="search"
@@ -143,13 +139,12 @@ const MyBookings = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="px-3 py-2 border border-redBorder rounded bg-black text-textColor pl-10"
               />
-
             </div>
             <button
               onClick={handleSort}
               className="bg-black border border-redBorder text-textColor px-4 py-2 rounded"
             >
-              Sort by Date
+              Sort by session Date
             </button>
           </div>
         </div>
@@ -159,9 +154,7 @@ const MyBookings = () => {
               <tr>
                 <th scope="col" className="px-6 py-4 font-medium">Trainer Name</th>
                 <th scope="col" className="px-6 py-4 font-medium">Booked On</th>
-                {/* <th scope="col" className="px-6 py-4 font-medium">Date</th>
-                <th scope="col" className="px-6 py-4 font-medium">Slot</th>
-                <th scope="col" className="px-6 py-4 font-medium">Amount</th> */}
+                <th scope="col" className="px-6 py-4 font-medium">session date</th>
                 <th scope="col" className="px-6 py-4 font-medium">Booking Status</th>
                 <th scope="col" className="px-6 py-4 font-medium">Training Status</th>
                 <th scope="col" className="px-6 py-4 font-medium">Actions</th>
@@ -186,9 +179,8 @@ const MyBookings = () => {
                         </div>
                       </th>
                       <td className="px-6 py-4">{booking.bookingDate}</td>
-                      {/* <td className="px-6 py-4">{formatDate(slot.date)}</td>
-                      <td className="px-6 py-4">{`${slot.startTime} - ${slot.endTime}`}</td>
-                      <td className="px-6 py-4">{booking.bookingAmount}</td> */}
+                      <td className="px-6 py-4">{formatDate(booking.slots[0].date)}</td>
+
                       <td className="px-6 py-4">
                         <span
                           className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-semibold border ${booking.bookingStatus === 'success'
@@ -196,7 +188,7 @@ const MyBookings = () => {
                             : booking.bookingStatus === 'cancelled' || booking.bookingStatus === 'failed'
                               ? 'bg-black text-white border border-red-600'
                               : 'bg-black text-white'
-                            }`}
+                          }`}
                         >
                           <span className={`h-1.5 w-1.5 rounded-full ${(booking.bookingStatus === 'cancelled' || booking.bookingStatus === 'failed') ? 'bg-red-600' : 'bg-green-600'} `}></span>
                           {booking.bookingStatus}
@@ -209,7 +201,7 @@ const MyBookings = () => {
                             : 'bg-black text-white border border-red-600'
                           )}`}
                         >
-                          <span className={`h-1.5 w-1.5 rounded-full ${booking.bookingStatus === 'cancelled' ? 'bg-red-600' : (isSlotUpcoming(slot.date, slot.endTime) ? 'bg-green-600' : 'bg-red-600')} }   `}> </span>
+                          <span className={`h-1.5 w-1.5 rounded-full ${booking.bookingStatus === 'cancelled' ? 'bg-red-600' : (isSlotUpcoming(slot.date, slot.endTime) ? 'bg-green-600' : 'bg-red-600')}`}> </span>
                           {booking.bookingStatus === 'cancelled' ? 'cancelled' : (isSlotUpcoming(slot.date, slot.endTime) ? 'Upcoming' : 'Completed')}
                         </span>
                       </td>
@@ -255,7 +247,6 @@ const MyBookings = () => {
           </button>
         </div>
       </div>
-      {/* Render BookingDetails component when showBookingDetails is true */}
       {viewBookingDetails && (
         <div className="fixed mt-20 inset-0 z-50 flex items-center justify-center bg-black bg-opacity-100">
           <BookingDetails
@@ -263,8 +254,7 @@ const MyBookings = () => {
             cancelBooking={handleCancelBooking}
             setViewBookingDetails={setViewBookingDetails}
             bookingData={bookingData}
-
-            onClose={() => setViewBookingDetails(false)} // Provide an onClose prop to handle closing the overlay
+            onClose={() => setViewBookingDetails(false)}
           />
         </div>
       )}

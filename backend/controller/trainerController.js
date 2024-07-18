@@ -10,8 +10,6 @@ const Trainer = require('../model/trainerModel')
                 { new: true } // Return the updated document
             );
     
-            console.log(updatedTrainer); // Log the updated trainer data
-       
             if (!updatedTrainer) {
                 // Handle case where Trainer with given ID is not found
                 return res.status(404).json({ message: "Trainer not found" });

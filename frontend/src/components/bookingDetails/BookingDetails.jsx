@@ -28,7 +28,13 @@ const BookingDetails = ({cancelBooking , bookingId , setViewBookingDetails ,book
     setModalOpen(false);
      
   };
+  const isFutureSlot = (slot) => {
+    const slotDate = new Date(slot.date);
+    const [hours, minutes] = slot.startTime.split(':').map(Number);
+    slotDate.setHours(hours, minutes);
 
+    return slotDate > new Date();
+  };
 
   const formatDate = (dateStr) => {
     const dateObj = new Date(dateStr);
@@ -100,9 +106,14 @@ const BookingDetails = ({cancelBooking , bookingId , setViewBookingDetails ,book
             </div>
           ))}
         </div>
-        <button onClick={bookingStatus === 'cancelled' ? (()=>toast.error('already cancelled booking')) : (()=>setModalOpen(true))  } className="absolute bottom-6 right-6 bg-red-700 font-semibold border border-red-600 text-white hover:bg-red-500 hover:scale-105 px-4 py-2 rounded-md">
-          Cancel Booking
-        </button>
+        {bookingStatus !== 'cancelled' && isFutureSlot(slots[0]) && (
+            <button
+              onClick={() => setModalOpen(true)}
+              className="absolute bottom-6 right-6 bg-red-700 font-semibold border border-red-600 text-white hover:bg-red-500 hover:scale-105 px-4 py-2 rounded-md"
+            >
+              Cancel Booking
+            </button>
+          )}
       </div>
       {modalOpen && <ConfirmationModal
         isOpen={modalOpen}

@@ -88,8 +88,8 @@ const createChat = async (req, res) => {
     const newChat = new Chat({
       user: user,
       trainer: trainer,
-      messages: [newMessage], // Initialize messages array with newMessage
-      lastMessage: newMessage // Set lastMessage to newMessage
+      messages: [newMessage],
+      lastMessage: newMessage 
     });
 
     const savedChat = await newChat.save();

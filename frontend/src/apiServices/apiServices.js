@@ -66,6 +66,9 @@ const getAvailableSlots = async(id)=>{
 const getUserTransactions = async(userId)=>{
     return await axiosInstance.get(`/api/users/transactions/${userId}`);
 }
+const sendContactUsEmail = async(formData)=>{
+    return await axiosInstance.post(`/api/users/contact-us/send-email`,formData)
+}
  
 
 
@@ -91,6 +94,9 @@ const trainerRejection = async(id,reason)=>{
 }
 const manageBlockTrainer = async(id)=>{
     return await axiosInstance.patch(`/api/admin/block-trainer/${id}`)
+}
+const getChartData = async(role,period)=>{
+    return await axiosInstance.get(`/api/admin/chart-data/${role}/?period=${period}`);
 }
 
 
@@ -142,8 +148,10 @@ const getChatByUserIdAndTrainerId = async(trainerId,userId)=>{
     return await axiosInstance.get(`/api/chat/getchat/${trainerId}/${userId}`);
 }
 const getNotifications =async(userId)=>{
-    console.log('userId on getAll notifications  = ',userId)
     return await axiosInstance.get(`/api/notifications/${userId}`)
+}
+const markNotificationsAsRead = async(userId)=>{
+    return await axiosInstance.put(`/api/notifications/${userId}`)
 }
 
 
@@ -181,6 +189,7 @@ const onlinePayment = async(checkoutData)=>{
     getTrainerProfile,
     getAvailableSlots,
     getUserTransactions,
+    sendContactUsEmail,
 
 
 
@@ -191,6 +200,7 @@ const onlinePayment = async(checkoutData)=>{
     trainerAproval,
     trainerRejection,
     manageBlockTrainer,
+    getChartData,
 
 
     getAllSlots,
@@ -210,6 +220,7 @@ const onlinePayment = async(checkoutData)=>{
     getAllChat,
     getChatByUserIdAndTrainerId,
     getNotifications,
+    markNotificationsAsRead,
 
     walletPayment,
     onlinePayment,

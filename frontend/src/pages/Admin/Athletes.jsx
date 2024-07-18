@@ -26,7 +26,7 @@ const Athletes = () => {
       navigate('/admin/login');
       toast.info("Please login to continue.");
     }
-  }, []);
+  }, [userRole]);
 
   useEffect(() => {
     fetchAthletes();

@@ -1,6 +1,45 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
+import socket from '../../utils/socket';
+
+const bookingDetailsString = localStorage.getItem('bookingNotificationData');
+const bookingDetails = JSON.parse(bookingDetailsString);
 
 const CheckoutSuccess = () => {
+  const hasNotified = useRef(false);
+
+  const formatDate = (dateStr) => {
+    const dateObj = new Date(dateStr);
+    const day = String(dateObj.getDate()).padStart(2, '0');
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const year = dateObj.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
+  useEffect(() => {
+    if (bookingDetails && !hasNotified.current) {
+      console.log("bookingDetails in success", bookingDetails);
+      const { user, trainer, slot } = bookingDetails;
+      console.log(user, trainer, slot);
+      const contentUser = `Your booking for slot on ${formatDate(slot.date)} - from ${slot.startTime} to ${slot.endTime} is successful.`;
+      const contentTrainer = `Slot added on ${formatDate(slot.date)} - from ${slot.startTime} to ${slot.endTime} is booked by ${user.username}.`;
+
+      socket.emit("notification", {
+        content: contentUser,
+        receiverId: user._id,
+        sender: `Trainer, ${trainer.username}`
+      });
+
+      socket.emit("notification", {
+        content: contentTrainer,
+        receiverId: trainer._id,
+        sender: 'Admin regarding Booking'
+      });
+
+      localStorage.removeItem('bookingNotificationData');
+      hasNotified.current = true; // Mark notifications as sent
+    }
+  }, []);
+
   return (
     <div className="bg-black h-screen flex items-center justify-center">
       <div className="bg-black p-6 md:mx-auto">

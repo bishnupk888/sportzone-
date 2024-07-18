@@ -16,6 +16,15 @@ adminRouter.patch('/:id/trainer-rejection',authAdmin,adminController.handleRejec
 adminRouter.get('/trainers',authAdmin,adminController.getAllTrainers)
 adminRouter.get('/users',authAdmin,adminController.getAllUsers)
 adminRouter.get('/bookings',authAdmin,adminBookingHelper.getAllBookings)
+adminRouter.get('/dashboard-data',authAdmin,adminController.getDashBoardDatas)
+adminRouter.get('/chart-data/user',authAdmin,adminController.getUserChartDatas)
+adminRouter.get('/chart-data/trainer',authAdmin,adminController.getTrainerChartDatas)
+
+
+
+// /chart-data/${role}/?period=${period}
+
+
 
 
 // adminRouter.get()

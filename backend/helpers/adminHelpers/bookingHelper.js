@@ -28,7 +28,6 @@ const getAllBookings = async (req, res) => {
       booking.bookingDate = new Date(booking.bookingDate).toLocaleDateString('en-GB');
     });
 
-    console.log(bookings);
 
     if (bookings.length) {
       return res.status(200).json({ message: "bookings found", data: bookings });

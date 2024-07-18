@@ -37,7 +37,6 @@ const userSlice = createSlice({
   initialState: getUserDataFromLocalStorage(),
 reducers: {
     setUserData: (state, action) => {
-      console.log('Data in userReducer = ', action.payload);
       const { role, _id, profileImage, username, isBlocked } = action.payload;
       state.userRole = role;
       state.userId = _id;
