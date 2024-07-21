@@ -98,6 +98,26 @@ const manageBlockTrainer = async(id)=>{
 const getChartData = async(role,period)=>{
     return await axiosInstance.get(`/api/admin/chart-data/${role}/?period=${period}`);
 }
+const getTrainerChartData = async(role,period)=>{
+    return await axiosInstance.get(`/api/admin/trainer-chart-data/${role}/?period=${period}`);
+}
+
+const getBookingChartData = async(period)=>{
+    return await axiosInstance.get(`/api/admin/booking-chart-data/?period=${period}`);
+}
+
+const getBarChartData = async(period)=>{
+    return await axiosInstance.get(`/api/admin/barchart-data/?period=${period}`);
+}
+const getDashBoardData = async()=>{
+    return await axiosInstance.get("/api/admin/dashboard-data"); 
+}
+const getRevenueChartData = async(period)=>{
+    return await axiosInstance.get(`/api/admin/revenuechart-data/?period=${period}`);
+}
+
+
+
 
 
 // trainer api calls
@@ -137,7 +157,7 @@ const getTrainerTransactions = async (userId)=>{
 
 
 
-// socket api
+//chat and notification apis
 const getChat = async(chatId)=>{
     return await axiosInstance.get(`/api/chat/${chatId}`)
 }
@@ -152,6 +172,11 @@ const getNotifications =async(userId)=>{
 }
 const markNotificationsAsRead = async(userId)=>{
     return await axiosInstance.put(`/api/notifications/${userId}`)
+}
+
+const uploadFile = async(formData)=>{
+    console.log("call to upload file");
+    return await axiosInstance.post('/api/chat/file-upload',formData)
 }
 
 
@@ -201,6 +226,11 @@ const onlinePayment = async(checkoutData)=>{
     trainerRejection,
     manageBlockTrainer,
     getChartData,
+    getBarChartData,
+    getDashBoardData,
+    getBookingChartData,
+    getTrainerChartData,
+    getRevenueChartData,
 
 
     getAllSlots,
@@ -221,6 +251,7 @@ const onlinePayment = async(checkoutData)=>{
     getChatByUserIdAndTrainerId,
     getNotifications,
     markNotificationsAsRead,
+    uploadFile,
 
     walletPayment,
     onlinePayment,

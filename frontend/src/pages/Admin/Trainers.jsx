@@ -2,10 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { FaSearch } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import CustomModal from '../../components/popupComponents/imageViewerModal';
-import { useNavigate } from 'react-router-dom';
 import TrainerDetails from '../../components/admin/TrainerDetails';
 import apiServices from '../../apiServices/apiServices';
 import socket from '../../utils/socket';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import * as XLSX from 'xlsx';
+import { useNavigate } from 'react-router-dom';
 
 const Trainers = () => {
   const [trainersData, setTrainersData] = useState([]);
@@ -13,19 +16,19 @@ const Trainers = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [modalImageUrl, setModalImageUrl] = useState('');
   const [isOpen, setIsOpen] = useState(false);
-  const [viewDetails,setViewDetails] = useState(false)
-  const [trainerData, setTrainerData] = useState(null)
+  const [viewDetails, setViewDetails] = useState(false);
+  const [trainerData, setTrainerData] = useState(null);
   const trainersPerPage = 10;
 
   const userRole = localStorage.getItem('adminData');
-
   const navigate = useNavigate();
+
   useEffect(() => {
     if (!userRole) {
       navigate('/admin/login');
       toast.info("Please login to continue.");
     }
-  }, []);
+  }, [userRole]);
 
   useEffect(() => {
     apiServices.getAllTrainers()
@@ -39,67 +42,56 @@ const Trainers = () => {
 
   const handleApprove = (id) => {
     apiServices.trainerAproval(id)
-    .then((response) => {
-      const content = `your verification Approved`
-      socket.emit("notification",({content,receiverId:id,sender:'Admin' }))
-      setTrainersData(prevTrainersData => {
-        return prevTrainersData.map(trainer =>
+      .then((response) => {
+        const content = `your verification Approved`;
+        socket.emit("notification", { content, receiverId: id, sender: 'Admin' });
+        setTrainersData(prevTrainersData => prevTrainersData.map(trainer =>
           trainer._id === id ? { ...trainer, isVerified: true } : trainer
-        );
-      });
-      toast.success(`Trainer approved successfully!`);
-      setViewDetails(false)
-    })
-    .catch((err) => {
-      console.error("Failed to approve trainer", err);
-      toast.error(`Failed to approve trainer ${id}`);
-    });
-};
-
-const handleRejectTrainer = (id,reason)=>{
-  apiServices.trainerRejection(id,reason)
-  .then((response) => {
-    const content = `you verification rejected due to ${reason}`
-    socket.emit("notification",({content,receiverId:id,sender:'Admin' }))
-    setTrainersData(prevTrainersData => {
-      return prevTrainersData.map(trainer =>
-        trainer._id === id ? { ...trainer, isVerified: false } : trainer
-      );
-      
-    });
-    toast.success(`Trainer rejected successfully!`);
-    setViewDetails(false)
-  })
-  .catch((err) => {
-    console.error("Failed to reject trainer", err);
-    toast.error(`Failed to reject trainer ${id}`);
-  });
-};
-
-
-const handleBlock = (id) => {
-  apiServices.manageBlockTrainer(id)
-    
-      .then(response => {
-        setTrainersData(prevTrainersData => {
-          return prevTrainersData.map(trainer =>
-            trainer._id === id ? { ...trainer, isBlocked: !trainer.isBlocked } : trainer
-          );
-        });
-        toast.success(`Trainer ${trainersData.find(trainer => trainer._id === id).isBlocked ? 'Unblocked' :'Blocked' } successfully!`);
+        ));
+        toast.success(`Trainer approved successfully!`);
+        setViewDetails(false);
       })
-      .catch(err => {
-        console.error("Failed to handle block:", err);
-        toast.error(`Failed to ${trainersData.find(trainer => trainer._id === id).isBlocked ? 'Unblocked' :'Blocked'} trainer`);
+      .catch((err) => {
+        console.error("Failed to approve trainer", err);
+        toast.error(`Failed to approve trainer ${id}`);
       });
   };
 
-  const handleViewTrainerDetails = (trainer)=>{
-    setTrainerData(trainer)
-    setViewDetails(true)
-  }
+  const handleRejectTrainer = (id, reason) => {
+    apiServices.trainerRejection(id, reason)
+      .then((response) => {
+        const content = `your verification rejected due to ${reason}`;
+        socket.emit("notification", { content, receiverId: id, sender: 'Admin' });
+        setTrainersData(prevTrainersData => prevTrainersData.map(trainer =>
+          trainer._id === id ? { ...trainer, isVerified: false } : trainer
+        ));
+        toast.success(`Trainer rejected successfully!`);
+        setViewDetails(false);
+      })
+      .catch((err) => {
+        console.error("Failed to reject trainer", err);
+        toast.error(`Failed to reject trainer ${id}`);
+      });
+  };
 
-  
+  const handleBlock = (id) => {
+    apiServices.manageBlockTrainer(id)
+      .then(response => {
+        setTrainersData(prevTrainersData => prevTrainersData.map(trainer =>
+          trainer._id === id ? { ...trainer, isBlocked: !trainer.isBlocked } : trainer
+        ));
+        toast.success(`Trainer ${trainersData.find(trainer => trainer._id === id).isBlocked ? 'Unblocked' : 'Blocked'} successfully!`);
+      })
+      .catch(err => {
+        console.error("Failed to handle block:", err);
+        toast.error(`Failed to ${trainersData.find(trainer => trainer._id === id).isBlocked ? 'Unblock' : 'Block'} trainer`);
+      });
+  };
+
+  const handleViewTrainerDetails = (trainer) => {
+    setTrainerData(trainer);
+    setViewDetails(true);
+  };
 
   const openModal = (imageUrl) => {
     setModalImageUrl(imageUrl);
@@ -124,7 +116,42 @@ const handleBlock = (id) => {
       return a.username.localeCompare(b.username);
     });
     setTrainersData(sorted);
-   
+  };
+
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    const tableColumn = ["SL No", "Trainer Name", "Email", "Status"];
+    const tableRows = [];
+
+    filteredTrainers.forEach((trainer, index) => {
+      tableRows.push([
+        indexOfFirstTrainer + index + 1,
+        trainer.username,
+        trainer.email,
+        trainer.isVerified ? 'Verified' : 'Not Verified'
+      ]);
+    });
+
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: 10,
+    });
+    doc.save('trainers.pdf');
+  };
+
+  const exportToExcel = () => {
+    const ws = XLSX.utils.json_to_sheet(
+      filteredTrainers.map((trainer, index) => ({
+        "SL No": indexOfFirstTrainer + index + 1,
+        "Trainer Name": trainer.username,
+        "Email": trainer.email,
+        "Status": trainer.isVerified ? 'Verified' : 'Not Verified',
+      }))
+    );
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Trainers');
+    XLSX.writeFile(wb, 'trainers.xlsx');
   };
 
   const renderTrainers = () => {
@@ -148,9 +175,9 @@ const handleBlock = (id) => {
           </button>
         </td>
         <td className="p-3 border border-redBorder text-center">
-        <button
+          <button
             onClick={() => handleViewTrainerDetails(trainer)}
-            className={`mr-2 px-3 py-1 rounded transition-transform duration-200 hover:scale-110 text-white border border-green-500 bg-green-900`}
+            className="mr-2 px-3 py-1 rounded transition-transform duration-200 hover:scale-110 text-white border border-green-500 bg-green-900"
           >
             Details
           </button>
@@ -165,7 +192,7 @@ const handleBlock = (id) => {
     <div className='bg-black w-auto h-[100%]'>
       <div className="overflow-x-auto m-4 p-4 border border-redBorder bg-black text-textColor rounded-md mx-[30px]">
         <div className="flex justify-between items-center mb-4">
-        <div>
+          <div>
             <h1 className='text-2xl font-bold pl-10'>TRAINERS</h1>
           </div>
           <div className="relative">
@@ -174,14 +201,26 @@ const handleBlock = (id) => {
               placeholder="Search trainers..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="px-3 py-2 border border-redBorder rounded bg-black text-textColor pl-10"
+              className="px-3 py-2 border border-redBorder rounded bg-black text-textColor pl-10 hover:scale-95"
             />
             <FaSearch className="absolute left-3 top-2.5 text-textColor" />
             <button
               onClick={handleSort}
-              className="bg-black border border-redBorder text-textColor ml-2 px-4 py-2 rounded"
+              className="bg-black border border-redBorder text-textColor ml-2 px-4 py-2 rounded hover:scale-95"
             >
               Sort by Name
+            </button>
+            <button
+              onClick={exportToPDF}
+              className="bg-green-800 border border-green-900 text-white ml-2 px-4 py-2 rounded hover:scale-95"
+            >
+              Export to PDF
+            </button>
+            <button
+              onClick={exportToExcel}
+              className="bg-blue-800 border border-blue-900 text-white ml-2 px-4 py-2 rounded hover:scale-95"
+            >
+              Export to Excel
             </button>
           </div>
         </div>

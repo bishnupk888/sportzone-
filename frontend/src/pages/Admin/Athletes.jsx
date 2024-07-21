@@ -6,20 +6,22 @@ import { setBlockedStatus } from '../../redux/features/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import UserDetails from '../../components/admin/UserDetails';
 import apiServices from '../../apiServices/apiServices';
-
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import * as XLSX from 'xlsx';
 
 const Athletes = () => {
   const [athletesData, setAthletesData] = useState([]);
-  const [athleteData,setAthleteData] = useState(null)
-  const [viewUserDetails,setViewUserDetails] = useState(false)
+  const [athleteData, setAthleteData] = useState(null);
+  const [viewUserDetails, setViewUserDetails] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const athletesPerPage = 10;
 
   const userRole = localStorage.getItem('adminData');
-  const isBlocked = useSelector((state)=>state.user.isBlocked)
+  const isBlocked = useSelector((state) => state.user.isBlocked);
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!userRole) {
@@ -48,7 +50,7 @@ const Athletes = () => {
         setAthletesData(prevAthletesData => {
           return prevAthletesData.map((athlete) => {
             if (id === athlete._id) {
-              dispatch(setBlockedStatus(!isBlocked))
+              dispatch(setBlockedStatus(!isBlocked));
               return { ...athlete, isBlocked: !athlete.isBlocked };
             }
             return athlete;
@@ -107,19 +109,54 @@ const Athletes = () => {
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
   };
-  const handleSort = () => {
 
+  const handleSort = () => {
     const sorted = [...athletesData].sort((a, b) => {
         return a.username.localeCompare(b.username);
     });
     setAthletesData(sorted);
-};
+  };
 
-const handleViewDetails = (athlete)=>{
-  setAthleteData(athlete)
-  setViewUserDetails(true)
-}
+  const handleViewDetails = (athlete) => {
+    setAthleteData(athlete);
+    setViewUserDetails(true);
+  };
 
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    const tableColumn = ["SL No", "Athlete Name", "Email", "Status"];
+    const tableRows = [];
+
+    filteredAthletes.forEach((athlete, index) => {
+      tableRows.push([
+        indexOfFirstAthlete + index + 1,
+        athlete.username,
+        athlete.email,
+        athlete.isBlocked ? 'Blocked' : 'Active'
+      ]);
+    });
+
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: 10,
+    });
+    doc.save('athletes.pdf');
+  };
+
+  const exportToExcel = () => {
+    const ws = XLSX.utils.json_to_sheet(
+      filteredAthletes.map((athlete, index) => ({
+        "SL No": indexOfFirstAthlete + index + 1,
+        "Athlete Name": athlete.username,
+        "Email": athlete.email,
+        "Status": athlete.isBlocked ? 'Blocked' : 'Active',
+      }))
+    );
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Athletes');
+    XLSX.writeFile(wb, 'athletes.xlsx');
+  };
 
   return (
     <div className='bg-black w-auto h-[100%]'>
@@ -134,17 +171,28 @@ const handleViewDetails = (athlete)=>{
               placeholder="Search athletes..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="px-3 py-2 border border-redBorder rounded bg-black text-textColor pl-10"
+              className="px-3 py-2 border border-redBorder rounded bg-black text-textColor pl-10 hover:scale-95"
             />
-            <FaSearch className="absolute left-3 top-2.5 text-textColor" />
+            <FaSearch className="absolute left-3 top-2.5 text-textColor " />
             <button
-            onClick={handleSort}
-            className="bg-black border border-redBorder text-textColor ml-2 px-4 py-2 rounded"
-          >
-            Sort by Name
-          </button>
+              onClick={handleSort}
+              className="bg-black border border-redBorder text-textColor ml-2 px-4 py-2 rounded hover:scale-95"
+            >
+              Sort by Name
+            </button>
+            <button
+              onClick={exportToPDF}
+              className="bg-green-800 border border-green-900 text-white ml-2 px-4 py-2 rounded hover:scale-95"
+            >
+              Export to PDF
+            </button>
+            <button
+              onClick={exportToExcel}
+              className="bg-blue-800 border border-blue-900 text-white ml-2 px-4 py-2 rounded hover:scale-95"
+            >
+              Export to Excel
+            </button>
           </div>
-          
         </div>
         <table className="min-w-full bg-white dark:bg-black">
           <thead>
@@ -154,7 +202,6 @@ const handleViewDetails = (athlete)=>{
               <th className="p-3 border border-redBorder">Email</th>
               <th className="p-3 border border-redBorder">Options</th>
               <th className="p-3 border border-redBorder">More</th>
-
             </tr>
           </thead>
           <tbody>
@@ -190,10 +237,10 @@ const handleViewDetails = (athlete)=>{
           </button>
         </div>
       </div>
-      {viewUserDetails && <UserDetails user={athleteData}  setViewUserDetails={setViewUserDetails}  />}
-
+      {viewUserDetails && <UserDetails user={athleteData} setViewUserDetails={setViewUserDetails} />}
     </div>
   );
 };
 
 export default Athletes;
+

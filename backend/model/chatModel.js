@@ -37,6 +37,10 @@ const chatSchema = new Schema({
         type: String,
         default:''
       },
+      audio:{
+        type: String,
+        default:''
+      },
       isRead:{
         type:Boolean,
         required:true,
@@ -59,20 +63,20 @@ const chatSchema = new Schema({
       required: true
     },
     content: {
-      // text:{
-      //   type: String,
-      //   default:''
-      // },
-      // image:{
-      //   type: String,
-      //   default:''
-      // },
-      // video:{
-      //   type: String,
-      //   default:''
-      // }
       type: String,
       required: true
+    },
+    image:{
+      type: String,
+      default:''
+    },
+    video:{
+      type: String,
+      default:''
+    },
+    audio:{
+      type: String,
+      default:'' 
     },
     isRead:{
       type:Boolean,

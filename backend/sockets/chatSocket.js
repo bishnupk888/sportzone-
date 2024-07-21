@@ -4,6 +4,7 @@ const Notification = require('../model/notificationModel');
   
 const connectedUsers = new Map()
 
+
 const chatSocket = (io) => {
     io.on('connection', async(socket) => {
         console.log('A client connected.');
@@ -16,7 +17,11 @@ const chatSocket = (io) => {
 
         socket.on('newMessage', async (data, callback) => {
             try {
+              
               const { userId, trainerId, message } = data;
+
+              console.log('newMessage in socket : ', message)
+
               const senderId = message.senderId;
               const senderType = message.senderType;
               console.log('senderId = ', senderId);
@@ -32,6 +37,9 @@ const chatSocket = (io) => {
                 senderType,
                 senderId,
                 content: message.content,
+                image:message.image,
+                video:message.video,
+                audio:message.audio,
                 createdAt: Date.now()
               };
           
@@ -40,7 +48,6 @@ const chatSocket = (io) => {
           
               let updatedChat;
               if (!existingChat) {
-                // Create a new chat if one doesn't exist
                 const newChat = new Chat({
                   user: userId,
                   trainer: trainerId,
@@ -89,8 +96,10 @@ const chatSocket = (io) => {
           socket.to(recieverSocketId).emit('notification',savedNotification)
         })
 
-          
-    
+        socket.on('typing', (data) => {
+          const { userId, chatId, isTyping } = data;
+          socket.to(chatId).emit('typing', { userId, isTyping });
+      });
         // Add more event listeners as needed
     
         // Example disconnect event handler

@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../axiosInstance/axiosInstance';
-import { setUserData } from '../Redux/features/userSlice';
+import { setUserData } from '../redux/features/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import logo from '../assets/images/logo/logo.png';
 import bgImage from '../assets/images/background/20215.jpg'; // Adjust the path accordingly
-import BouncingBallLoader from '../components/Loader/BouncingBallLoader';
+
+import BouncingBallLoader from '../components/loader/BouncingBallLoader';
 
 
 const LoginGoogleAuth = () => {

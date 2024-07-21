@@ -12,5 +12,8 @@ chatRouter.get('/messages/:userRole/:userId',authenticate,chatController.getAllC
 
 chatRouter.get('/:chatId', authenticate, chatController.getChatById);
 chatRouter.post('/:chatId/message', authenticate, chatController.sendMessage);
+chatRouter.post('/file-upload', authenticate, chatController.uploadFile);
+
+
 
 module.exports = chatRouter;  

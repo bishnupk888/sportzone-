@@ -128,15 +128,15 @@ const AreaChartCard = ({ role }) => {
     <div className="max-w-md w-full bg-white rounded-lg shadow dark:bg-black border border-redBorder p-4 md:p-6">
       <div className="flex justify-between">
         <div>
-          <h5 className="leading-none text-3xl font-bold text-gray-900 dark:text-white pb-2">{`${usersCount} `}</h5>
-          <p className="text-base font-normal text-gray-500 dark:text-gray-400">{` ${role}s joined ${period}`}</p>
+          <h5 className="leading-none text-3xl font-bold text-gray-900 dark:text-highlightTextColor pb-2">{`${usersCount} ${role}s`}</h5>
+          <p className="text-base font-normal text-gray-500 dark:text-gray-400">{`  joined ${period}`}</p>
         </div>
-        <div className="flex items-center px-2.5 py-0.5 text-base font-semibold text-green-700  text-center">
+        {/* <div className="flex items-center px-2.5 py-0.5 text-base font-semibold text-green-700  text-center">
           12%
           <svg className="w-3 h-3 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 14">
             <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13V1m0 0L1 5m4-4 4 4"/>
           </svg>
-        </div>
+        </div> */}
       </div>
       <div id="area-chart">
         <Chart options={options} series={options.series} type="area" height="150" />

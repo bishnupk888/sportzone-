@@ -12,6 +12,7 @@ import UserRoutes from './UserRoutes';
 import TrainerRoutes from './TrainerRoutes';
 import AdminRoutes from './AdminRoutes';
 import VerifyForResetPassword from '../pages/VerifyForResetPassword';
+import InvoiceComponent from '../components/pdfComponents/InvoiceComponent';
 
 const Routers = () => {
   // const isBlocked = useSelector((state) => state.user.isBlocked);
@@ -43,6 +44,9 @@ const Routers = () => {
       <Route path='/verify-otp' element={<VerifyOtp />} />
       <Route path='/reset-password' element={<ResetPassword />} />
       <Route path='/reset-password/verify-otp' element={<VerifyForResetPassword />} />
+      <Route path='/invoice' element={<InvoiceComponent />} />
+
+      InvoiceComponent
 
 
       {/* User Routes */}

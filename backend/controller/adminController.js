@@ -163,7 +163,15 @@ const getDashBoardDatas = async (req, res) => {
 
     const successfulBookingsCount = await Booking.countDocuments({ bookingStatus: 'success' });
 
+    const cancelledBookingsCount = await Booking.countDocuments({ bookingStatus: 'cancelled' });
+
     const bookedSlotsCount = await Slot.countDocuments({ isBooked: true });
+
+    const totalBookings = await Booking.countDocuments({ });
+
+
+
+    const slotsCount = await Slot.countDocuments({})
 
     // Fetch total revenue generated
     const successfulBookings = await Booking.find({ bookingStatus: 'success' });
@@ -174,7 +182,11 @@ const getDashBoardDatas = async (req, res) => {
       totalTrainersCount,
       successfulBookingsCount,
       bookedSlotsCount,
-      totalRevenueGenerated
+      totalRevenueGenerated,
+      slotsCount,
+      cancelledBookingsCount,
+      totalBookings,
+
     }
     // Send the collected data to the frontend
     res.status(200).json({message:" successfully fetched dashboard data",dashBoardData});
@@ -315,6 +327,344 @@ const getTrainerChartDatas = async (req, res) => {
   }
 };
 
+const getBarChartData = async (req, res) => {
+  const { period } = req.query;
+  let dateRange = {};
+
+  switch (period) {
+    case 'yesterday':
+      dateRange = {
+        $gte: moment().subtract(1, 'days').startOf('day').toDate(),
+        $lt: moment().startOf('day').toDate(),
+      };
+      break;
+    case 'today':
+      dateRange = {
+        $gte: moment().startOf('day').toDate(),
+        $lt: moment().endOf('day').toDate(),
+      };
+      break;
+    case 'last7days':
+      dateRange = {
+        $gte: moment().subtract(7, 'days').startOf('day').toDate(),
+        $lt: moment().endOf('day').toDate(),
+      };
+      break;
+    case 'last30days':
+      dateRange = {
+        $gte: moment().subtract(30, 'days').startOf('day').toDate(),
+        $lt: moment().endOf('day').toDate(),
+      };
+      break;
+    case 'last90days':
+      dateRange = {
+        $gte: moment().subtract(90, 'days').startOf('day').toDate(),
+        $lt: moment().endOf('day').toDate(),
+      };
+      break;
+    case 'allTime':
+      dateRange = null; // No restrictions, includes all data
+      break;
+    default:
+      return res.status(400).send('Invalid period');
+  }
+
+  const matchCondition = dateRange
+    ? { createdAt: dateRange }
+    : {};
+
+  try {
+    const [usersData, trainersData] = await Promise.all([
+      User.aggregate([
+        { $match: { ...matchCondition, role: 'user' } },
+        { $group: { _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } }, count: { $sum: 1 } } },
+        { $sort: { _id: 1 } },
+      ]),
+      Trainer.aggregate([
+        { $match: { ...matchCondition, role: 'trainer' } },
+        { $group: { _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } }, count: { $sum: 1 } } },
+        { $sort: { _id: 1 } },
+      ]),
+    ]);
+
+    // Format data for response
+    const formatData = (data) => ({
+      counts: data.map(item => item.count),
+      labels: data.map(item => item._id),
+    });
+
+    res.json({
+      users: formatData(usersData),
+      trainers: formatData(trainersData),
+    });
+  } catch (error) {
+    console.error('Error fetching chart data:', error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
+const getBookingChartData = async (req, res) => {
+  const { period } = req.query;
+  console.log(period)
+  let dateRange = {};
+  let matchCondition = {};
+
+  // Determine the date range based on the period
+  switch (period) {
+
+    case 'yesterday':
+      dateRange = {
+        $gte: moment().subtract(1, 'days').startOf('day').toDate(),
+        $lt: moment().startOf('day').toDate(),
+      };
+      break;
+    case 'today':
+      dateRange = {
+        $gte: moment().startOf('day').toDate(),
+        $lt: moment().endOf('day').toDate(),
+      };
+      break;
+    case 'last7days':
+      dateRange = {
+        $gte: moment().subtract(7, 'days').startOf('day').toDate(),
+        $lt: moment().endOf('day').toDate(),
+      };
+      break;
+    case 'last30days':
+      dateRange = {
+        $gte: moment().subtract(30, 'days').startOf('day').toDate(),
+        $lt: moment().endOf('day').toDate(),
+      };
+      break;
+    case 'last90days':
+      dateRange = {
+        $gte: moment().subtract(90, 'days').startOf('day').toDate(),
+        $lt: moment().endOf('day').toDate(),
+      };
+      break;
+    case 'allTime':
+      dateRange = null; // No restrictions, includes all data
+      break;
+    default:
+      return res.status(400).send('Invalid period');
+  }
+
+  if (dateRange) {
+    matchCondition.bookingDate = dateRange;
+  }
+
+  try {
+    const data = await Booking.aggregate([
+      { $match: matchCondition }, // Filter by the conditions you need, e.g., date range
+      {
+        $group: {
+          _id: null,
+          successful: {
+            $sum: { $cond: [{ $eq: ["$bookingStatus", "success"] }, 1, 0] }
+          },
+          canceled: {
+            $sum: { $cond: [{ $eq: ["$bookingStatus", "cancelled"] }, 1, 0] }
+          },
+          totalSuccessAmount: {
+            $sum: {
+              $cond: [{ $eq: ["$bookingStatus", "success"] }, "$bookingAmount", 0]
+            }
+          }
+        }
+      }
+    ]);
+
+
+    // Format the response to include the counts
+    const result = {
+      successful: data.length ? data[0].successful : 0,
+      canceled: data.length ? data[0].canceled : 0,
+      totalSuccessAmount:data.length ?data[0].totalSuccessAmount:0
+    };
+
+    res.json(result);
+  } catch (error) {
+    console.error('Error fetching chart data:', error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
+const getTrainerIsVerifiedData = async (req, res) => {
+  const role = 'trainer';
+  const { period } = req.query;
+  let matchCondition = { role };
+  let groupByCondition = { _id: "$isVerified", count: { $sum: 1 } };
+  let dateRange = {};
+
+  switch (period) {
+    case 'yesterday':
+      dateRange = {
+        $gte: moment().subtract(1, 'days').startOf('day').toDate(),
+        $lt: moment().startOf('day').toDate(),
+      };
+      break;
+    case 'today':
+      dateRange = {
+        $gte: moment().startOf('day').toDate(),
+        $lt: moment().endOf('day').toDate(),
+      };
+      break;
+    case 'last7days':
+      dateRange = {
+        $gte: moment().subtract(7, 'days').startOf('day').toDate(),
+        $lt: moment().endOf('day').toDate(),
+      };
+      break;
+    case 'last30days':
+      dateRange = {
+        $gte: moment().subtract(30, 'days').startOf('day').toDate(),
+        $lt: moment().endOf('day').toDate(),
+      };
+      break;
+    case 'last90days':
+      dateRange = {
+        $gte: moment().subtract(90, 'days').startOf('day').toDate(),
+        $lt: moment().endOf('day').toDate(),
+      };
+      break;
+    case 'allTime':
+      dateRange = null; // No restrictions, includes all data
+      break;
+    default:
+      return res.status(400).send('Invalid period');
+  }
+
+  if (dateRange) {
+    matchCondition.createdAt = dateRange;
+  }
+
+  try {
+    const data = await Trainer.aggregate([
+      { $match: matchCondition },
+      { $group: groupByCondition },
+      { $sort: { _id: 1 } }, // Sort by _id (which is now the isVerified status)
+    ]);
+
+    // Format the data to include both verified and unverified counts
+    const result = {
+      verified: 0,
+      unverified: 0,
+    };
+
+    data.forEach(item => {
+      if (item._id === true) {
+        result.verified = item.count;
+      } else if (item._id === false) {
+        result.unverified = item.count;
+      }
+    });
+
+    res.json(result);
+  } catch (error) {
+    console.error('Error fetching trainer verification data:', error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+const getTotalRevenueChartData = async (req, res) => {
+  const { period } = req.query;
+  let matchCondition = { bookingStatus: 'success' };
+  let groupByCondition;
+  let dateRange = {};
+  let labelFormat = '';
+
+  switch (period) {
+    case 'yesterday':
+      dateRange = {
+        $gte: moment().subtract(1, 'days').startOf('day').toDate(),
+        $lt: moment().startOf('day').toDate(),
+      };
+      labelFormat = 'YYYY-MM-DD';
+      groupByCondition = { _id: { $dateToString: { format: labelFormat, date: "$bookingDate" } }, totalRevenue: { $sum: "$bookingAmount" } };
+      break;
+    case 'today':
+      dateRange = {
+        $gte: moment().startOf('day').toDate(),
+        $lt: moment().endOf('day').toDate(),
+      };
+      labelFormat = 'YYYY-MM-DD';
+      groupByCondition = { _id: { $dateToString: { format: labelFormat, date: "$bookingDate" } }, totalRevenue: { $sum: "$bookingAmount" } };
+      break;
+    case 'last7days':
+      dateRange = {
+        $gte: moment().subtract(7, 'days').startOf('day').toDate(),
+        $lt: moment().endOf('day').toDate(),
+      };
+      labelFormat = 'YYYY-MM-DD';
+      groupByCondition = { _id: { $dateToString: { format: labelFormat, date: "$bookingDate" } }, totalRevenue: { $sum: "$bookingAmount" } };
+      break;
+    case 'last30days':
+      dateRange = {
+        $gte: moment().subtract(30, 'days').startOf('day').toDate(),
+        $lt: moment().endOf('day').toDate(),
+      };
+      labelFormat = 'YYYY-MM-DD';
+      groupByCondition = { _id: { $dateToString: { format: labelFormat, date: "$bookingDate" } }, totalRevenue: { $sum: "$bookingAmount" } };
+      break;
+    case 'last90days':
+      dateRange = {
+        $gte: moment().subtract(90, 'days').startOf('day').toDate(),
+        $lt: moment().endOf('day').toDate(),
+      };
+      labelFormat = 'YYYY-MM-DD';
+      groupByCondition = { _id: { $dateToString: { format: labelFormat, date: "$bookingDate" } }, totalRevenue: { $sum: "$bookingAmount" } };
+      break;
+    case 'allTime':
+      dateRange = null; // No restrictions, includes all data
+      labelFormat = 'YYYY-MM-DD'; // Adjust as needed for the entire period
+      groupByCondition = { _id: { $dateToString: { format: labelFormat, date: "$bookingDate" } }, totalRevenue: { $sum: "$bookingAmount" } };
+      break;
+    default:
+      return res.status(400).send('Invalid period');
+  }
+
+  if (dateRange) {
+    matchCondition.bookingDate = dateRange;
+  }
+
+  try {
+    const data = await Booking.aggregate([
+      { $match: matchCondition },
+      { $group: groupByCondition },
+      { $sort: { _id: 1 } }, // Sort by date
+    ]);
+
+    // Generate labels based on the selected period
+    const startDate = moment().startOf(period === 'allTime' ? 'year' : 'day');
+    const endDate = moment().endOf('day');
+    const labels = [];
+    const revenueData = [];
+
+    while (startDate.isBefore(endDate)) {
+      const dateLabel = startDate.format(labelFormat);
+      labels.push(dateLabel);
+
+      const entry = data.find(d => d._id === dateLabel);
+      revenueData.push(entry ? entry.totalRevenue : 0);
+
+      startDate.add(1, 'day');
+    }
+
+    res.json({
+      revenue: revenueData,
+      labels: labels,
+    });
+  } catch (error) {
+    console.error('Error fetching revenue data:', error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
+
+
+
+
+
+
 
 
 module.exports ={
@@ -329,6 +679,10 @@ module.exports ={
     getDashBoardDatas,
     getUserChartDatas,
     getTrainerChartDatas,
+    getBarChartData,
+    getBookingChartData,
+    getTrainerIsVerifiedData,
+    getTotalRevenueChartData,
     
 
 }

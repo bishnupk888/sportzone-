@@ -1,7 +1,7 @@
 const Chat = require('../model/chatModel');
 const chatSocket = require('../sockets/chatSocket');
-
-// Create a new chat
+const cloudinary = require('../config/cloudinary'); // Assuming you have a cloudinaryConfig file
+const streamifier = require('streamifier'); // To handle streams for Cloudinary
 
 const newMessage =async(data)=>{
            
@@ -143,6 +143,53 @@ const sendMessage = async (req, res) => {
     }
   };
 
+
+
+  const uploadFile = async (formData) => {
+    const { file, chatId, senderType, senderId, type } = formData;
+  
+    try {
+      const uploadStream = cloudinary.uploader.upload_stream(async (error, result) => {
+        if (error) {
+          console.error('Error uploading to Cloudinary:', error);
+          throw new Error('Upload failed');  
+        }
+  
+        const message = {
+          senderType,
+          senderId,
+          createdAt: new Date(),
+        };
+  
+        if (type === 'image') {
+          message.image = result.secure_url;
+        } else if (type === 'video') {
+          message.video = result.secure_url;
+        } else if (type === 'audio') {
+          message.audio = result.secure_url;
+        }
+  
+        const updatedChat = await Chat.findByIdAndUpdate(
+          chatId,
+          { $push: { messages: message }, $set: { lastMessage: message } },
+          { new: true }
+        );
+  
+        return { message: 'File uploaded successfully', chat: updatedChat };
+      });
+  
+      // Ensure file.buffer is a valid Buffer or Uint8Array before piping
+      if (Buffer.isBuffer(file.buffer) || file.buffer instanceof Uint8Array) {
+        streamifier.createReadStream(file.buffer).pipe(uploadStream);
+      } else {
+        throw new Error('Invalid file buffer type');
+      }
+    } catch (error) {
+      console.error('Error handling file upload:', error);
+      throw new Error('Server error');
+    }
+  };
+  
   
 
 module.exports = {
@@ -151,6 +198,7 @@ module.exports = {
     sendMessage,
     newMessage,
     getChatByUserAndTrainerId,
-    getAllChatsByUserId
+    getAllChatsByUserId,
+    uploadFile,
 
 }

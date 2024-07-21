@@ -19,6 +19,19 @@ adminRouter.get('/bookings',authAdmin,adminBookingHelper.getAllBookings)
 adminRouter.get('/dashboard-data',authAdmin,adminController.getDashBoardDatas)
 adminRouter.get('/chart-data/user',authAdmin,adminController.getUserChartDatas)
 adminRouter.get('/chart-data/trainer',authAdmin,adminController.getTrainerChartDatas)
+adminRouter.get('/barchart-data',authAdmin,adminController.getBarChartData)
+adminRouter.get('/booking-chart-data',authAdmin,adminController.getBookingChartData)
+adminRouter.get('/trainer-chart-data/trainer',authAdmin,adminController.getTrainerIsVerifiedData)
+adminRouter.get('/revenuechart-data',authAdmin,adminController.getTotalRevenueChartData)
+
+
+
+
+
+
+
+
+
 
 
 

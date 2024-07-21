@@ -1,13 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { FaArrowLeft } from 'react-icons/fa';
+import { HiOutlineDownload } from 'react-icons/hi';
+import { PDFDownloadLink } from '@react-pdf/renderer';
 import ConfirmationModal from '../popupComponents/ConfirmationModal';
 import { toast } from 'react-toastify';
 import apiServices from '../../apiServices/apiServices';
+import Invoice from '../../components/pdfComponents/InvoiceComponent'; // Import the Invoice component
+import { useSelector } from 'react-redux';
 
 const BookingDetailsTrainer = ({ cancelBooking, bookingId, setViewBookingDetails, bookingData }) => {
   const [bookingDetails, setBookingDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const user = useSelector((state) => state.user);
 
   const handleOpenModal = () => {
     setModalOpen(true);
@@ -20,6 +26,13 @@ const BookingDetailsTrainer = ({ cancelBooking, bookingId, setViewBookingDetails
   const handleConfirmAction = () => {
     cancelBooking(bookingId);
     setModalOpen(false);
+  };
+
+  const isFutureSlot = (slot) => {
+    const slotDate = new Date(slot.date);
+    const [hours, minutes] = slot.startTime.split(':').map(Number);
+    slotDate.setHours(hours, minutes);
+    return slotDate > new Date();
   };
 
   const formatDate = (dateStr) => {
@@ -52,6 +65,7 @@ const BookingDetailsTrainer = ({ cancelBooking, bookingId, setViewBookingDetails
   }
 
   const { userId, bookingDate, slots, bookingAmount, bookingStatus } = bookingDetails;
+
 
   return (
     <div className="mx-10 lg:mx-60 md:mx-40 w-full h-auto">
@@ -91,9 +105,47 @@ const BookingDetailsTrainer = ({ cancelBooking, bookingId, setViewBookingDetails
             </div>
           ))}
         </div>
-        <button onClick={bookingStatus === 'cancelled' ? (() => toast.error('already cancelled booking')) : handleOpenModal} className="absolute bottom-6 right-6 bg-red-700 font-semibold border border-red-600 text-white hover:bg-red-500 hover:scale-105 px-4 py-2 rounded-md">
-          Cancel Booking
-        </button>
+
+        <div className="flex justify-end items-center mt-4 gap-2">
+          <div className="relative">
+            <button
+              onClick={() => setDropdownOpen(!dropdownOpen)}
+              className="bg-blue-700 font-semibold border border-blue-600 text-white hover:bg-blue-500 hover:scale-105 px-4 py-2 rounded-md flex items-center"
+            >
+              <HiOutlineDownload size={20} className="mr-2" />
+              Download
+            </button>
+            {dropdownOpen && (
+              <div className="absolute top-12 bg-black border border-red-900 rounded-lg shadow-lg">
+                <PDFDownloadLink document={<Invoice trainer={user} username={userId.username} bookingDate={formatDate(bookingDate)} slot={slots} slotDate={formatDate(slots[0].date)} bookingAmount={bookingAmount} />} fileName='invoice.pdf'>
+                  {({ loading }) => (
+                    <button
+                      
+                      disabled={loading}
+                      className="block px-4 py-2 text-gray-200 hover:bg-gray-800 w-full text-left text-[13px]"
+                    >
+                      {loading ? 'Preparing PDF...' : 'Download PDF'}
+                    </button>
+                  )}
+                </PDFDownloadLink>
+              </div>
+            )}
+          </div>
+          <button
+            onClick={() => {
+              if (bookingStatus === 'cancelled') {
+                toast.error('Already cancelled booking');
+              } else if (isFutureSlot(slots[0])) {
+                handleOpenModal();
+              } else {
+                toast.error('Cannot cancel a past booking');
+              }
+            }}
+            className="bg-red-700 font-semibold border border-red-600 text-white hover:bg-red-500 hover:scale-105 px-4 py-2 rounded-md"
+          >
+            Cancel Booking
+          </button>
+        </div>
       </div>
       {modalOpen && <ConfirmationModal
         isOpen={modalOpen}
@@ -107,3 +159,4 @@ const BookingDetailsTrainer = ({ cancelBooking, bookingId, setViewBookingDetails
 };
 
 export default BookingDetailsTrainer;
+
