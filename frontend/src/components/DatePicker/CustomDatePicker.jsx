@@ -46,7 +46,7 @@ const CustomDatePicker = ({ selectedDate, setSelectedDate }) => {
   const getDateValue = (date) => {
     const selectedDate = new Date(year, month, date);
     if (selectedDate < new Date()) {
-      return; // Do nothing if the selected date is in the past
+      return; 
     }
     datepickerValue.current = selectedDate.toDateString();
     setSelectedDate(selectedDate);

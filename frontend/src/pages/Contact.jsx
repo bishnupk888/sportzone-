@@ -3,10 +3,12 @@ import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import apiServices from '../apiServices/apiServices';
+import BouncingBallLoader from '../components/loader/BouncingBallLoader';
 
 const Contact = () => {
   window.scrollTo(0, 0);
   const userRole = useSelector((state) => state.user.userRole);
+  const [loaderActive, setLoaderActive] = useState(false)
   const navigate = useNavigate();
   const [contactFormData, setContactFormData] = useState({
     fullname: '',
@@ -48,19 +50,25 @@ const Contact = () => {
     if (contactFormData.message.length > 500) {
       formErrors.message = 'Message cannot exceed 500 characters';
     }
+    
     return formErrors;
+
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setLoaderActive(true)
+
     const formErrors = validateForm();
     if (Object.keys(formErrors).length > 0) {
+      setLoaderActive(false)
       setErrors(formErrors);
       toast.error('Please fix the errors in the form');
     } else {
       apiServices.sendContactUsEmail(contactFormData)
       .then((response)=>{
           console.log("response : " ,response)
+          setLoaderActive(false)
           toast.success(response.data.message);
           setContactFormData({
             fullname: '',
@@ -141,8 +149,8 @@ const Contact = () => {
               ></textarea>
               {errors.message && <p className="text-red-500">{errors.message}</p>}
             </label>
-            <button type="submit" className="self-center px-8 py-3 text-lg rounded focus:ring hover:ring focus:ring-opacity-75 bg-red-600 text-white focus:ring-red-600 hover:ring-red-600">
-              Submit
+            <button type="submit" className="self-center px-8 py-3 text-lg rounded focus:ring  focus:ring-opacity-75 bg-red-600 text-white focus:ring-red-600 hover:scale-95 ">
+              {loaderActive? 'Sending..' : 'Submit'}
             </button>
           </form>
         </div>

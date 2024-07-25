@@ -7,7 +7,6 @@ const checkBlocked = require('../middlewares/checkBlocked')
 const userBookingHelper =require('../helpers/userHelpers/bookingHelper')
 const userTransactionHelper  = require('../helpers/userHelpers/transactionHelper')
 
-// userRouter.get('/',userController.getAllUsers)  
 userRouter.get('/trainer-profile/:id',userController.getTrainer)
 userRouter.get('/get-trainers',userController.getAllTrainers)
 userRouter.get('/services/list',userController.getServices)

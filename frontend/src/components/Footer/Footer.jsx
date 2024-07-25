@@ -9,7 +9,7 @@ const Footer = () => {
 					<a rel="noopener noreferrer" href="#" className="flex justify-center space-x-3 lg:justify-start">
 						<div className="flex items-center justify-center w-12 h-12 rounded-full dark:bg-textColo border-2 border-white">
 							<img
-								src={logoSZ} // Replace with the actual path to your image
+								src={logoSZ} 
 								alt="Description of image"
 								className="flex-shrink-0 w-12 h-12 rounded-full dark:text-gray-50"
 							/>
@@ -21,39 +21,15 @@ const Footer = () => {
 				<div className="py-[20px] grid grid-cols-2 text-sm gap-x-3 gap-y-10 lg:w-2/3 sm:grid-cols-4">
 					<div className="space-y-3">
 						<h3 className="tracking-wide uppercase dark:text-textColor">Brototype</h3>
-						{/* <ul className="space-y-1">
-					<li>
-						<a rel="noopener noreferrer" href="#">Maradu</a>
-					</li>
-					<li>
-						<a rel="noopener noreferrer" href="#">Ernakulam</a>
-					</li>
-				</ul> */}
+						
 					</div>
 					<div className="space-y-3">
 						<h3 className="tracking-wide uppercase dark:text-textColor">Company</h3>
-						{/* <ul className="space-y-1">
-					<li>
-						<a rel="noopener noreferrer" href="#">Privacy</a>
-					</li>
-					<li>
-						<a rel="noopener noreferrer" href="#">Terms of Service</a>
-					</li>
-				</ul> */}
+						
 					</div>
 					<div className="space-y-3">
 						<h3 className="uppercase dark:text-textColor">Developers</h3>
-						{/* <ul className="space-y-1">
-					<li>
-						<a rel="noopener noreferrer" href="#">Public API</a>
-					</li>
-					<li>
-						<a rel="noopener noreferrer" href="#">Documentation</a>
-					</li>
-					<li>
-						<a rel="noopener noreferrer" href="#">Guides</a>
-					</li>
-				</ul> */}
+						
 					</div>
 					<div className="space-y-3">
 						<div className="uppercase dark:text-textColor">Social media</div>

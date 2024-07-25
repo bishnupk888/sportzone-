@@ -6,9 +6,7 @@ const TrainerCard = ({ trainer }) => {
 	
     const navigate = useNavigate()
   return (
-    // <div className='text-textColor bg-white'>
-    //   {trainer.username}
-    // </div>
+    
     <>
 	<style>
         {`

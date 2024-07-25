@@ -5,7 +5,6 @@ import { FaBars, FaUserFriends, FaCalendarAlt, FaCog } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
 import { RiDashboardLine } from "react-icons/ri";
 import { GiTeacher } from "react-icons/gi";
-import axiosInstance from '../../axiosInstance/axiosInstance';
 import { toast } from 'react-toastify';
 import { clearAdminData } from '../../redux/features/adminSlice';
 import { useDispatch, useSelector } from 'react-redux';
@@ -16,7 +15,7 @@ const navLinks = [
     { path: '/admin/trainers', display: 'Trainers', icon: <GiTeacher /> },
     { path: '/admin/users', display: 'Athletes', icon: <FaUserFriends /> },
     { path: '/admin/bookings', display: 'Bookings', icon: <FaCalendarAlt /> },
-    { path: '/admin/services', display: 'Services', icon: <FaCog /> },
+    
 ];
 
 const AdminSidebar = ({ setIsSidebarOpen, isSidebarOpen }) => {
@@ -24,10 +23,10 @@ const AdminSidebar = ({ setIsSidebarOpen, isSidebarOpen }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const [userLoggedin, setUserLoggedin] = useState(!!userRole); // Initial state based on userRole existence
+    const [userLoggedin, setUserLoggedin] = useState(!!userRole); 
 
     useEffect(() => {
-        setUserLoggedin(!!userRole); // Update userLoggedin when userRole changes
+        setUserLoggedin(!!userRole); 
     }, [userRole]);
 
     const handleLogin = () => {
@@ -37,16 +36,15 @@ const AdminSidebar = ({ setIsSidebarOpen, isSidebarOpen }) => {
     const handleLogout = () => {
         apiServices.adminLogout()
             .then(() => {
-                setUserLoggedin(false); // Update state
+                setUserLoggedin(false); 
                 toast.success("Successfully logged out");
                 navigate('/admin/login');
             })
             .catch((err) => {
-                console.error("Failed to logout", err);
                 toast.error("Failed to logout");
             });
 
-        dispatch(clearAdminData()); // Dispatch action to clear admin data from Redux store
+        dispatch(clearAdminData()); 
     };
 
     const toggleMenu = () => {
@@ -114,14 +112,14 @@ const AdminSidebar = ({ setIsSidebarOpen, isSidebarOpen }) => {
                     {userLoggedin ? (
                         <button
                             onClick={handleLogout}
-                            className={`bg-black border-redBorder border-[2px] py-1 text-white font-[600] flex items-center rounded-[10px] ${isSidebarOpen ? 'h-[60px] sm:h-[40px] md:h-[44px] w-[100px] px-5' : 'h-[40px] w-[64px]'}`}
+                            className={`bg-black border-redBorder border-[2px] py-1 sm:py-2 md:py-2 text-white font-[600] flex items-center rounded-[10px]  hover:scale-95 ${isSidebarOpen ? 'h-[60px] sm:h-[40px] md:h-[44px] w-[100px] px-5' : 'h-[40px] w-[64px] '}`}
                         >
                             Logout
                         </button>
                     ) : (
                         <button
                             onClick={handleLogin}
-                            className={`bg-black border-redBorder border-[2px] py-1 sm:py-2 md:py-2 text-white font-[600] flex items-center rounded-[10px] ${isSidebarOpen ? 'h-[60px] sm:h-[40px] md:h-[44px] w-[100px] px-5' : 'h-[40px] w-[64px] px-2'}`}
+                            className={`bg-black border-redBorder border-[2px] py-1 sm:py-2 md:py-2 text-white font-[600] flex items-center rounded-[10px]  hover:scale-95 ${isSidebarOpen ? 'h-[60px] sm:h-[40px] md:h-[44px] w-[100px] px-5' : 'h-[40px] w-[64px] px-2'}`}
                         >
                             Login
                         </button>

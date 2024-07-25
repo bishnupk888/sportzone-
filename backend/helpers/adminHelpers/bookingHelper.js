@@ -1,29 +1,26 @@
 const Booking = require('../../model/bookingModel');
-const Slot = require('../../model/slotModel'); // Ensure the Slot model is correctly imported
-const User = require('../../model/userModel'); // Ensure the User model is correctly imported
-const Trainer = require('../../model/trainerModel'); // Ensure the Trainer model is correctly imported
+const Slot = require('../../model/slotModel'); 
+const User = require('../../model/userModel'); 
+const Trainer = require('../../model/trainerModel'); 
 
 const getAllBookings = async (req, res) => {
   try {
     const bookings = await Booking.find({})
       .populate('userId', 'username')
-      .populate('trainerId','username') // Populate userId with username
+      .populate('trainerId','username') 
       .exec();
 
-    // Manually populate slots and trainer
     for (let booking of bookings) {
       const populatedSlots = await Slot.find({ _id: { $in: booking.slots } })
         .exec();
       booking.slots = populatedSlots;
 
-      // Divide the booking amount by the number of slots
       const slotCount = booking.slots.length;
       if (slotCount > 0) {
         booking.bookingAmount = booking.bookingAmount / slotCount;
       }
     }
 
-    // Format booking date
     bookings.forEach(booking => {
       booking.bookingDate = new Date(booking.bookingDate).toLocaleDateString('en-GB');
     });

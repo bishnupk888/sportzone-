@@ -52,12 +52,7 @@ const Wallet = () => {
             <button className=" flex-1 rounded-lg flex flex-col bg-green-700 items-center justify-center p-2 border border-green-800 m-2 cursor-pointer hover:bg-green-600 hover:scale-105 ">
               <p className="text-white text-xl ">RECHARGE WALLET</p>
             </button>
-            {/* <button className="flex-1 rounded-lg flex flex-col items-center justify-center p-2 border border-red-500 m-2 cursor-pointer hover:border-2 hover:border-red-700">
-              <p className="text-white text-lg">Transfer</p>
-            </button> */}
-            {/* <button className="flex-1 rounded-lg flex flex-col items-center justify-center p-2 border border-red-500 m-2 cursor-pointer hover:border-2 hover:border-red-700">
-              <p className="text-white text-lg">Redeem</p>
-            </button> */}
+            
           </div>
         </div>
       </div>

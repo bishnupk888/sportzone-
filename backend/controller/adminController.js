@@ -405,7 +405,6 @@ const getBarChartData = async (req, res) => {
 
 const getBookingChartData = async (req, res) => {
   const { period } = req.query;
-  console.log(period)
   let dateRange = {};
   let matchCondition = {};
 

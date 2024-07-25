@@ -53,7 +53,6 @@ export default function EditTrainerProfile() {
     const handleCertificateUpload = async (certificateUrl) => {
         try {
             const response = await apiServices.uploadTrainerCertificate(user.userId,certificateUrl) 
-            console.log('Certificate uploaded:', response.data);
 
             setTrainerData((prevData) => ({
                 ...prevData,
@@ -75,7 +74,6 @@ export default function EditTrainerProfile() {
     const handleImageUpload = async (url) => {
         try {
             const response = await apiServices.uploadTrainerImage(user.userId,url) 
-            console.log('Profile image updated:', response.data);
 
             setTrainerData((prevData) => ({
                 ...prevData,
@@ -360,41 +358,7 @@ export default function EditTrainerProfile() {
                                 </div>
                             </div>
 
-                            {/* <div className="col-span-full">
-                                <label htmlFor="experience" className="block text-xl font-medium leading-6">
-                                    Experience
-                                </label>
-                                {trainerData.experience.map((exp, index) => (
-                                    <div key={index} className="mt-2 flex gap-x-4">
-                                        <input
-                                            type="text"
-                                            name={`experience.${index}.institution`}
-                                            placeholder='Institution'
-                                            value={exp.institution}
-                                            onChange={(e) => handleInputChange(e, index)}
-                                            className={`block w-full rounded-md border ${errors[`experience.${index}.institution`] ? 'border-red-500' : 'border-redBorder'} bg-white bg-opacity-5 py-1.5 text-textColor shadow-xl placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-redBorder focus:border-redBorder lg:text-[16px] sm:text-sm sm:leading-6 px-2`}
-                                        />
-                                        <input
-                                            type="text"
-                                            name={`experience.${index}.duration`}
-                                            placeholder='Duration'
-                                            value={exp.duration}
-                                            onChange={(e) => handleInputChange(e, index)}
-                                            className={`block w-full rounded-md border ${errors[`experience.${index}.duration`] ? 'border-red-500' : 'border-redBorder'} bg-white bg-opacity-5 py-1.5 text-textColor shadow-xl placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-redBorder focus:border-redBorder lg:text-[16px] sm:text-sm sm:leading-6 px-2`}
-                                        />
-                                    </div>
-                                ))}
-                                <button
-                                    type="button"
-                                    onClick={() => setTrainerData(prevData => ({
-                                        ...prevData,
-                                        experience: [...prevData.experience, { institution: '', duration: '' }]
-                                    }))}
-                                    className="mt-2 text-textColor hover:text-red-500"
-                                >
-                                    Add more experience
-                                </button>
-                            </div> */}
+                            
                         </div>
                     </div>
                 </div>

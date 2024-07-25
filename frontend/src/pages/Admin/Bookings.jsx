@@ -18,15 +18,8 @@ const Bookings = () => {
   const [viewBookingDetails, setViewBookingDetails] = useState(false);
   const itemsPerPage = 10;
 
-  const userRole = localStorage.getItem('adminData');
-  const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!userRole) {
-      navigate('/admin/login');
-      toast.info("Please login to continue.");
-    }
-  }, [userRole]);
+ 
 
   useEffect(() => {
     apiServices.getAllBookings()
@@ -44,7 +37,7 @@ const Bookings = () => {
   const formatDate = (dateStr) => {
     const dateObj = new Date(dateStr);
     const day = String(dateObj.getDate()).padStart(2, '0');
-    const month = String(dateObj.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0'); 
     const year = dateObj.getFullYear();
     return `${day}-${month}-${year}`;
   };

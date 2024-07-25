@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import PrivateRoutes from './PrivateRoutes';
+import AdminPriveateRoute from '../routes/AdminPrivateRoute'
 import Dashboard from '../pages/Admin/Dashboard';
 import AdminLogin from '../pages/Admin/AdminLogin';
 import AdminTrainers from '../pages/Admin/Trainers';
@@ -14,7 +14,7 @@ const AdminRoutes = () => {
         <Routes>
             <Route path='/' element={<AdminLogin />} />
             <Route path='/login' element={<AdminLogin />} />
-            <Route path='/*' >
+            <Route path='/*' element={<AdminPriveateRoute role={'admin'} />} >
                 <Route path='dashboard' element={<Dashboard />} />
                 <Route path='trainers' element={<AdminTrainers />} />
                 <Route path='users' element={<Athletes />} />

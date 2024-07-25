@@ -18,7 +18,7 @@ const Bookings = () => {
   const formatDate = (dateStr) => {
     const dateObj = new Date(dateStr);
     const day = String(dateObj.getDate()).padStart(2, "0");
-    const month = String(dateObj.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+    const month = String(dateObj.getMonth() + 1).padStart(2, "0"); 
     const year = dateObj.getFullYear();
     return `${day}-${month}-${year}`;
   };
@@ -73,12 +73,12 @@ const Bookings = () => {
 
     setBookingData(sortedData);
     setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    setIsDropdownOpen(false); // Close dropdown after sorting
+    setIsDropdownOpen(false); 
   };
 
   const sortBookingsBySlotDate = () => {
     const sortedData = [...bookingData].sort((a, b) => {
-      const slotDateA = new Date(a.slots[0].date); // Assuming you want to sort by the first slot's date
+      const slotDateA = new Date(a.slots[0].date); 
       const slotDateB = new Date(b.slots[0].date);
 
       if (slotSortOrder === "asc") {
@@ -90,7 +90,7 @@ const Bookings = () => {
 
     setBookingData(sortedData);
     setSlotSortOrder(slotSortOrder === "asc" ? "desc" : "asc");
-    setIsDropdownOpen(false); // Close dropdown after sorting
+    setIsDropdownOpen(false); 
   };
 
   const isSlotUpcoming = (slotDate, slotEndTime) => {

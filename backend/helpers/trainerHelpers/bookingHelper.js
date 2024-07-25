@@ -1,5 +1,5 @@
 const Booking = require('../../model/bookingModel');
-const Slot = require('../../model/slotModel'); // Ensure the Slot model is correctly imported
+const Slot = require('../../model/slotModel'); 
 const User = require('../../model/userModel');
 
 const getAllBookings = async (req, res) => {
@@ -11,19 +11,16 @@ const getAllBookings = async (req, res) => {
       .exec();
 
 
-    // Manually populate slots
     for (let booking of bookings) {
       const populatedSlots = await Slot.find({ _id: { $in: booking.slots } }).exec();
       booking.slots = populatedSlots;
 
-      // Divide the booking amount by the number of slots
       const slotCount = booking.slots.length;
       if (slotCount > 0) {
         booking.bookingAmount = booking.bookingAmount / slotCount;
       }
     }
 
-    // Format booking date
     bookings.forEach(booking => {
       booking.bookingDate = new Date(booking.bookingDate).toLocaleDateString('en-GB');
     });
@@ -31,8 +28,10 @@ const getAllBookings = async (req, res) => {
 
     if (bookings.length) {
       return res.status(200).json({ message: "bookings found", data: bookings });
-    } else {
-      return res.status(404).json({ message: "bookings not found" });
+    } else if(bookings.length === 0) {
+      return res.status(201).json({ message: "bookings not found",data: bookings });
+    }else{
+      return res.status(404).json({ message: "bookings not found"})
     }
   } catch (error) {
     console.error(error);
@@ -59,7 +58,6 @@ const getBookingDetails = async (req, res) => {
       const userDetails = await User.findById(booking.userId)
 
 
-      // Include the slot details in the booking object
       booking.slots = slotDetails;
       booking.userId = userDetails
 

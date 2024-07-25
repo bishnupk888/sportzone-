@@ -4,7 +4,7 @@ import { HiOutlineDownload } from 'react-icons/hi';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import ConfirmationModal from '../popupComponents/ConfirmationModal';
 import apiServices from '../../apiServices/apiServices';
-import Invoice from '../../components/pdfComponents/InvoiceComponent'; // Import your Invoice component
+import Invoice from '../../components/pdfComponents/InvoiceComponent'; 
 import { useSelector } from 'react-redux';
 
 const BookingDetails = ({ cancelBooking, bookingId, setViewBookingDetails, bookingData }) => {
@@ -46,12 +46,11 @@ const BookingDetails = ({ cancelBooking, bookingId, setViewBookingDetails, booki
   useEffect(() => {
     apiServices.getUserBookingDetails(bookingId)
       .then((response) => {
-        console.log(response.data);
         setBookingDetails(response.data.data);
         setLoading(false);
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
         setLoading(false);
       });
   }, [bookingId, bookingData]);

@@ -7,12 +7,6 @@ const Services = () => {
   const userRole = localStorage.getItem('adminData');
 
   const navigate = useNavigate()
-    useEffect(()=>{
-      if(!userRole){
-        navigate('/admin/login')
-        toast.info("please login for more")       
-      }
-    },[])
 
   return (
     <div>Services</div>

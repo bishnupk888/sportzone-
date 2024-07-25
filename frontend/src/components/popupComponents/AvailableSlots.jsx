@@ -7,7 +7,7 @@ const AvailableSlots = ({ slots }) => {
     const filteredSlots = slots.filter(slot => {
         const slotDate = new Date(slot.date);
         const [startHour, startMinute] = slot.startTime.split(':').map(Number);
-        slotDate.setHours(startHour, startMinute, 0, 0); // Set the slot start time
+        slotDate.setHours(startHour, startMinute, 0, 0); 
         return slotDate >= now;
     });
 

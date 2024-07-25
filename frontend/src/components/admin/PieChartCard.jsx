@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ApexCharts from "react-apexcharts";
-import apiServices from "../../apiServices/apiServices"; // Adjust import based on your setup
+import apiServices from "../../apiServices/apiServices"; 
 
 const PieChartCard = () => {
   const [chartData, setChartData] = useState({ successful: 0, canceled: 0 });
@@ -14,8 +14,7 @@ const PieChartCard = () => {
   const fetchChartData = async (period) => {
     try {
       const response = await apiServices.getBookingChartData(period);
-      console.log("response in piechart +++", response);
-      // Adjust API call as needed
+      
       const data = response.data;
 
       setChartData({
@@ -39,14 +38,14 @@ const PieChartCard = () => {
   const getChartOptions = () => ({
     series: [chartData.successful, chartData.canceled],
     labels: ["Successful Bookings", "Canceled Bookings"],
-    colors: ["#750000", "#1F1F1F"], // Updated colors
+    colors: ["#750000", "#1F1F1F"], 
     chart: {
       type: "pie",
-      height: 400, // Increased height for larger chart
+      height: 400, 
       animations: {
         enabled: true,
         easing: "easeinout",
-        speed: 1000, // Duration of animation in milliseconds
+        speed: 1000, 
       },
     },
     plotOptions: {
@@ -58,15 +57,14 @@ const PieChartCard = () => {
         donut: {
           size: "70%",
         },
-        // Apply a black border to pie slices
         stroke: {
           show: true,
-          width: 3, // Border width
-          colors: ["#000000"], // Border color
+          width: 3, 
+          colors: ["#000000"], 
         },
-        expandOnClick: true, // Enlarge the slice on hover
+        expandOnClick: true, 
         hover: {
-          mode: "single", // Highlight a single slice on hover
+          mode: "single", 
         },
       },
     },
@@ -80,7 +78,7 @@ const PieChartCard = () => {
     tooltip: {
       enabled: true,
       style: {
-        fontSize: "14px", // Adjusted font size for better readability
+        fontSize: "14px", 
         fontFamily: "Inter, sans-serif",
         background: "#000",
         color: "#fff",
@@ -90,7 +88,7 @@ const PieChartCard = () => {
       position: "bottom",
       fontFamily: "Inter, sans-serif",
       labels: {
-        colors: ["#FFFFFF", "#FFFFFF"], // Legend text color for all labels
+        colors: ["#FFFFFF", "#FFFFFF"], 
       },
     },
   });
@@ -123,12 +121,12 @@ const PieChartCard = () => {
       <div className="w-full flex justify-center p-4">
         <div style={{ height: 400, width: 400 }}>
           {" "}
-          {/* Enlarged chart size */}
+          
           <ApexCharts
             options={getChartOptions()}
             series={[chartData.successful, chartData.canceled]}
             type="pie"
-            height={400} // Height of the chart
+            height={400} 
           />
         </div>
       </div>

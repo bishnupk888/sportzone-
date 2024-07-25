@@ -38,12 +38,7 @@ const RoleSelectModal = ({ isOpen, onClose, onRoleSelect, selectedRole }) => {
           </label>
         </div>
         <div className="flex justify-end">
-          {/* <button
-            onClick={onClose}
-            className="px-4 py-2 bg-red-500 text-white rounded-md mr-2 hover:scale-105"
-          >
-            Cancel
-          </button> */}
+          
           <button
             onClick={() => {
               if (!selectedRole) {

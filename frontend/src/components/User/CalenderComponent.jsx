@@ -15,12 +15,10 @@ const Calendar = () => {
 
     const calendarDays = [];
 
-    // Empty days before the first day of the month
     for (let i = 0; i < firstDayOfWeek; i++) {
       calendarDays.push(<div key={`empty-${i}`} />);
     }
 
-    // Days of the month
     for (let day = 1; day <= daysInMonth; day++) {
       const isToday = year === new Date().getFullYear() && month === new Date().getMonth() && day === new Date().getDate();
       calendarDays.push(

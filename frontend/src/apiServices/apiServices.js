@@ -1,5 +1,6 @@
 
 import axiosInstance from "../axiosInstance/axiosInstance";
+import axiosInstanceAdmin from "../axiosInstance/axiosInstanceAdmin";
 
 
 // auth api calls
@@ -75,45 +76,45 @@ const sendContactUsEmail = async(formData)=>{
 
 // admin api calls
 const getAllUsers = async()=>{
-    return await axiosInstance.get('/api/admin/users')
+    return await axiosInstanceAdmin.get('/api/admin/users')
 }
 const ManageBlockUser = async(id)=>{
-    return await axiosInstance.patch(`/api/admin/${id}/block-user`)
+    return await axiosInstanceAdmin.patch(`/api/admin/${id}/block-user`)
 }
 const getAllBookings  = async ()=>{
-    return await axiosInstance.get('/api/admin/bookings')
+    return await axiosInstanceAdmin.get('/api/admin/bookings') 
 }
 const getAllTrainers = async()=>{
-    return await axiosInstance.get('/api/admin/trainers')
+    return await axiosInstanceAdmin.get('/api/admin/trainers')
 }
 const trainerAproval = async(id)=>{
-    return await axiosInstance.patch(`/api/admin/${id}/trainer-approval`)
+    return await axiosInstanceAdmin.patch(`/api/admin/${id}/trainer-approval`)
 }
 const trainerRejection = async(id,reason)=>{
-    return await axiosInstance.patch(`/api/admin/${id}/trainer-rejection`, { reason })
+    return await axiosInstanceAdmin.patch(`/api/admin/${id}/trainer-rejection`, { reason })
 }
 const manageBlockTrainer = async(id)=>{
-    return await axiosInstance.patch(`/api/admin/block-trainer/${id}`)
+    return await axiosInstanceAdmin.patch(`/api/admin/block-trainer/${id}`)
 }
 const getChartData = async(role,period)=>{
-    return await axiosInstance.get(`/api/admin/chart-data/${role}/?period=${period}`);
+    return await axiosInstanceAdmin.get(`/api/admin/chart-data/${role}/?period=${period}`);
 }
 const getTrainerChartData = async(role,period)=>{
-    return await axiosInstance.get(`/api/admin/trainer-chart-data/${role}/?period=${period}`);
+    return await axiosInstanceAdmin.get(`/api/admin/trainer-chart-data/${role}/?period=${period}`);
 }
 
 const getBookingChartData = async(period)=>{
-    return await axiosInstance.get(`/api/admin/booking-chart-data/?period=${period}`);
+    return await axiosInstanceAdmin.get(`/api/admin/booking-chart-data/?period=${period}`);
 }
 
 const getBarChartData = async(period)=>{
-    return await axiosInstance.get(`/api/admin/barchart-data/?period=${period}`);
+    return await axiosInstanceAdmin.get(`/api/admin/barchart-data/?period=${period}`);
 }
 const getDashBoardData = async()=>{
-    return await axiosInstance.get("/api/admin/dashboard-data"); 
+    return await axiosInstanceAdmin.get("/api/admin/dashboard-data"); 
 }
 const getRevenueChartData = async(period)=>{
-    return await axiosInstance.get(`/api/admin/revenuechart-data/?period=${period}`);
+    return await axiosInstanceAdmin.get(`/api/admin/revenuechart-data/?period=${period}`);
 }
 
 
@@ -173,11 +174,10 @@ const getNotifications =async(userId)=>{
 const markNotificationsAsRead = async(userId)=>{
     return await axiosInstance.put(`/api/notifications/${userId}`)
 }
-
 const uploadFile = async(formData)=>{
-    console.log("call to upload file");
     return await axiosInstance.post('/api/chat/file-upload',formData)
 }
+
 
 
 // payment api

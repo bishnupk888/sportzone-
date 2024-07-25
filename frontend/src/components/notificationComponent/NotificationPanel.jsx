@@ -6,29 +6,42 @@ import apiServices from '../../apiServices/apiServices';
 
 const NotificationsPanel = ({ notifications, setViewNotification, viewNotification, userRole, userId , setUnreadNotificationCount }) => {
   const navigate = useNavigate()
-  console.log('notifications ++ ', notifications);
   const transformDate = (inputDateString) => {
     const inputDate = new Date(inputDateString);
     const today = new Date();
     const inputDateFormatted = inputDate.toISOString().split('T')[0];
     const todayFormatted = today.toISOString().split('T')[0];
-
+  
+    let hours = inputDate.getHours();
+    const minutes = inputDate.getMinutes().toString().padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    const hoursStr = hours.toString().padStart(2, '0');
+    const timeStr = `${hoursStr}:${minutes} ${ampm}`;
+  
     if (inputDateFormatted === todayFormatted) {
-      let hours = inputDate.getHours();
-      const minutes = inputDate.getMinutes().toString().padStart(2, '0');
-      const ampm = hours >= 12 ? 'PM' : 'AM';
-      hours = hours % 12;
-      hours = hours ? hours : 12;
-      const hoursStr = hours.toString().padStart(2, '0');
-      return `${hoursStr}:${minutes} ${ampm}`;
+      // If the date is today, return only the time
+      return timeStr;
     } else {
-      return inputDateFormatted;
+      // Otherwise, return the date with time
+      return `${inputDateFormatted} ${timeStr}`;
     }
   };
   useEffect(() => {
-    setUnreadNotificationCount(0)
-    apiServices.markNotificationsAsRead(userId)
-  },[])
+    const markAsRead = async () => {
+      try {
+        await apiServices.markNotificationsAsRead(userId).then((response)=>{
+          setUnreadNotificationCount(0)
+        })
+  
+      } catch (error) {
+        console.error("Error marking notifications as read:", error);
+      }
+    };
+
+    markAsRead();
+  }, [userId,userRole]);
   
 
   return (

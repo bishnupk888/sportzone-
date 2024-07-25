@@ -1,5 +1,4 @@
 const Chat = require('../model/chatModel');
-const chatController = require('../controller/chatController');
 const Notification = require('../model/notificationModel');
   
 const connectedUsers = new Map()
@@ -8,23 +7,18 @@ const connectedUsers = new Map()
 const chatSocket = (io) => {
     io.on('connection', async(socket) => {
         console.log('A client connected.');
-    
         // Example event listener for 'connect' event from frontend
         socket.on('register', async (id) => {
             connectedUsers.set(id,socket.id)
         });
-
 
         socket.on('newMessage', async (data, callback) => {
             try {
               
               const { userId, trainerId, message } = data;
 
-              console.log('newMessage in socket : ', message)
-
               const senderId = message.senderId;
               const senderType = message.senderType;
-              console.log('senderId = ', senderId);
           
               let recieverId = null;
               if (senderType === 'user') {
@@ -68,17 +62,12 @@ const chatSocket = (io) => {
                 );
               }
           
-              // Find the receiver's socket ID
               const recieverSocketId = connectedUsers.get(recieverId);
-              console.log('recieverId on listening message = ', recieverId);
-              console.log('recieverSocketId on listening message = ', recieverSocketId);
           
-              // Emit the new message to the receiver if they're connected
               if (recieverSocketId) {
                 socket.to(recieverSocketId).emit('newMessage', newMessage);
               }
           
-              // Send the new message back to the client as a callback
               callback(newMessage);
             } catch (error) {
               console.error('Error processing new message:', error);
@@ -86,25 +75,43 @@ const chatSocket = (io) => {
           });
 
         socket.on("notification",async(data)=>{
-          // const {receiverId,sender,content} = data
-          console.log('Listening to notification = ',data)
           const notification = new Notification(data)
           const savedNotification = await notification.save()
-          console.log('savedNotification === ', savedNotification);
           const recieverSocketId = connectedUsers.get(data.receiverId)
-          console.log('recieverSocketId--',recieverSocketId);
           socket.to(recieverSocketId).emit('notification',savedNotification)
         })
 
         socket.on('typing', (data) => {
-          const { userId, chatId, isTyping } = data;
-          socket.to(chatId).emit('typing', { userId, isTyping });
+          const { userId, recieverId,  } = data;
+          const recieverSocketId = connectedUsers.get(recieverId)
+          if(recieverSocketId){
+          socket.to(recieverSocketId).emit('typing',{userId,recieverId} );
+          }
       });
-        // Add more event listeners as needed
+
+      socket.on('stopTyping',(data)=>{
+        const { userId, recieverId,  } = data;
+        const recieverSocketId = connectedUsers.get(recieverId)
+        if(recieverSocketId){
+        socket.to(recieverSocketId).emit('stopTyping',{userId,recieverId} );
+        }
+      })
+
+      socket.on('readMessages',(data)=>{
+        const { userId, recieverId,  } = data;
+        const recieverSocketId = connectedUsers.get(recieverId)
+        if(recieverSocketId){
+          socket.to(recieverSocketId).emit('readMessages',{userId,recieverId} );
+          }
+      })
     
-        // Example disconnect event handler
         socket.on('disconnect', () => {
-            console.log('A client disconnected.');
+          console.log('A client disconnected.');
+          connectedUsers.forEach((value, key) => {
+            if (value === socket.id) {
+              connectedUsers.delete(key);
+            }
+          });
         });
     });
 

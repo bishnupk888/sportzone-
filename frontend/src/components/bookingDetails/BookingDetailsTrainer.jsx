@@ -5,7 +5,7 @@ import { PDFDownloadLink } from '@react-pdf/renderer';
 import ConfirmationModal from '../popupComponents/ConfirmationModal';
 import { toast } from 'react-toastify';
 import apiServices from '../../apiServices/apiServices';
-import Invoice from '../../components/pdfComponents/InvoiceComponent'; // Import the Invoice component
+import Invoice from '../../components/pdfComponents/InvoiceComponent'; 
 import { useSelector } from 'react-redux';
 
 const BookingDetailsTrainer = ({ cancelBooking, bookingId, setViewBookingDetails, bookingData }) => {
@@ -38,7 +38,7 @@ const BookingDetailsTrainer = ({ cancelBooking, bookingId, setViewBookingDetails
   const formatDate = (dateStr) => {
     const dateObj = new Date(dateStr);
     const day = String(dateObj.getDate()).padStart(2, '0');
-    const month = String(dateObj.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0'); 
     const year = dateObj.getFullYear();
     return `${day}-${month}-${year}`;
   };
@@ -46,12 +46,11 @@ const BookingDetailsTrainer = ({ cancelBooking, bookingId, setViewBookingDetails
   useEffect(() => {
     apiServices.getTrainerBookingDetails(bookingId)
       .then((response) => {
-        console.log(response.data);
         setBookingDetails(response.data.data);
         setLoading(false);
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
         setLoading(false);
       });
   }, [bookingId, bookingData]);

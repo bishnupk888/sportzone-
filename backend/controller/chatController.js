@@ -3,16 +3,7 @@ const chatSocket = require('../sockets/chatSocket');
 const cloudinary = require('../config/cloudinary'); // Assuming you have a cloudinaryConfig file
 const streamifier = require('streamifier'); // To handle streams for Cloudinary
 
-const newMessage =async(data)=>{
-           
-    try {
-      console.log("newMessage backend");
-        console.log(data);
-        // const existingChat = Chat.findOne({})
-    } catch (error) {
-        
-    }
-}
+
 
 const getAllChatsByUserId = async (req, res) => {
   const { userId, userRole } = req.params;
@@ -33,8 +24,12 @@ const getAllChatsByUserId = async (req, res) => {
         .sort({ 'lastMessage.createdAt': -1 }); // Sort by lastMessage.createdAt in descending order
     }
 
-    if (!allChats || allChats.length === 0) {
-      return res.status(404).json({ message: "Chats not found" });
+    if (allChats.length === 0) {
+      return res.status(200).json({ message: "no previous chats" });
+    }
+    else if(!allChats){
+      return res.status(400).json({ message: " chats not found" });
+
     } else {
       res.status(200).json({ message: "Found chats", allChats });
     }
@@ -48,16 +43,13 @@ const getAllChatsByUserId = async (req, res) => {
 
 const getChatByUserAndTrainerId = async (req, res) => {
   const { userId, trainerId } = req.params; // Use req.query for GET requests
-    console.log('getChat: ',userId,trainerId );
   try {
     const chat = await Chat.findOne({ user: userId, trainer: trainerId });
     if (chat) {
-    console.log(chat);
 
       const chatId = chat._id;
       res.status(200).json({ message: "chat Id found.", chatId });
     } else {
-      console.log('no chat found');
       res.status(400).json({ message: "chat not found.." });
     }
   } catch (error) {
@@ -73,7 +65,6 @@ const getChatByUserAndTrainerId = async (req, res) => {
 const createChat = async (req, res) => {
   const { user, trainer, message } = req.body;
 
-  console.log('message',message);
 
   const newMessage = {
     senderType: message[0].senderType,
@@ -82,7 +73,6 @@ const createChat = async (req, res) => {
     createdAt: new Date()
   };
 
-  console.log('newMessage : ',newMessage);
 
   try {
     const newChat = new Chat({
@@ -190,15 +180,19 @@ const sendMessage = async (req, res) => {
     }
   };
   
+
+  
+  
   
 
 module.exports = {
     createChat,
     getChatById,
     sendMessage,
-    newMessage,
+    
     getChatByUserAndTrainerId,
     getAllChatsByUserId,
     uploadFile,
+    
 
 }

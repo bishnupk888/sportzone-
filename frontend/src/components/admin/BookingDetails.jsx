@@ -9,7 +9,7 @@ const BookingDetails = ({ booking, setViewBookingDetails }) => {
   const formatDate = (dateStr) => {
     const dateObj = new Date(dateStr);
     const day = String(dateObj.getDate()).padStart(2, '0');
-    const month = String(dateObj.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0'); 
     const year = dateObj.getFullYear();
     return `${day}-${month}-${year}`;
   };
@@ -38,7 +38,6 @@ const BookingDetails = ({ booking, setViewBookingDetails }) => {
         </div>
 
         <div className="mt-6 flex justify-end space-x-4">
-          {/* Add buttons or actions if needed */}
         </div>
       </div>
     </div>

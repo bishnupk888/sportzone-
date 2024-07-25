@@ -4,13 +4,10 @@ import { setUserData } from '../redux/features/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import logo from '../assets/images/logo/logo.png';
-import bgImage from '../assets/images/background/20215.jpg'; // Adjust the path accordingly
+import bgImage from '../assets/images/background/20215.jpg'; 
 import { useGoogleLogin } from '@react-oauth/google';
 import BouncingBallLoader from '../components/loader/BouncingBallLoader'
 import apiServices from '../apiServices/apiServices';
-
-// import RoleSelectModal from '../components/popupComponents/RoleSelectModal';
-
 
 
 
@@ -18,9 +15,7 @@ const Login = ({Role}) => {
   const userRole = useSelector((state) => state.user.userRole);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [isLoaderActive, setLoaderActive] = useState(true)
-  // const [isModalOpen,setIsModalOpen] = useState(true)
-  // const [role,setRole] = useState(null)
+  const [isLoaderActive, setLoaderActive] = useState(false)
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -39,19 +34,6 @@ const Login = ({Role}) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // const openModal = (e) => {
-  //   e.preventDefault();
-  //   if (!formData.role) {
-  //     setIsModalOpen(true);
-  //   } else {
-  //     handleSignUp(e);
-  //   }
-  // };
-
-  // const handleRoleSelect = (role) => {
-  //   setRole(role)
-  //   setFormData({ ...formData,role:role});
-  // };
 
   const GoogleSignIn = useGoogleLogin({
     onSuccess: tokenResponse => handleGoogleSignIn(tokenResponse),
@@ -81,7 +63,6 @@ const Login = ({Role}) => {
   const handleGoogleSignIn = (credentialResponse) => {
     const { access_token } = credentialResponse;
     
-    // Extract email using Google's userinfo endpoint
     fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
       headers: {
         Authorization: `Bearer ${access_token}`,
@@ -132,6 +113,7 @@ const Login = ({Role}) => {
           }
         `}
       </style>
+      {isLoaderActive? <BouncingBallLoader/> :
       <div className="bgImage fixed top-0 bottom-0 bg-black h-screen w-screen flex justify-center items-center" style={{ zIndex: 1000 }}>
         <div className='flex items-center justify-center lg:justify-start md:justify-start w-full min-h-screen bg-black bg-opacity-50 lg:pl-[15%] md:pl-[15%] '>
           <div className="flex-col w-full max-w-md p-4 rounded-md shadow sm:p-8 dark:text-white bg-black hover:bg-opacity-100 border hover:border-r-4 hover:border-b-4 border-redBorder button-hover-effect">
@@ -186,9 +168,7 @@ const Login = ({Role}) => {
 
           </div>
         </div>
-      </div>
-      
-      
+      </div>}
       
     </>
   );

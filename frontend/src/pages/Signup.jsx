@@ -8,6 +8,7 @@ import bgImage from '../assets/images/background/20215.jpg'; // Adjust the path 
 import { useGoogleLogin } from '@react-oauth/google';
 import RoleSelectModal from '../components/popupComponents/RoleSelectModal';
 import apiServices from '../apiServices/apiServices';
+import BouncingBallLoader from '../components/loader/BouncingBallLoader';
 
 
 const Signup = () => {
@@ -38,7 +39,7 @@ const Signup = () => {
 
   const GoogleSignUp = useGoogleLogin({
     onSuccess: tokenResponse => handleGoogleSignUp(tokenResponse),
-    onFailure: tokenResponse => console.log(tokenResponse),
+    onFailure: tokenResponse => console.error(tokenResponse),
     cookiePolicy : 'single_host_origin',
   });
 
@@ -81,7 +82,6 @@ const Signup = () => {
     const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/;
     const usernameRegx = /^[A-Za-z\s]+$/;
 
-
     if (!formData.name) {
       toast.error("Name is required.");
       setLoaderActive(false);
@@ -120,8 +120,9 @@ const Signup = () => {
       
       apiServices.signUp(formData)
         .then((response) => {
+          const {userId} = response.data
           toast.success("OTP sent to your email");
-          navigate('/verify-otp');
+          navigate('/verify-otp', { state: { userId } });
           setLoaderActive(false);
         }) 
         .catch((err) => {
@@ -131,19 +132,6 @@ const Signup = () => {
     }
   };
 
-  const openModal = (e) => {
-    e.preventDefault();
-    if (!formData.role) {
-      setIsModalOpen(true);
-    } else {
-      handleSignUp(e);
-    }
-  };
-
-  const handleRoleSelect = (role) => {
-    setRole(role)
-    setFormData({ ...formData,role:role});
-  };
 
   return (
     <>
@@ -217,6 +205,7 @@ const Signup = () => {
           }
         `}
       </style>
+      {loaderActive ? <BouncingBallLoader/> : 
       <div className={"bgImage fixed top-0 bottom-0 bg-black h-screen w-screen flex justify-center items-center"} style={{ zIndex: 1000 }}>
         <div className='flex items-center justify-left w-full bg-black bg-opacity-50 h-full'>
           <div className="flex-col w-full form-container rounded-md shadow sm:p-8 dark:text-white bg-black hover:bg-opacity-100 border-r hover:border-r-4 border-redBorder lg:ml-40 md:ml-40 lg:hover:ml-44 ">
@@ -296,6 +285,7 @@ const Signup = () => {
           </div>
         </div>
       </div>
+      }
     </>
   );
 }

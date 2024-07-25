@@ -5,8 +5,8 @@ Modal.setAppElement('#root');
 
 const customStyles = {
   overlay: {
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent black background
-    backdropFilter: 'blur(5px)', // Blur effect
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backdropFilter: 'blur(5px)', 
     zIndex: 100
   },
   content: {
@@ -16,35 +16,35 @@ const customStyles = {
     bottom: 'auto',
     transform: 'translate(-50%, -50%)',
     backgroundColor: 'transparent',
-    border: 'none', // Remove border
-    boxShadow: 'none', // Remove box shadow
-    maxWidth: '80%', // Adjust as needed
-    maxHeight: '80%', // Adjust as needed
-    overflow: 'hidden', // Hide any overflow
+    border: 'none', 
+    boxShadow: 'none', 
+    maxWidth: '80%', 
+    maxHeight: '80%', 
+    overflow: 'hidden', 
     padding: 0,
-    borderRadius: '10px', // Optional: Add border radius for rounded corners
-    position: 'relative', // Ensure the modal content can position the close button
+    borderRadius: '10px', 
+    position: 'relative', 
   },
   closeButton: {
     position: 'absolute',
     top: '20px',
     right: '20px',
-    background: 'rgba(0, 0, 0, 0.5)', // 50% transparent black background
+    background: 'rgba(0, 0, 0, 0.5)', 
     border: 'none',
     cursor: 'pointer',
     color: '#ffffff',
     fontSize: '2rem',
-    padding: '5px', // Add padding for better visibility and clickability
-    borderRadius: '20%', // Make it a circle
-    zIndex: 1, // Ensure it's above the blurred background
+    padding: '5px', 
+    borderRadius: '20%', 
+    zIndex: 1, 
   },
   closeButtonText: {
     position: 'relative',
-    zIndex: 2, // Ensure it's above the blurred background
+    zIndex: 2, 
   },
   modalContent: {
     maxWidth: '100%',
-    height: '100%', // Adjust to ensure the entire image is visible
+    height: '100%', 
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -52,8 +52,8 @@ const customStyles = {
   modalImage: {
     maxWidth: '100%',
     maxHeight: '100%',
-    objectFit: 'contain', // Ensure the image fits inside without stretching
-    borderRadius: '10px', // Optional: Add border radius for rounded corners
+    objectFit: 'contain', 
+    borderRadius: '10px', 
   },
 };
 
@@ -71,3 +71,4 @@ const CustomModal = ({ isOpen, onClose, imageUrl }) => {
 };
 
 export default CustomModal;
+

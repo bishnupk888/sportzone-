@@ -23,12 +23,7 @@ const Trainers = () => {
   const userRole = localStorage.getItem('adminData');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!userRole) {
-      navigate('/admin/login');
-      toast.info("Please login to continue.");
-    }
-  }, [userRole]);
+ 
 
   useEffect(() => {
     apiServices.getAllTrainers()

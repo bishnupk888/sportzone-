@@ -12,7 +12,7 @@ const WebsiteTrafficWidget = () => {
     },
     stroke: {
       width: 2,
-      colors: ["#7F1D1D"], // Tailwind's red-900 color
+      colors: ["#7F1D1D"], 
     },
     plotOptions: {
       pie: {

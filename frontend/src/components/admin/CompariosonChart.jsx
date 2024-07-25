@@ -18,12 +18,12 @@ const ComparisonChart = () => {
       },
       tooltip: {
         enabled: true,
-        theme: 'dark', // This sets the tooltip theme to dark
+        theme: 'dark', 
         style: {
           fontSize: '12px',
           fontFamily: 'Inter, sans-serif',
-          background: '#000', // Custom background color
-          color: '#fff', // Custom text color
+          background: '#000', 
+          color: '#fff', 
         },
         x: {
           show: false,
@@ -77,7 +77,7 @@ const ComparisonChart = () => {
       chart.render();
 
       return () => {
-        chart.destroy(); // Cleanup chart on unmount
+        chart.destroy(); 
       };
     }
   }, []);

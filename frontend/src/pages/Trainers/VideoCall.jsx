@@ -14,7 +14,6 @@ const VideoCall = () => {
    
     
     const {userName} = useSelector((state)=> state.user )
-    console.log("user in video",userName);
 
     const newMeeting = async( element)=>{
         

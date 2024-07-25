@@ -51,7 +51,6 @@ const getNotifications = async (req, res) => {
 
 const markAsReadNotifications = async (req, res) => {
   const { userId } = req.params;
-  
   try {
       const updatedNotifications = await Notification.updateMany(
           { receiverId: userId, isRead: false },

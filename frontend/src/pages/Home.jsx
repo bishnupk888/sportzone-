@@ -34,9 +34,6 @@ const Home = () => {
     fetchData();
   }, []);
 
-  if (loaderActive) {
-    return <BouncingBallLoader />;
-  }
 
   return (
     <>
@@ -56,7 +53,8 @@ const Home = () => {
           animation: heartbeat 1.0s ease-in-out infinite;
         }
       `}</style>
-
+    {loaderActive ? <BouncingBallLoader/> : 
+      <> 
       <section className='hero_section pt-[60px] xl:h-[800px]'>
         <div className='container mx-auto px-4'>
           <div className='flex flex-col lg:flex-row gap-[30px] lg:gap-[90px] items-center justify-between'>
@@ -71,7 +69,7 @@ const Home = () => {
                 </p>
                 {userRole === '' && (
                   <Link to='/register'>
-                    <button className='btn scale-90 text-white mt-[30px] lg:ml-[550px] lg:mt-[0px] border-redBorder hover:border rounded-[10px] bg-gradient-to-r from-red-950 via-red-800 via-red-800 via-red-500 to-red-950 hover:shadow-[0_0_20px_rgba(255,0,0,0.6)] button-hover-effect text-lg hover:bg-gradient-to-b from-red-900 via-red-900 to-black inline-block hover:text-white hover:bg-clip-text'>
+                    <button className='btn scale-95 text-white mt-[30px] lg:ml-[550px] lg:mt-[0px] border-redBorder hover:border rounded-[10px] bg-gradient-to-r from-red-950 via-red-800 via-red-600 via-red-500 to-red-950 hover:shadow-[0_0_20px_rgba(255,0,0,0.6)]  button-hover-effect   '>
                       <span>JOIN NOW</span>
                     </button>
                   </Link>
@@ -83,7 +81,6 @@ const Home = () => {
         </div>
       </section>
 
-      
 
       {userRole === 'trainer' ? '' : (
         <section className="py-6 dark:bg-black dark:text-textColor mt-10">
@@ -150,6 +147,8 @@ const Home = () => {
           </div>
         </div>
       </section>
+      </>
+      }
       
     </>
   );

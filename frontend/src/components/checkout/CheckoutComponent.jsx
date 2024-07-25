@@ -32,14 +32,12 @@ const CheckoutPage = () => {
     useEffect(()=>{
       apiServices.getUser(userId)
       .then((response)=>{
-        console.log(response.data);
         setUserData(response.data.data)
       })
     },[userId])
 
   const handlePayment = async () => {
     try {
-      console.log(totalAmount, userData.wallet,);
       if (paymentMethod === 'wallet' && (!userData.wallet || userData.wallet < totalAmount)) {
         toast.warning('insufficient wallet balance')
       } else {
@@ -47,18 +45,14 @@ const CheckoutPage = () => {
         if (paymentMethod === 'wallet') {
           apiServices.walletPayment(checkoutData)
             .then((response) => {
-              console.log(response.data);
               navigate('/user/checkout-success')
             })
         }
         if (paymentMethod === 'online') {
           apiServices.onlinePayment(checkoutData)
             .then((response) => {
-              console.log('payment',response.data.data);
               const {session,bookingDetails} = response.data.data
-              console.log('bookingDetails : ',bookingDetails)
               const bookingDataString = JSON.stringify(bookingDetails)
-              console.log('bookingDataString : ',bookingDataString)
               localStorage.setItem('bookingNotificationData',bookingDataString)
 
               if (session.url) {
@@ -69,13 +63,13 @@ const CheckoutPage = () => {
               // }
             })
             .catch((error => {
-              console.log(" error creating checkout session : ", error);
+              console.error(" error creating checkout session : ", error);
             }))
         }
 
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
   const formatDate = (date) => {

@@ -7,7 +7,6 @@ const UploadWidget = ({ onUpload }) => {
   const uploadPreset= import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
 
   useEffect(() => {
-    console.log('Setting up Cloudinary widget');
     if (window.cloudinary) {
       cloudinaryRef.current = window.cloudinary;
 
@@ -24,7 +23,6 @@ const UploadWidget = ({ onUpload }) => {
           if (result.event === 'success') {
             const imageUrl = result.info.secure_url;
             onUpload(imageUrl);
-            console.log('Uploaded image URL:', imageUrl);
           }
         }
       );

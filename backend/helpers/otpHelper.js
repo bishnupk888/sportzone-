@@ -19,7 +19,6 @@ const generateOtp = async (email) => {
   try {
     // Save the OTP document to the database
     const savedOtp = await otpDocument.save();
-  console.log("generated otp : ",savedOtp);
   } catch (err) {
     console.error("Error saving OTP:", err);
     throw new Error('Failed to save OTP');
@@ -29,6 +28,7 @@ const generateOtp = async (email) => {
 };
 
 const sendOtp = async (email, otp) => {
+  console.log('otp send : ',otp)
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -74,7 +74,6 @@ const verifyOtp = async (req, res) => {
   }
   if (otpDocument.otp === otp) {
     user.isOtpVerified = true;
-    // Save the user document with the updated flag
     try {
       const data = await user.save();
       res.clearCookie('email');
@@ -109,7 +108,6 @@ const verifyOtpResetPassword = async (req, res) => {
   }
   if (otpDocument.otp === otp) {
    
-    // Save the user document with the updated flag
     try {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);

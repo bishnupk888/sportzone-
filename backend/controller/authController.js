@@ -3,10 +3,8 @@ const User = require('../model/userModel')
 const Trainer = require('../model/trainerModel')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
-const crypto = require('crypto')
-
 const otpHelper = require('../helpers/otpHelper')
-const OTP = require('../model/otpSchema')
+
 
 
 
@@ -33,7 +31,6 @@ const register = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     const otp = await otpHelper.generateOtp(email)
-    console.log(" in authcontroller send otp: ",otp);
     await otpHelper.sendOtp(email, otp); //sends email with otp
     if (role === 'user') {
       user = new User({
@@ -52,14 +49,19 @@ const register = async (req, res) => {
         role
       });
     }
-    user.save().then(() => {
-      res.cookie('email', email, { httpOnly: true });
-      res.cookie('role', role, { httpOnly: true });
+    user.save()
+  .then((savedUser) => { 
+    res.cookie('email', email, { httpOnly: true });
+    res.cookie('role', role, { httpOnly: true });
 
-      res.status(200).json({ message: "Successfully registered user" });
-    }).catch((err) => {
-      res.status(500).json({ message: "Server error, user creation failed", error: err });
+    res.status(200).json({
+      message: "Successfully registered user",
+      userId: savedUser._id 
     });
+  })
+  .catch((err) => {
+    res.status(500).json({ message: "Server error, user creation failed", error: err });
+  });
   } catch (error) {
     console.error("Error in registration:", error);
     res.status(500).json({ message: "Server error, registration failed" });
@@ -83,7 +85,6 @@ const googleSignUp = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     const otp = await otpHelper.generateOtp(email)
-    console.log(" in authcontroller send otp: ",otp);
 
     await otpHelper.sendOtp(email, otp); //sends email with otp
     if (role === 'user') {
@@ -102,12 +103,15 @@ const googleSignUp = async (req, res) => {
       });
     }
 
-    user.save().then(() => {
-      
+    user.save()
+    .then((savedUser) => {
       res.cookie('email', email, { httpOnly: true });
       res.cookie('role', role, { httpOnly: true });
 
-      res.status(200).json({ message: "Successfully registered user" });
+     res.status(200).json({
+      message: "Successfully registered user",
+      userId: savedUser._id 
+    });
     }).catch((err) => {
       res.status(500).json({ message: "Server error, user creation failed", error: err });
     });

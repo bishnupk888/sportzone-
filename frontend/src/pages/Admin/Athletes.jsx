@@ -18,21 +18,16 @@ const Athletes = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const athletesPerPage = 10;
 
-  const userRole = localStorage.getItem('adminData');
+
   const isBlocked = useSelector((state) => state.user.isBlocked);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (!userRole) {
-      navigate('/admin/login');
-      toast.info("Please login to continue.");
-    }
-  }, [userRole]);
+ 
 
   useEffect(() => {
     fetchAthletes();
-  }, []); // Empty dependency array ensures this effect runs once on mount
+  }, []); 
 
   const fetchAthletes = () => {
     apiServices.getAllUsers()
@@ -76,13 +71,13 @@ const Athletes = () => {
     return currentAthletes.map((athlete, index) => (
       <tr key={athlete._id} className="border dark:border-redBorder bg-transparent text-textColor">
         <td className="p-3 border border-redBorder">
-          <p>{indexOfFirstAthlete + index + 1}</p> {/* sl.no */}
+          <p>{indexOfFirstAthlete + index + 1}</p> 
         </td>
         <td className="p-3 border border-redBorder">
-          <p>{athlete.username}</p> {/* athlete name */}
+          <p>{athlete.username}</p> 
         </td>
         <td className="p-3 border border-redBorder">
-          <p>{athlete.email}</p> {/* email */}
+          <p>{athlete.email}</p>
         </td>
         <td className="p-3 border border-redBorder text-right">
           <button

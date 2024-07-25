@@ -19,22 +19,6 @@ const Routers = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   const handleBlockedUser = async () => {
-  //     if (isBlocked) {
-  //       try {
-  //         await axiosInstance.post('/api/auth/logout');
-  //         console.log("call to logout");
-  //         dispatch(clearUserData());
-  //         navigate('/home');
-  //       } catch (error) {
-  //         console.error('Error logging out blocked user:', error);
-  //       }
-  //     }
-  //   };
-
-  //   handleBlockedUser();
-  // }, [isBlocked, dispatch, navigate]);
 
   return (
     <Routes>
@@ -46,7 +30,6 @@ const Routers = () => {
       <Route path='/reset-password/verify-otp' element={<VerifyForResetPassword />} />
       <Route path='/invoice' element={<InvoiceComponent />} />
 
-      InvoiceComponent
 
 
       {/* User Routes */}

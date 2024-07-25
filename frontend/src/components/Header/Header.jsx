@@ -49,18 +49,11 @@ const Header = ({notifications,unreadNotificationCount, setUnreadNotificationCou
     menuRef.current.classList.toggle('show_menu');
   };
 
-  // const checkIsBlocked = () => {
-
-  //   if(isBlocked) {
-  //     navigate('/home');
-  //     toast.warning("You are blocked. Redirecting to home...");
-  //   }
-  // };
+ 
   const handleWarning = () => {
     toast.warning('please login for more.')
   }
   const handleNotificationClick = () => {
-    console.log('clicked on notification icon');
     setViewNotification(!viewNotification)
   }
 
@@ -68,12 +61,11 @@ const Header = ({notifications,unreadNotificationCount, setUnreadNotificationCou
     apiServices.logout()
     
       .then((response) => {
-        console.log(response.data);
         toast.success("Successfully logged out");
         navigate('/home');
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
         toast.error("Failed to logout");
       });
 

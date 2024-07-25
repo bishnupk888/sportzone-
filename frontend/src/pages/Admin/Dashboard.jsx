@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import CountUp from "react-countup";
 import { useInView } from "react-intersection-observer";
 import { PieChart } from "@mui/x-charts/PieChart";
 import AreaChartCard from "../../components/admin/AreaChartCard";
 import ComparisonChart from "../../components/admin/CompariosonChart";
-import axiosInstance from "../../axiosInstance/axiosInstance"; // Assuming you have axiosInstance configured
 import BarChartCard from "../../components/admin/BarChartCard";
 import apiServices from "../../apiServices/apiServices";
 import PieChartCard from "../../components/admin/PieChartCard";
@@ -27,29 +25,17 @@ const Dashboard = () => {
     { name: "Athletes", value: 0 },
     { name: "Trainers", value: 0 },
   ]);
-
-  useEffect(() => {
-    console.log(pieData); // Check data structure
-  }, [pieData]);
-
-  const userRole = localStorage.getItem("adminData");
-  const navigate = useNavigate();
+  
   const { ref, inView } = useInView({ triggerOnce: true });
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    if (!userRole) {
-      navigate("/admin/login");
-      toast.info("Please login for more.");
-    } else {
       fetchData();
-    }
-  }, [userRole]);
+  }, []);
 
   const fetchData = async () => {
     try {
       const response = await apiServices.getDashBoardData();
-      console.log(response.data.dashBoardData);
       const {
         totalUsersCount,
         totalTrainersCount,
@@ -125,14 +111,17 @@ const Dashboard = () => {
           <div className="flex flex-col justify-start m-4 lg:m-12 border-b-2 rounded-xl border-redBorder p-4">
             <p className="text-4xl font-bold leading-none lg:text-6xl">
               {inView && (
+                <>
                 <CountUp
                   end={dashboardData.revenueGenerated}
                   duration={2.5}
                   separator=","
                 />
+                <span>/-</span>
+                </>
               )}
             </p>
-            <p className="text-lg">REVENUE GENERATED</p>
+            <p className="text-lg">TOTAL TRANSACTIONS</p>
           </div>
           <div className="flex flex-col justify-start m-4 lg:m-12 border-b-2 rounded-xl border-redBorder p-4">
             <p className="text-4xl font-bold leading-none lg:text-6xl">
@@ -165,28 +154,6 @@ const Dashboard = () => {
       <div className="border border-redBorder m-20">
       <PieChartCard/>
       </div>
-
-      {/* <ComparisonChart role={'trainer'}/>
-      <BarChartCard /> */}
-
-      {/* <div className="w-full flex justify-center p-4" style={{ height: 300, width: 300 }}>
-        <PieChart
-          series={[
-            {
-              data: pieData,
-              innerRadius: 30,
-              outerRadius: 100,
-              paddingAngle: 5,
-              cornerRadius: 5,
-              startAngle: -90,
-              endAngle: 180,
-              cx: 150,
-              cy: 150,
-            }
-          ]}
-          colors={['darkgray', 'darkred']} // Set colors here
-        />
-      </div> */}
     </div>
   );
 };

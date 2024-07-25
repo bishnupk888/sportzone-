@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import axiosInstance from '../axiosInstance/axiosInstance';
 import { toast } from 'react-toastify';
 import logo from '../assets/images/logo/logo.png';
 import bgImage from '../assets/images/background/20215.jpg'; // Adjust the path accordingly
+import socket from '../utils/socket';
 
 const VerifyOtp = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [otp, setOtp] = useState('');
   const [timer, setTimer] = useState(60);
   const [showResend, setShowResend] = useState(false);
+
+  const { userId } = location.state || {};
 
   useEffect(() => {
     if (timer > 0) {
@@ -32,6 +36,20 @@ const VerifyOtp = () => {
       .then((response) => {
         const role = response?.data?.data?.role;
 
+        socket.emit("notification", {
+          content: `Congrats! your registration successful. Welcome to Sportzone family.`,
+          receiverId: userId,
+          sender: 'Admin regarding Registration'
+        });
+
+        if(role === 'trainer'){
+          socket.emit("notification", {
+            content: `Complete your profile for verification and to be listed as a trainer on Sportzone`,
+            receiverId: userId,
+            sender: 'Admin regarding Verification'
+          });
+        }
+        
         toast.success("Successfully verified OTP");
         navigate(`/${role}/login`);
       })

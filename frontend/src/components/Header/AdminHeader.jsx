@@ -3,8 +3,8 @@ import Logo from '../../assets/images/logo/logo.png';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { BiMenu } from 'react-icons/bi';
 import { toast } from 'react-toastify';
-import { useSelector, useDispatch } from 'react-redux';
-import { clearUserData } from '../../redux/features/userSlice'; 
+import { useDispatch } from 'react-redux';
+import { clearAdminData } from '../../redux/features/adminSlice'; 
 
 
 import apiServices from '../../apiServices/apiServices'
@@ -14,7 +14,6 @@ const navLinks = [
     { path: '/admin/trainers', display: 'Trainers' },
     { path: '/admin/users', display: 'Athletes' },
     { path: '/admin/bookings', display: 'Bookings' },
-    { path: '/admin/Services', display: 'Services' },
 ];
 
 const Header = () => {
@@ -46,12 +45,12 @@ const Header = () => {
         e.preventDefault();
         apiServices.adminLogout()
             .then((response) => {
-                localStorage.removeItem('adminData');
+                dispatch(clearAdminData())
                 toast.success("Successfully logged out");
                 navigate('/admin/login');
             })
             .catch((err) => {
-                console.log(err, " admin header error");
+                console.error(err, " admin header error");
                 toast.error("Failed to logout");
             });
     };

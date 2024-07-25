@@ -3,6 +3,7 @@ import ChatComponent from "./ChatComponent";
 import { useSelector } from "react-redux";
 import chatImg from "../../assets/images/chatImage1.jpg";
 import { format, differenceInHours } from "date-fns";
+import socket from "../../utils/socket";
 import { useSocket } from "../../context/SocketContext";
 import apiServices from "../../apiServices/apiServices";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -18,17 +19,35 @@ const ChatList = () => {
   const [allChats, setAllChats] = useState([]);
   const [chatId, setChatId] = useState(null);
   const [receiverData, setReceiverData] = useState(null);
+  const [typingUsers, setTypingUsers] = useState([]);
 
   const { messages, markMessageAsRead } = useSocket(); // Access context values
 
   const { userRole, userId } = useSelector((state) => state.user);
+  useEffect(() => {
+    socket.on("typing", (data) => {
+      const { userId } = data;
+      setTypingUsers((prevState) => {
+        return [...prevState, userId];
+      });
+    });
+    socket.on("stopTyping",(data)=>{
+      const {userId} = data
+      setTypingUsers(typingUsers.filter((id)=>id !== userId))
+    })
+    return()=>{
+      socket.off("typing")
+      socket.off("stopTyping")
+    }
+  }, [userId,userRole]);
 
+  
+  
   useEffect(() => {
     const fetchChats = async () => {
       try {
-        console.log("fetching chats");
         const response = await apiServices.getAllChat(userRole, userId);
-        console.log(response.data.allChats);
+
         setAllChats(
           Array.isArray(response.data.allChats) ? response.data.allChats : []
         );
@@ -88,7 +107,7 @@ const ChatList = () => {
                       handleClickOnSingleChat(
                         chat._id,
                         userRole === "user" ? chat?.trainer : chat?.user
-                      )  
+                      )
                     }
                     className={`flex h-[80px] items-center mb-4 cursor-pointer p-2 rounded-md ${
                       chat?.lastMessage?.isRead
@@ -113,98 +132,103 @@ const ChatList = () => {
                           ? chat?.trainer?.username
                           : chat?.user?.username}
                       </h2>
-                      {chat.lastMessage.content !== "" &&
-                      (chat.lastMessage.image !== "" ||
-                        chat.lastMessage.audio !== "" ||
-                        chat.lastMessage.video !== "") ? (
-                        <div className="flex items-center space-x-2">
-                          {/* Display the file icons if any */}
-                          {chat.lastMessage.image !== "" && (
-                            <span className="px-2">
-                              <FontAwesomeIcon
-                                icon={faImage}
-                                className="text-gray-400"
-                              />
-                            </span>
-                          )}
-                          {chat.lastMessage.audio !== "" && (
-                            <span className="px-2">
-                              <FontAwesomeIcon
-                                icon={faMicrophone}
-                                className="text-gray-400"
-                              />
-                            </span>
-                          )}
-                          {chat.lastMessage.video !== "" && (
-                            <span className="px-2">
-                              <FontAwesomeIcon
-                                icon={faVideo}
-                                className="text-gray-400"
-                              />
-                            </span>
-                          )}
-                          {/* Display the content */}
-                          <p
-                            className={`text-gray-400  ${
-                              chat?.lastMessage?.isRead
-                                ? "text-gray-400"
-                                : "text-white font-semibold "
-                            }`}
-                          >
-                            {chat.lastMessage.content.length > 30
-                              ? chat?.lastMessage?.content.slice(0, 20) + "..."
-                              : chat?.lastMessage?.content}
-                          </p>
-                        </div>
+                      {typingUsers.includes(chat.lastMessage.senderId) ? (
+                        <p className="text-green-800">typing..</p>
                       ) : (
                         <>
-                          {/* Display the content or icons individually if no content and file together */}
-                          {chat.lastMessage.content !== "" && (
-                            <p
-                              className={`text-gray-400 px-2 ${
-                                chat?.lastMessage?.isRead
-                                  ? "text-gray-400"
-                                  : "text-white font-semibold "
-                              }`}
-                            >
-                              {chat.lastMessage.content.length > 30
-                                ? chat?.lastMessage?.content.slice(0, 20) +
-                                  "..."
-                                : chat?.lastMessage?.content}
-                            </p>
-                          )}
-                          {chat.lastMessage.image !== "" && (
-                            <span className="px-2">
-                              <FontAwesomeIcon
-                                icon={faImage}
-                                className="text-gray-400"
-                              />
-                            </span>
-                          )}
-                          {chat.lastMessage.audio !== "" && (
-                            <span className="px-2">
-                              <FontAwesomeIcon
-                                icon={faMicrophone}
-                                className="text-gray-400"
-                              />
-                            </span>
-                          )}
-                          {chat.lastMessage.video !== "" && (
-                            <span className="px-2">
-                              <FontAwesomeIcon
-                                icon={faVideo}
-                                className="text-gray-400"
-                              />
-                            </span>
+                          {chat.lastMessage.content !== "" &&
+                          (chat.lastMessage.image !== "" ||
+                            chat.lastMessage.audio !== "" ||
+                            chat.lastMessage.video !== "") ? (
+                            <div className="flex items-center space-x-2">
+                              
+                              {chat.lastMessage.image !== "" && (
+                                <span className="px-2">
+                                  <FontAwesomeIcon
+                                    icon={faImage}
+                                    className="text-gray-400"
+                                  />
+                                </span>
+                              )}
+                              {chat.lastMessage.audio !== "" && (
+                                <span className="px-2">
+                                  <FontAwesomeIcon
+                                    icon={faMicrophone}
+                                    className="text-gray-400"
+                                  />
+                                </span>
+                              )}
+                              {chat.lastMessage.video !== "" && (
+                                <span className="px-2">
+                                  <FontAwesomeIcon
+                                    icon={faVideo}
+                                    className="text-gray-400"
+                                  />
+                                </span>
+                              )}
+                              
+                              <p
+                                className={`text-gray-400  ${
+                                  chat?.lastMessage?.isRead
+                                    ? "text-gray-400"
+                                    : "text-white font-semibold "
+                                }`}
+                              >
+                                {chat.lastMessage.content.length > 30
+                                  ? chat?.lastMessage?.content.slice(0, 20) +
+                                    "..."
+                                  : chat?.lastMessage?.content}
+                              </p>
+                            </div>
+                          ) : (
+                            <>
+                              {chat.lastMessage.content !== "" && (
+                                <p
+                                  className={`text-gray-400 px-2 ${
+                                    chat?.lastMessage?.isRead
+                                      ? "text-gray-400"
+                                      : "text-white font-semibold "
+                                  }`}
+                                >
+                                  {chat.lastMessage.content.length > 30
+                                    ? chat?.lastMessage?.content.slice(0, 20) +
+                                      "..."
+                                    : chat?.lastMessage?.content}
+                                </p>
+                              )}
+                              {chat.lastMessage.image !== "" && (
+                                <span className="px-2">
+                                  <FontAwesomeIcon
+                                    icon={faImage}
+                                    className="text-gray-400"
+                                  />
+                                </span>
+                              )}
+                              {chat.lastMessage.audio !== "" && (
+                                <span className="px-2">
+                                  <FontAwesomeIcon
+                                    icon={faMicrophone}
+                                    className="text-gray-400"
+                                  />
+                                </span>
+                              )}
+                              {chat.lastMessage.video !== "" && (
+                                <span className="px-2">
+                                  <FontAwesomeIcon
+                                    icon={faVideo}
+                                    className="text-gray-400"
+                                  />
+                                </span>
+                              )}
+                            </>
                           )}
                         </>
                       )}
 
                       <div className="flex items-center justify-end mb-4">
-                        <div className="flex items-center">
-                          {/* {!chat.lastMessage.isRead && (
-                            <div className="h-3 w-3 bg-green-500 rounded-full mr-2"></div>
-                          )} */}
+                        <div className="flex-col items-center">
+                          
+
                           <p className="text-[10px] text-textColor">
                             {formattedDate}
                           </p>

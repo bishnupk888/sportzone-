@@ -2,7 +2,6 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 
 const backendBaseUrl = import.meta.env.VITE_BACKEND_BASE_URL;
-console.log('backendBaseUrl = ', backendBaseUrl);
 
 const axiosInstance = axios.create({
     baseURL: backendBaseUrl,
@@ -12,7 +11,6 @@ const axiosInstance = axios.create({
         'timeout': 5000,
     },
 });
-console.log("completed axiosInstance");
 
 // Adding an interceptor to handle 403 responses
 axiosInstance.interceptors.response.use(

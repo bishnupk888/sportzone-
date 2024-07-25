@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import logo from '../../assets/images/logo/logo.png';
-import bgImage from '../../assets/images/background/20215.jpg'; // Adjust the path accordingly
+import bgImage from '../../assets/images/background/20215.jpg'; 
 
 const CreateVideocallSession = () => {
   const navigate = useNavigate();
   const [sessionId, setSessionId] = useState('');
-  
 
   const handleInputChange = (e) => {
     setSessionId(e.target.value);
@@ -15,16 +14,16 @@ const CreateVideocallSession = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    navigate('/trainer/videocall',{state:sessionId})
-    // axiosInstance.post('/api/videocall/create-session', { sessionId: sessionId })
-    //   .then((response) => {
-    //     toast.success("Session created successfully");
-    //     navigate(`/videocall/session/${sessionId}`);
-    //   })
-    //   .catch((error) => {
-    //     toast.error("Failed to create session. Please try again.");
-    //     console.error("Error while creating session:", error);
-    //   });
+
+    // Validate sessionId
+    const isValid = /^[^\s]+$/.test(sessionId); // Check if sessionId is a string without spaces
+
+    if (!isValid) {
+      toast.error('Session ID must be a string without spaces.');
+      return;
+    }
+
+    navigate('/trainer/videocall', { state: { sessionId } });
   };
 
   return (
@@ -56,7 +55,7 @@ const CreateVideocallSession = () => {
           }
         `}
       </style>
-      <div className="bgImage absolute top-0 bottom-0 bg-black h-screen w-screen flex justify-center items-center">
+      <div className="bgImage absolute top-0 bottom-0 bg-black h-screen w-full flex justify-center items-center">
         <div className='flex items-center justify-center w-full min-h-screen bg-black bg-opacity-50 '>
           <div className="flex-col w-full max-w-md p-4 rounded-md shadow sm:p-8 dark:text-white bg-black hover:bg-opacity-100 border hover:border-r-4 hover:border-b-4 border-redBorder button-hover-effect m-10">
             <div className="flex flex-col items-center">
@@ -64,14 +63,30 @@ const CreateVideocallSession = () => {
               <h2 className="mb-3 lg:text-2xl md:text-2xl text-lg font-semibold text-center">CREATE AND START SESSION</h2>
               <br />
             </div>
+            
             <form noValidate="" action="" className="space-y-8" onSubmit={handleSubmit}>
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <input type="text" name="sessionId" id="sessionId" placeholder="Enter Session ID" value={sessionId} onChange={handleInputChange} className="w-full px-3 py-2 border rounded-md bg-black text-white hover:scale-95 focus:scale-100" />
+                  <input 
+                    type="text" 
+                    name="sessionId" 
+                    id="sessionId" 
+                    placeholder="Enter Session ID" 
+                    value={sessionId} 
+                    onChange={handleInputChange} 
+                    className="w-full px-3 py-2 border rounded-md bg-black text-white hover:scale-95 focus:scale-100" 
+                  />
                 </div>
               </div>
-              <button type="submit" className="w-full px-8 py-3 font-semibold rounded-md dark:bg-green-800 hover:bg-green-600 dark:text-gray-50 button-hover-effect">Create Session</button>
+              <button 
+                type="submit" 
+                className="w-full px-8 py-3 font-semibold rounded-md dark:bg-green-800 hover:bg-green-600 dark:text-gray-50 button-hover-effect"
+              >
+                Create Session
+              </button>
             </form>
+            <br />
+            <p  className='text-textColor text-sm'>* share session id with athlete to join call </p>
           </div>
         </div>
       </div>

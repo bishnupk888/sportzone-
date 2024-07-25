@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Chart from 'react-apexcharts';
 import axiosInstance from '../../axiosInstance/axiosInstance';
 import apiServices from '../../apiServices/apiServices';
+import { useNavigate } from 'react-router-dom';
 
 const AreaChartCard = ({ role }) => {
   const [chartData, setChartData] = useState([]);
@@ -10,7 +11,7 @@ const AreaChartCard = ({ role }) => {
   const [usersCount, setUsersCount] = useState(0)
 
   const [showDropdown, setShowDropdown] = useState(false); // State to manage dropdown visibility
-
+  const navigate = useNavigate()
   useEffect(() => {
     fetchChartData(period);
 
@@ -18,15 +19,12 @@ const AreaChartCard = ({ role }) => {
 
   const fetchChartData = async (period) => {
     try {
-      console.log("fetch chart data ",role);
       apiServices.getChartData(role,period)
       .then((response)=>{
-      console.log(response.data);
       const data = response.data;
       setChartData(data.map(item => item.count));
       setCategories(data.map(item => item._id));
       if (data.length > 0) {
-        console.log(" data in for count : ",data);
         const totalUsersCount = data.reduce((acc, item) => acc + item.count, 0);
         setUsersCount(totalUsersCount);
       } else {
@@ -173,15 +171,15 @@ const AreaChartCard = ({ role }) => {
               </ul>
             </div>
           )}
-          <a
-            href="#"
+          <p
+            onClick={()=>navigate(`/admin/${role}s`)}
             className="uppercase text-sm font-semibold inline-flex items-center rounded-lg text-red-600 hover:text-red-700 dark:hover:text-red-500 hover:bg-gray-100 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 px-3 py-2"
           >
-            {role}s report
+            {role}s details
             <svg className="w-2.5 h-2.5 ms-1.5 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
               <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 9 4-4-4-4"/>
             </svg>
-          </a>
+          </p>
         </div>
       </div>
     </div>

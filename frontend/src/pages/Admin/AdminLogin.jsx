@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import bgImgLogin from '../../assets/images/loginBG.png'; // Adjust the import path as necessary
+import bgImgLogin from '../../assets/images/loginBG.png'; 
 import { setAdminData } from '../../redux/features/adminSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import logoImg from '../../assets/images/logo/logo.png'
@@ -12,11 +12,6 @@ const AdminLogin = () => {
   const dispatch = useDispatch();
   const userRole = useSelector((state) => state.admin.adminRole);
 
-  useEffect(() => {
-    if (userRole) {
-      navigate('/admin/dashboard');
-    }
-  }, [userRole]);
 
   const [formData, setFormData] = useState({
     email: '',
@@ -38,13 +33,13 @@ const AdminLogin = () => {
 
     apiServices.adminLogin(formData)
       .then((response) => {
-        dispatch(setAdminData(response.data.data)); // redux store
+        dispatch(setAdminData(response.data.data)); 
         toast.success("Successfully logged in");
         navigate('/admin/dashboard');
       })
       .catch((err) => {
         console.error(err);
-        toast.error('Failed to login');
+        toast.error('Failed to login ');
       });
     }
   };

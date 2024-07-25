@@ -9,7 +9,6 @@ const trainerTransactionHelper = require('../helpers/trainerHelpers/transactionH
 
 
 
-// trainerRouter.get('/',trainerController.getAllTrainers)
 trainerRouter.get('/:id',authTrainer,checkBlocked,trainerController.getTrainer)
 trainerRouter.put('/:id',authTrainer,checkBlocked, trainerController.updateTrainer)
 trainerRouter.patch('/:id/profile-image',authTrainer,checkBlocked,trainerController.updateProfileImage)

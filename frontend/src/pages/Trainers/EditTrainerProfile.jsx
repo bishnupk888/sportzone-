@@ -38,20 +38,18 @@ export default function EditTrainerProfile() {
         }
     }, [userId]);
     const handleCertificateUpload =async()=>{
-        console.log("certificate upload");
     }
     const handleImageUpload = async (userId,url) => {
         try {
                 apiServices.uploadTrainerImage(userId,url)
                 .then((response)=>{
-                    console.log('Profile image updated:', response.data);
                     setTrainerData(prevData => ({
                         ...prevData,
                         profileImage: url
                     }));
                 })
                 .catch((error)=>{
-                    console.log(error);
+                    console.error(error);
                 })
                 
         } catch (error) {
@@ -94,7 +92,6 @@ export default function EditTrainerProfile() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log("in handle submit");
         const newErrors = validateForm();
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
@@ -102,7 +99,6 @@ export default function EditTrainerProfile() {
         }
         apiServices.updateTrainerData(userId,trainerData)
             .then((response) => {
-                console.log("in response");
                 toast.success("Trainer data updated successfully");
                 navigate('/trainer/profile');
             })

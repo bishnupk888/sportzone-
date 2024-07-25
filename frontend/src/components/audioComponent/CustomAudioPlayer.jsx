@@ -8,11 +8,11 @@ const CustomAudioPlayer = ({ src }) => {
       <AudioPlayer
         src={src}
         onError={(e) => console.error('Error loading audio file:', e)}
-        customAdditionalControls={[]} // Hide default controls
-        customVolumeControls={[]} // Hide volume control
-        showJumpControls={false} // Hide forward/rewind controls
+        customAdditionalControls={[]} 
+        customVolumeControls={[]} 
+        showJumpControls={false} 
       />
-      <style jsx>{`
+      <style >{`
         .custom-audio-player-container {
           position: relative;
           margin-bottom: 10px;

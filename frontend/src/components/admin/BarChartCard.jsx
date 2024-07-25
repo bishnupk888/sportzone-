@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { BarChart } from '@mui/x-charts/BarChart';
-import apiServices from '../../apiServices/apiServices'; // Adjust import based on your setup
+import apiServices from '../../apiServices/apiServices'; 
 
 const BarChartCard = () => {
   const [chartData, setChartData] = useState({ revenue: [] });
@@ -20,10 +20,8 @@ const BarChartCard = () => {
     }
     try {
       const response = await apiServices.getRevenueChartData(period);
-      console.log('response in revenue chart', response);
       const data = response.data;
   
-      // Process the response data
       const revenue = data.revenue || [];
       const xLabels = data.labels || [];
   

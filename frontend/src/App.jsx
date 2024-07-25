@@ -1,5 +1,7 @@
 import './App.css';
 import Layout from './layout/Layout';
+import { SocketProvider } from './context/SocketContext';
+
 
 
 
@@ -7,9 +9,9 @@ function App() {
   
   return (
     <>
-    
-      <Layout />
-  
+     <SocketProvider>
+     <Layout />
+     </SocketProvider>
     </>
   )
 }

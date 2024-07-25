@@ -1,6 +1,6 @@
 import React from 'react';
 import { Page, Text, View, Document, StyleSheet, Image } from '@react-pdf/renderer';
-import logo from '../../assets/images/logo/logo.png'; // Ensure this path is correct
+import logo from '../../assets/images/logo/logo.png'; 
 
 const styles = StyleSheet.create({
   page: {
