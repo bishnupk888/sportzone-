@@ -20,15 +20,17 @@ const FindATrainer = () => {
     window.scrollTo(0, 0);
     const getTrainers = async () => {
       try {
-        const response = await apiServices.fetchAllTrainers();
+        const response = await apiServices.fetchAllTrainers()
+        console.log("response find trainer ==", response);
         const allTrainers = response.data.data;
-        const verified = allTrainers.filter(trainer => trainer.isVerified);
+        console.log('All Trainers:', allTrainers);
+        const verified = (Array.isArray(allTrainers) ? allTrainers : [])
+        .filter(trainer => trainer && trainer.isVerified);
         setVerifiedTrainers(verified);
         setFilteredTrainers(verified);
         setMoreAvailable(verified.length > 8);
       } catch (error) {
         console.error('Error fetching trainers:', error);
-        setError(error);
         toast.error('Failed to fetch trainers');
       }
     };
@@ -48,7 +50,9 @@ const FindATrainer = () => {
     }
   }, [location.search, verifiedTrainers]);
 
-    
+  useEffect(() => {
+    console.log('Filtered Trainers:', filteredTrainers);
+  }, [filteredTrainers]);
 
   const getDepartments = () => {
     const departments = verifiedTrainers.map(trainer => trainer.department);
@@ -66,7 +70,7 @@ const FindATrainer = () => {
     setFilterDepartment('');
     setSortOption('');
     navigate(`/user/findtrainers`)
-    // Clear filters and fetch trainers with cleared state
+    
     filterTrainers('', '', '');
   };
 

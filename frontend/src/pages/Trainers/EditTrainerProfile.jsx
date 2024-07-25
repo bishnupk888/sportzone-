@@ -112,22 +112,7 @@ export default function EditTrainerProfile() {
         navigate('/trainer-profile');
     };
 
-    // const addExperienceField = () => {
-    //     setTrainerData(prevData => ({
-    //         ...prevData,
-    //         experience: [
-    //             ...prevData.experience,
-    //             { institution: '', duration: '' }
-    //         ],
-    //     }));
-    // };
-
-    // const removeExperienceField = (indexToRemove) => {
-    //     setTrainerData(prevData => ({
-    //         ...prevData,
-    //         experience: prevData.experience.filter((exp, index) => index !== indexToRemove),
-    //     }));
-    // };
+    
 
     return (
         <div className='px-[5%] py-[5%] bg-black text-white'>

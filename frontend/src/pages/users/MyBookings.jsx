@@ -95,16 +95,25 @@ const MyBookings = () => {
   
 
   useEffect(() => {
-    const fData = bookingData.filter(booking =>
-      booking.trainerId.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      booking.trainerId.email.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
-    const pData = fData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-
-    setFilteredData(fData);
-    setPaginatedData(pData);
+    // Check if bookingData is defined and is an array
+    if (Array.isArray(bookingData)) {
+      // Filter booking data based on search query
+      const fData = bookingData.filter(booking =>
+        booking.trainerId?.username?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        booking.trainerId?.email?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+  
+      // Calculate the current page slice
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = currentPage * itemsPerPage;
+      const pData = fData.slice(startIndex, endIndex);
+  
+      // Update state with filtered and paginated data
+      setFilteredData(fData);
+      setPaginatedData(pData);
+    }
   }, [bookingData, searchQuery, currentPage]);
+  
 
   const handleCancelBooking = (bookingId) => {
    

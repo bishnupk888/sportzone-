@@ -56,15 +56,13 @@ useEffect(()=>{
 },[userId])
 
 useEffect(() => {
-   const unreadCount = notifications.filter(notification => !notification.isRead).length;
-   setUnreadNotificationCount(unreadCount)
-}, [notifications,userId])
-// useEffect(()=>{
-//   const unreadMessages = 
-// },[])
+  if (notifications && Array.isArray(notifications)) {
+    const unreadCount = notifications.filter(notification => !notification.isRead).length;
+    setUnreadNotificationCount(unreadCount);
+  }
+}, [notifications, userId]);
 
 
-// const unreadNotificationCount = notifications.filter(notification => !notification.isRead).length;
 
 const isAdminPath = location.pathname.startsWith('/admin');
   

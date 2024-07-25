@@ -1,5 +1,6 @@
 // server.js
 const express = require('express');
+const  path = require('path')
 const app = express();
 const http = require('http');
 const socketIo = require('socket.io');
@@ -15,28 +16,37 @@ const chatSocket = require('./sockets/chatSocket');
 const chatRoute = require('./routes/chatRoute');
 const notificationRoute = require('./routes/notificationRoute')
 
-
-if (process.env.NODE_ENV != "production") {
-    require('dotenv').config();
-}
+const currentWorkingDir = path.resolve();
+const parentDir = path.dirname(currentWorkingDir);
 
 app.use(express.json());
 app.use(cookieParser());
 
 app.use(express.urlencoded({ extended: true }));
+
 app.use(cors({
-    origin: process.env.CORS_ORIGIN, // Allow requests from this origin
-    credentials: true,               // Allow credentials (cookies, authorization headers, etc.)
+    origin: process.env.CORS_ORIGIN, 
+    credentials: true,               
 }));
 
 app.use('/api/auth', authRoute);
-app.use('/api/users', userRoute);
+app.use('/api/users',  userRoute);
 app.use('/api/admin', adminRoute);
 app.use('/api/trainers', trainerRoute);
 app.use('/api/bookings', bookingRoute);
 app.use('/api/chat',chatRoute)
 app.use('/api/notifications',notificationRoute)
 
+if (process.env.NODE_ENV != "production") {
+    require('dotenv').config();
+    const __dirname = path.resolve();
+    app.use(express.static(path.join(parentDir, "/frontend/dist")));
+    app.get("*", (req, res) =>res.sendFile(path.resolve(parentDir, "frontend", "dist", "index.html")))
+}
+
+
+
+ 
 // connect database
 connectDb();
 

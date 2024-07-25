@@ -26,19 +26,24 @@ const ViewTrainerDetails = () => {
 
 
 
-    const filteredSlots = slotsAvailable.filter(slot => {
-        // Filter out booked slots
-        if (slot.isBooked) {
-            return false;
-        }
+    
+const filteredSlots = slotsAvailable.filter(slot => {
+    // Filter out booked slots
+    if (slot.isBooked) {
+        return false;
+    }
 
-        // Check if the slot date and time is in the future
-        const slotDate = new Date(slot.date);
-        const [startHour, startMinute] = slot.startTime.split(':').map(Number);
-        slotDate.setHours(startHour, startMinute, 0, 0); // Set the slot start time
+    const slotDate = new Date(slot.date);
+    const [startHour, startMinute] = slot.startTime.split(':').map(Number);
 
-        return slotDate >= now;
-    });
+    if (isNaN(startHour) || isNaN(startMinute)) {
+        return false;
+    }
+
+    slotDate.setHours(startHour, startMinute, 0, 0);
+
+    return slotDate > now;
+});
     useEffect(() => {
         window.scrollTo(0, 0);
         try {

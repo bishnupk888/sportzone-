@@ -81,14 +81,13 @@ const Home = () => {
         </div>
       </section>
 
-
       {userRole === 'trainer' ? '' : (
         <section className="py-6 dark:bg-black dark:text-textColor mt-10">
           <div className="container flex flex-col items-center justify-center p-4 mx-auto sm:p-4">
             <p className="p-2 text-sm lg:text-2xl font-medium tracking-wider text-center uppercase"> our Experts </p>
             <h1 className="lg:text-[60px] font-bold leading-none text-center text-4xl lg:mb-10">Talented Trainers With Us</h1>
             <div className="flex flex-row flex-wrap-reverse justify-center mt-10">
-              {userData.filter((data) => data.isVerified === true).slice(0, 6).map((trainer) => (
+              {userData && Array.isArray(userData) && userData.filter((data) => data.isVerified === true).slice(0, 6).map((trainer) => (
                 <div key={trainer._id} onClick={() => {
                   if (userRole) {
                     navigate(`/user/view-trainer/${trainer._id}`, { state: { trainer: trainer } });
