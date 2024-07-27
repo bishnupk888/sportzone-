@@ -12,6 +12,7 @@ const Bookings = () => {
   const [sortOrder, setSortOrder] = useState("asc");
   const [slotSortOrder, setSlotSortOrder] = useState("asc");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true)
   const itemsPerPage = 10;
   const trainerId = useSelector((state) => state.user.userId);
 
@@ -24,6 +25,7 @@ const Bookings = () => {
   };
 
   useEffect(() => {
+    setIsLoading(true)
     apiServices
       .getTrainerBookings(trainerId)
       .then((response) => {
@@ -268,6 +270,20 @@ const Bookings = () => {
         )}
         
         </>):(
+          isLoading ? <><h3 className="text-center py-4 text-white" style={{
+            animation: "fade 2s infinite",
+          }} > Loading...</h3>
+          <style>
+          {`
+@keyframes fade {
+0% { opacity: 0; }
+50% { opacity: 1; }
+100% { opacity: 0; }
+}
+`}
+        </style>
+        </>
+          :
           <h3 className="text-redBorder "> No bookings made or No booking data to display!!</h3>
         )}
       </div>

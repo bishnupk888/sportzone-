@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { FaSearch } from 'react-icons/fa';
-import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
-import BookingDetails from '../../components/bookingDetails/BookingDetails';
-import apiServices from '../../apiServices/apiServices';
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { FaSearch } from "react-icons/fa";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import BookingDetails from "../../components/bookingDetails/BookingDetails";
+import apiServices from "../../apiServices/apiServices";
 
 const MyBookings = () => {
   const [bookingData, setBookingData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [sortOrder, setSortOrder] = useState('asc');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortOrder, setSortOrder] = useState("asc");
   const [viewBookingDetails, setViewBookingDetails] = useState(false);
   const [selectedBookingId, setSelectedBookingId] = useState(null);
   const [paginatedData, setPaginatedData] = useState([]);
@@ -21,15 +22,18 @@ const MyBookings = () => {
 
   const formatDate = (dateStr) => {
     const dateObj = new Date(dateStr);
-    const day = String(dateObj.getDate()).padStart(2, '0');
-    const month = String(dateObj.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const day = String(dateObj.getDate()).padStart(2, "0");
+    const month = String(dateObj.getMonth() + 1).padStart(2, "0"); // Months are 0-based
     const year = dateObj.getFullYear();
     return `${day}-${month}-${year}`;
   };
 
   useEffect(() => {
-  window.scrollTo(0, 0);
-    apiServices.getUserBookings(userId)
+    setIsLoading(true);
+    window.scrollTo(0, 0);
+
+    apiServices
+      .getUserBookings(userId)
       .then((response) => {
         const transformedData = response.data.data.map((booking) => ({
           ...booking,
@@ -52,7 +56,7 @@ const MyBookings = () => {
 
   const compareCurrentTimeWithSlot = (slotEndTime) => {
     const currentTime = new Date();
-    const [endHours, endMinutes] = slotEndTime.split(':');
+    const [endHours, endMinutes] = slotEndTime.split(":");
     const slotEndDateTime = new Date(currentTime);
     slotEndDateTime.setHours(parseInt(endHours, 10));
     slotEndDateTime.setMinutes(parseInt(endMinutes, 10));
@@ -86,46 +90,54 @@ const MyBookings = () => {
     const sortedData = [...bookingData].sort((a, b) => {
       const dateA = new Date(a.slots[0].date); // Accessing the first slot's date
       const dateB = new Date(b.slots[0].date);
-      return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
+      return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
     });
-    
+
     setBookingData(sortedData);
-    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
   };
-  
 
   useEffect(() => {
     // Check if bookingData is defined and is an array
     if (Array.isArray(bookingData)) {
       // Filter booking data based on search query
-      const fData = bookingData.filter(booking =>
-        booking.trainerId?.username?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        booking.trainerId?.email?.toLowerCase().includes(searchQuery.toLowerCase())
+      const fData = bookingData.filter(
+        (booking) =>
+          booking.trainerId?.username
+            ?.toLowerCase()
+            .includes(searchQuery.toLowerCase()) ||
+          booking.trainerId?.email
+            ?.toLowerCase()
+            .includes(searchQuery.toLowerCase())
       );
-  
+
       // Calculate the current page slice
       const startIndex = (currentPage - 1) * itemsPerPage;
       const endIndex = currentPage * itemsPerPage;
       const pData = fData.slice(startIndex, endIndex);
-  
+
       // Update state with filtered and paginated data
       setFilteredData(fData);
       setPaginatedData(pData);
+      
     }
   }, [bookingData, searchQuery, currentPage]);
-  
 
   const handleCancelBooking = (bookingId) => {
-   
-    apiServices.cancelUserBooking(bookingId) 
+    apiServices
+      .cancelUserBooking(bookingId)
       .then((response) => {
         console.log(response);
         if (response.data.success) {
-          setBookingData(prevData => prevData.map(booking =>
-            booking._id === bookingId ? { ...booking, bookingStatus: 'cancelled' } : booking
-          ));
-          
-          toast.success('booking cancelled successfully');
+          setBookingData((prevData) =>
+            prevData.map((booking) =>
+              booking._id === bookingId
+                ? { ...booking, bookingStatus: "cancelled" }
+                : booking
+            )
+          );
+
+          toast.success("booking cancelled successfully");
         }
       })
       .catch((err) => {
@@ -135,9 +147,9 @@ const MyBookings = () => {
 
   return (
     <>
-      <div className='m-10'>
+      <div className="m-10">
         <div className="flex justify-between items-center mb-4">
-          <h1 className='text-white text-2xl my-4'>MY BOOKING</h1>
+          <h1 className="text-white text-2xl my-4">MY BOOKINGS</h1>
           <div className="flex items-center">
             <div className="flex mr-4">
               <FaSearch className="relative left-7 top-3 text-textColor" />
@@ -161,19 +173,34 @@ const MyBookings = () => {
           <table className="w-full border-collapse bg-black text-left text-sm text-gray-500">
             <thead className="bg-black text-textColor">
               <tr>
-                <th scope="col" className="px-6 py-4 font-medium">Trainer Name</th>
-                <th scope="col" className="px-6 py-4 font-medium">Booked On</th>
-                <th scope="col" className="px-6 py-4 font-medium">session date</th>
-                <th scope="col" className="px-6 py-4 font-medium">Booking Status</th>
-                <th scope="col" className="px-6 py-4 font-medium">Training Status</th>
-                <th scope="col" className="px-6 py-4 font-medium">Actions</th>
+                <th scope="col" className="px-6 py-4 font-medium">
+                  Trainer Name
+                </th>
+                <th scope="col" className="px-6 py-4 font-medium">
+                  Booked On
+                </th>
+                <th scope="col" className="px-6 py-4 font-medium">
+                  session date
+                </th>
+                <th scope="col" className="px-6 py-4 font-medium">
+                  Booking Status
+                </th>
+                <th scope="col" className="px-6 py-4 font-medium">
+                  Training Status
+                </th>
+                <th scope="col" className="px-6 py-4 font-medium">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 border-t border-gray-100">
               {paginatedData.length > 0 ? (
-                paginatedData.map((booking, index) => (
+                paginatedData.map((booking, index) =>
                   booking.slots.map((slot, slotIndex) => (
-                    <tr key={`${index}-${slotIndex}`} className="hover:bg-buttonBgColor">
+                    <tr
+                      key={`${index}-${slotIndex}`}
+                      className="hover:bg-buttonBgColor"
+                    >
                       <th className="flex gap-3 px-6 py-4 font-normal text-gray-900">
                         <div className="relative h-10 w-10">
                           <img
@@ -183,35 +210,67 @@ const MyBookings = () => {
                           />
                         </div>
                         <div className="text-sm">
-                          <div className="font-medium text-gray-400">{booking.trainerId.username}</div>
-                          <div className="text-gray-600">{booking.trainerId.email}</div>
+                          <div className="font-medium text-gray-400">
+                            {booking.trainerId.username}
+                          </div>
+                          <div className="text-gray-600">
+                            {booking.trainerId.email}
+                          </div>
                         </div>
                       </th>
                       <td className="px-6 py-4">{booking.bookingDate}</td>
-                      <td className="px-6 py-4">{formatDate(booking.slots[0].date)}</td>
+                      <td className="px-6 py-4">
+                        {formatDate(booking.slots[0].date)}
+                      </td>
 
                       <td className="px-6 py-4">
                         <span
-                          className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-semibold border ${booking.bookingStatus === 'success'
-                            ? 'bg-black text-white border border-green-600'
-                            : booking.bookingStatus === 'cancelled' || booking.bookingStatus === 'failed'
-                              ? 'bg-black text-white border border-red-600'
-                              : 'bg-black text-white'
+                          className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-semibold border ${
+                            booking.bookingStatus === "success"
+                              ? "bg-black text-white border border-green-600"
+                              : booking.bookingStatus === "cancelled" ||
+                                booking.bookingStatus === "failed"
+                              ? "bg-black text-white border border-red-600"
+                              : "bg-black text-white"
                           }`}
                         >
-                          <span className={`h-1.5 w-1.5 rounded-full ${(booking.bookingStatus === 'cancelled' || booking.bookingStatus === 'failed') ? 'bg-red-600' : 'bg-green-600'} `}></span>
+                          <span
+                            className={`h-1.5 w-1.5 rounded-full ${
+                              booking.bookingStatus === "cancelled" ||
+                              booking.bookingStatus === "failed"
+                                ? "bg-red-600"
+                                : "bg-green-600"
+                            } `}
+                          ></span>
                           {booking.bookingStatus}
                         </span>
                       </td>
                       <td className="px-6 py-4">
                         <span
-                          className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-semibold ${booking.bookingStatus === 'cancelled' ? 'bg-black text-white border border-red-600' : (isSlotUpcoming(slot.date, slot.endTime)
-                            ? 'bg-black text-white border border-green-600'
-                            : 'bg-black text-white border border-red-600'
-                          )}`}
+                          className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-semibold ${
+                            booking.bookingStatus === "cancelled"
+                              ? "bg-black text-white border border-red-600"
+                              : isSlotUpcoming(slot.date, slot.endTime)
+                              ? "bg-black text-white border border-green-600"
+                              : "bg-black text-white border border-red-600"
+                          }`}
                         >
-                          <span className={`h-1.5 w-1.5 rounded-full ${booking.bookingStatus === 'cancelled' ? 'bg-red-600' : (isSlotUpcoming(slot.date, slot.endTime) ? 'bg-green-600' : 'bg-red-600')}`}> </span>
-                          {booking.bookingStatus === 'cancelled' ? 'cancelled' : (isSlotUpcoming(slot.date, slot.endTime) ? 'Upcoming' : 'Completed')}
+                          <span
+                            className={`h-1.5 w-1.5 rounded-full ${
+                              booking.bookingStatus === "cancelled"
+                                ? "bg-red-600"
+                                : isSlotUpcoming(slot.date, slot.endTime)
+                                ? "bg-green-600"
+                                : "bg-red-600"
+                            }`}
+                          >
+                            {" "}
+                          </span>
+                          {booking.bookingStatus === "cancelled"
+                            ? "cancelled"
+                            : isSlotUpcoming(slot.date, slot.endTime)
+                            ? "Upcoming"
+                            : "Completed"}
                         </span>
                       </td>
                       <td className="px-6 py-4">
@@ -227,11 +286,39 @@ const MyBookings = () => {
                       </td>
                     </tr>
                   ))
-                ))
+                )
               ) : (
-                <tr>
-                  <td colSpan="8" className="text-center py-4">No bookings found</td>
-                </tr>
+                <>
+                  {isLoading ? (
+                    <tr>
+                        <td
+                          colSpan="8"
+                          className="text-center py-4 text-white text-md"
+                          style={{
+                            animation: "fade 2s infinite",
+                          }}
+                        >
+                          Booking Data Loading..
+                        </td>
+                        <style>
+                          {`
+          @keyframes fade {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+          }
+        `}
+                        </style>
+  
+                    </tr>
+                  ) : (
+                    <tr>
+                      <td colSpan="8" className="text-center py-4">
+                        No Booking Data Found
+                      </td>
+                    </tr>
+                  )}
+                </>
               )}
             </tbody>
           </table>
@@ -245,11 +332,14 @@ const MyBookings = () => {
             Previous
           </button>
           <span className="text-white">
-            Page {currentPage} of {Math.ceil(filteredData.length / itemsPerPage)}
+            Page {currentPage} of{" "}
+            {Math.ceil(filteredData.length / itemsPerPage)}
           </span>
           <button
             onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === Math.ceil(filteredData.length / itemsPerPage)}
+            disabled={
+              currentPage === Math.ceil(filteredData.length / itemsPerPage)
+            }
             className="bg-black border border-green-600 text-white px-4 py-2 rounded disabled:bg-black disabled:text-gray-700 disabled:border-black"
           >
             Next

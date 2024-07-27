@@ -1,11 +1,10 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import socket from '../../utils/socket';
 
 const bookingDetailsString = localStorage.getItem('bookingNotificationData');
 const bookingDetails = JSON.parse(bookingDetailsString);
 
 const CheckoutSuccess = () => {
-  const hasNotified = useRef(false);
 
   const formatDate = (dateStr) => {
     const dateObj = new Date(dateStr);
@@ -16,27 +15,24 @@ const CheckoutSuccess = () => {
   };
 
   useEffect(() => {
-    if (bookingDetails && !hasNotified.current) {
-      console.log("bookingDetails in success", bookingDetails);
+    if (bookingDetails) {
       const { user, trainer, slot } = bookingDetails;
-      console.log(user, trainer, slot);
-      const contentUser = `Your booking for slot on ${formatDate(slot.date)} - from ${slot.startTime} to ${slot.endTime} is successful.`;
-      const contentTrainer = `Slot added on ${formatDate(slot.date)} - from ${slot.startTime} to ${slot.endTime} is booked by ${user.username}.`;
+      const contentUser = `Your booking for slot on ${formatDate(slot?.date)} - from ${slot?.startTime} to ${slot?.endTime} is successful.`;
+      const contentTrainer = `Slot added on ${formatDate(slot?.date)} - from ${slot?.startTime} to ${slot?.endTime} is booked by ${user?.username}.`;
 
       socket.emit("notification", {
         content: contentUser,
-        receiverId: user._id,
-        sender: `Trainer, ${trainer.username}`
+        receiverId: user?._id,
+        sender: `Trainer, ${trainer?.username}`
       });
 
       socket.emit("notification", {
         content: contentTrainer,
-        receiverId: trainer._id,
+        receiverId: trainer?._id,
         sender: 'Admin regarding Booking'
       });
 
       localStorage.removeItem('bookingNotificationData');
-      hasNotified.current = true; // Mark notifications as sent
     }
   }, []);
 

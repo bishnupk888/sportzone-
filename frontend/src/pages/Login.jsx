@@ -9,7 +9,7 @@ import { useGoogleLogin } from '@react-oauth/google';
 import BouncingBallLoader from '../components/loader/BouncingBallLoader'
 import apiServices from '../apiServices/apiServices';
 
-
+  
 
 const Login = ({Role}) => {
   const userRole = useSelector((state) => state.user.userRole);
@@ -37,7 +37,7 @@ const Login = ({Role}) => {
 
   const GoogleSignIn = useGoogleLogin({
     onSuccess: tokenResponse => handleGoogleSignIn(tokenResponse),
-    onFailure: tokenResponse => console.log(tokenResponse),
+    onFailure: tokenResponse => handleGoogleSignInFailure(tokenResponse),
     cookiePolicy : 'single_host_origin',
   });
 
@@ -60,6 +60,12 @@ const Login = ({Role}) => {
   }
   };
 
+  const handleGoogleSignInFailure=(tokenResponse)=>{
+    toast.error('unknown error. please try again later')
+    navigate('/home')
+    setLoaderActive(false)
+  }
+
   const handleGoogleSignIn = (credentialResponse) => {
     const { access_token } = credentialResponse;
     
@@ -73,7 +79,6 @@ const Login = ({Role}) => {
       setLoaderActive(true)
      
       const { email } = data;
-      const role = formData.role
       
       apiServices.googleSignIn(email,Role)
         .then(response => {

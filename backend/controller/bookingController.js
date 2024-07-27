@@ -106,6 +106,7 @@ const walletBooking = async(req,res)=>{
             const slotsQuantity = slotIds.length
             const user = await User.findById(userId);
             const trainer = await Trainer.findById(trainerId);
+            const slot = await Slot.findById(slotIds[0])
 
                 if (!slotsQuantity) {
                   return res.status(404).json({ message: 'Slot not found' });
@@ -141,8 +142,8 @@ const walletBooking = async(req,res)=>{
                     status:'success'
                   })
                   await transaction.save()
-
-                return res.status(200).json({ success: true, message: "Successfully booked and paid"});
+                const bookingDetails = {slot , user, trainer}
+                return res.status(200).json({ success: true, message: "Successfully booked and paid",data:{bookingDetails}});
         } catch (error) {
             console.error(error);
             res.status(500).json({message:"server error booking failed retry"})

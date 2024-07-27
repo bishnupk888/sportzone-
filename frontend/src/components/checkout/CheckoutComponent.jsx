@@ -45,6 +45,9 @@ const CheckoutPage = () => {
         if (paymentMethod === 'wallet') {
           apiServices.walletPayment(checkoutData)
             .then((response) => {
+              const {bookingDetails} = response.data.data
+              const bookingDataString = JSON.stringify(bookingDetails)
+              localStorage.setItem('bookingNotificationData',bookingDataString)
               navigate('/user/checkout-success')
             })
         }

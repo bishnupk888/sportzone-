@@ -36,13 +36,14 @@ const VerifyOtp = () => {
       .then((response) => {
         const role = response?.data?.data?.role;
 
+        console.log(`joined as ${role} id : `,userId)
         socket.emit("notification", {
           content: `Congrats! your registration successful. Welcome to Sportzone family.`,
           receiverId: userId,
           sender: 'Admin regarding Registration'
         });
 
-        if(role === 'trainer'){
+        if(role && role == 'trainer' ){
           socket.emit("notification", {
             content: `Complete your profile for verification and to be listed as a trainer on Sportzone`,
             receiverId: userId,
@@ -51,6 +52,7 @@ const VerifyOtp = () => {
         }
         
         toast.success("Successfully verified OTP");
+        
         navigate(`/${role}/login`);
       })
       .catch((error) => {
@@ -61,8 +63,8 @@ const VerifyOtp = () => {
   
   const handleResend = (e) => {
     e.preventDefault();
-    axiosInstance.post('/api/auth/re-send-otp').then((response) => {
-      // Handle response if needed
+    axiosInstance.post('/api/auth/re-send-otp').then(() => {
+      toast.success("OTP resent successfully");
     });
     setTimer(60); // Reset the timer
     setShowResend(false); // Hide the resend button

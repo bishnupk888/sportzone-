@@ -6,24 +6,24 @@ import bgImage from '../../assets/images/background/20215.jpg';
 
 const CreateVideocallSession = () => {
   const navigate = useNavigate();
-  const [sessionId, setSessionId] = useState('');
+  const [roomId, setRoomId] = useState('');
 
   const handleInputChange = (e) => {
-    setSessionId(e.target.value);
+    setRoomId(e.target.value);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     // Validate sessionId
-    const isValid = /^[^\s]+$/.test(sessionId); // Check if sessionId is a string without spaces
+    const isValid = /^[a-zA-Z]+$/.test(roomId); // Check if sessionId is a string without spaces
 
     if (!isValid) {
-      toast.error('Session ID must be a string without spaces.');
+      toast.error('Room ID must be of alphabetic characters without spaces.');
       return;
     }
 
-    navigate('/trainer/videocall', { state: { sessionId } });
+    navigate('/trainer/videocall',{state:roomId})
   };
 
   return (
@@ -69,10 +69,10 @@ const CreateVideocallSession = () => {
                 <div className="space-y-2">
                   <input 
                     type="text" 
-                    name="sessionId" 
-                    id="sessionId" 
-                    placeholder="Enter Session ID" 
-                    value={sessionId} 
+                    name="roomId" 
+                    id="roomId" 
+                    placeholder="Enter Room ID" 
+                    value={roomId} 
                     onChange={handleInputChange} 
                     className="w-full px-3 py-2 border rounded-md bg-black text-white hover:scale-95 focus:scale-100" 
                   />
@@ -82,11 +82,11 @@ const CreateVideocallSession = () => {
                 type="submit" 
                 className="w-full px-8 py-3 font-semibold rounded-md dark:bg-green-800 hover:bg-green-600 dark:text-gray-50 button-hover-effect"
               >
-                Create Session
+                Create RoomId
               </button>
             </form>
             <br />
-            <p  className='text-textColor text-sm'>* share session id with athlete to join call </p>
+            <p  className='text-textColor text-sm'>* share Room id with athlete to join call </p>
           </div>
         </div>
       </div>
