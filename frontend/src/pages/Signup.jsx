@@ -44,8 +44,8 @@ const Signup = () => {
   });
 
   const handleGoogleSignUp = (credentialResponse) => {
-    
     const { access_token } = credentialResponse;
+    setLoaderActive(true)
     // Extract email using Google's userinfo endpoint
     fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
       headers: {
@@ -73,6 +73,7 @@ const Signup = () => {
     })
     .catch(error => {
       console.error('Error fetching userinfo:', error);
+      
     });
   };
 

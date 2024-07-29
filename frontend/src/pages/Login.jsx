@@ -70,7 +70,8 @@ const Login = ({Role}) => {
 
   const handleGoogleSignIn = (credentialResponse) => {
     const { access_token } = credentialResponse;
-    
+    setLoaderActive(true)
+
     fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
       headers: {
         Authorization: `Bearer ${access_token}`,
@@ -78,7 +79,6 @@ const Login = ({Role}) => {
     })
     .then(response => response.json())
     .then(data => {
-      setLoaderActive(true)
      
       const { email } = data;
       
