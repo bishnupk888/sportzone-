@@ -43,7 +43,6 @@ const Login = ({Role}) => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setLoaderActive(true)
     if (formData.email === '' || formData.password === ''|| formData.role ==='' ) {
       toast.error('Need to fill all fields');
       setLoaderActive(false)
@@ -70,7 +69,7 @@ const Login = ({Role}) => {
 
   const handleGoogleSignIn = (credentialResponse) => {
     const { access_token } = credentialResponse;
-    setLoaderActive(true)
+    
 
     fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
       headers: {
@@ -81,7 +80,7 @@ const Login = ({Role}) => {
     .then(data => {
      
       const { email } = data;
-      
+      setLoaderActive(true)
       apiServices.googleSignIn(email,Role)
         .then(response => {
           dispatch(setUserData(response.data.data));
