@@ -67,6 +67,8 @@ const Signup = () => {
      
       apiServices.googleSignUp(name,email,password,role)
       .then((response) => {
+        console.log("response in g sign in", response)
+        const {userId} = response.data
         toast.success("OTP sent to your email");
         navigate('/verify-otp', { state: { userId } });
         setLoaderActive(false);
