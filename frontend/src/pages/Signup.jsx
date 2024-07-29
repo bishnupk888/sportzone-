@@ -39,9 +39,15 @@ const Signup = () => {
 
   const GoogleSignUp = useGoogleLogin({
     onSuccess: tokenResponse => handleGoogleSignUp(tokenResponse),
-    onFailure: tokenResponse => console.error(tokenResponse),
+    onFailure: tokenResponse => handleGoogleSignupFailure(tokenResponse),
     cookiePolicy : 'single_host_origin',
   });
+
+  const handleGoogleSignupFailure=(tokenResponse)=>{
+    toast.error('unknown error. please try again later')
+    navigate('/home')
+    setLoaderActive(false)
+  }
 
   const handleGoogleSignUp = (credentialResponse) => {
     const { access_token } = credentialResponse;
@@ -62,8 +68,8 @@ const Signup = () => {
       apiServices.googleSignUp(name,email,password,role)
       .then((response) => {
         toast.success("OTP sent to your email");
-        setLoaderActive(false);
         navigate('/verify-otp', { state: { userId } });
+        setLoaderActive(false);
       })
         .catch(error => {
           toast.error(error.response.data.message)
