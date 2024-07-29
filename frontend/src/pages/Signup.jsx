@@ -45,7 +45,6 @@ const Signup = () => {
 
   const handleGoogleSignUp = (credentialResponse) => {
     const { access_token } = credentialResponse;
-    setLoaderActive(true)
     // Extract email using Google's userinfo endpoint
     fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
       headers: {
@@ -54,6 +53,7 @@ const Signup = () => {
     })
     .then(response => response.json())
     .then(data => {
+      setLoaderActive(true)
       const { email } = data;
       const name = data.given_name+" "+data.family_name
       const role = formData.role
@@ -62,8 +62,8 @@ const Signup = () => {
       apiServices.googleSignUp(name,email,password,role)
       .then((response) => {
         toast.success("OTP sent to your email");
-        navigate('/verify-otp', { state: { userId } });
         setLoaderActive(false);
+        navigate('/verify-otp', { state: { userId } });
       })
         .catch(error => {
           toast.error(error.response.data.message)
@@ -73,7 +73,7 @@ const Signup = () => {
     })
     .catch(error => {
       console.error('Error fetching userinfo:', error);
-      
+
     });
   };
 
