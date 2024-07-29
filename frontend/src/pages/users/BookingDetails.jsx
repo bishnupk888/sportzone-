@@ -5,7 +5,7 @@ import apiServices from '../../apiServices/apiServices';
 
 const BookingDetails = ({cancelBooking , bookingId}) => {
 
-//   const bookingId = "66787909df1a698c232ac15d";
+
   
   const navigate = useNavigate();
   const [bookingDetails, setBookingDetails] = useState(null);
@@ -23,7 +23,6 @@ const BookingDetails = ({cancelBooking , bookingId}) => {
     window.scrollTo(0, 0);
     apiServices.getUserBookingDetails(bookingId)
       .then((response) => {
-        console.log(response.data);
         setBookingDetails(response.data.data);
         setLoading(false);
       })

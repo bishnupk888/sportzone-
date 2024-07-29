@@ -166,7 +166,6 @@ const login = async (req, res) => {
 }; 
 
 const googleSignIn = async (req, res) => {
-  console.log("g sign in")
   const { email,role  } = req.body;
   let user
   try {

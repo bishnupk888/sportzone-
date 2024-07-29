@@ -127,7 +127,6 @@ const MyBookings = () => {
     apiServices
       .cancelUserBooking(bookingId)
       .then((response) => {
-        console.log(response);
         if (response.data.success) {
           setBookingData((prevData) =>
             prevData.map((booking) =>

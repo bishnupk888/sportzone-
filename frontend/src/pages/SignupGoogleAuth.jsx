@@ -43,13 +43,12 @@ const LoginGoogleAuth = () => {
     } else if (formData.password !== formData.confirmPassword) {
       toast.error('Passwords do not match');
     } else {
-        console.log(formData);
       axiosInstance.post('/api/auth/signup', { formData, role }).then((response) => {
         dispatch(setUserData(response.data.data));
         toast.success('Successfully signed up');
         navigate('/home');
       }).catch((err) => {
-        console.log(err);
+        console.error(err);
         toast.error(err?.response?.data?.message);
       });
     }

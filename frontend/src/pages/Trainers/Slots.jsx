@@ -16,8 +16,8 @@ const Slots = () => {
   const [slots, setSlots] = useState([]);
   const [count, setCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [slotsPerPage] = useState(10); // Number of slots per page
-  const [sortByDateAsc, setSortByDateAsc] = useState(true); // State for sorting by date
+  const [slotsPerPage] = useState(10); 
+  const [sortByDateAsc, setSortByDateAsc] = useState(true); 
   const [viewEditSlot, setViewEditSlot] = useState(false);
   const [slotToEdit, setSlotToEdit] = useState([]);
   const [isLoading, setIsLoading] = useState(true);

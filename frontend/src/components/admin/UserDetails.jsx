@@ -32,9 +32,7 @@ const UserDetails = ({ user, setViewUserDetails }) => {
 
     if (!user) {
         return <div>No user details found</div>;
-    } else {
-        console.log(user)
-    }
+    } 
 
     return (
         <div className="fixed inset-0 z-40 bg-black bg-opacity-75 flex items-center justify-center">

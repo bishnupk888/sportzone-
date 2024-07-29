@@ -5,7 +5,6 @@ const PrivateRoutes = ({role}) => {
     const isLoggedIn = useSelector((state)=>{
        return role === state.admin.adminRole}
     )
-    console.log(' admin isLoggedIn = ',isLoggedIn)
     
     // let  = {'token': false}
     return(

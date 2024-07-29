@@ -46,13 +46,15 @@ const Login = ({Role}) => {
     setLoaderActive(true)
     if (formData.email === '' || formData.password === ''|| formData.role ==='' ) {
       toast.error('Need to fill all fields');
+      setLoaderActive(false)
+
     } else {
       try {
       const response = await apiServices.login(formData);
       dispatch(setUserData(response.data.data));
       toast.success('Successfully logged in');
-      setLoaderActive(false);
       navigate('/home');
+      setLoaderActive(false);
     } catch (err) {
       toast.error(err?.response?.data?.message || 'Login failed');
       setLoaderActive(false);
@@ -89,6 +91,7 @@ const Login = ({Role}) => {
         })
         .catch(error => {
           toast.error(error.response.data.message)
+          setLoaderActive(false)
           console.error('Error while signing in with Google:', error.response.data );
         });
     })

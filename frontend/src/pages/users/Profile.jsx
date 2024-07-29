@@ -57,7 +57,6 @@ export default function Profile() {
         try {
             apiServices.uploadUserImage(user.userId,url)
                 .then((response) => {
-                    console.log('Profile image updated:', response.data);
                     const updatedUserData = {
                         ...localUserData,
                         profileImage: url

@@ -25,7 +25,7 @@ const CalendarWithSlots = ({ slots, setIsOpen, trainerFee, trainerId }) => {
 
   const [selectedSlots, setSelectedSlots] = useState([]);
 
-  console.log("selected slots : ", selectedSlots);
+  
 
   const navigate = useNavigate();
 
@@ -56,7 +56,7 @@ const CalendarWithSlots = ({ slots, setIsOpen, trainerFee, trainerId }) => {
   };
 
   const totalAmount = calculateTotalAmount(selectedSlots, trainerFee);
-  console.log("totalAmount : ", totalAmount);
+  
 
   const formatDate = (date) => {
     const day = date.getDate().toString().padStart(2, "0");
@@ -89,7 +89,7 @@ const CalendarWithSlots = ({ slots, setIsOpen, trainerFee, trainerId }) => {
   };
 
   const handleDateClick = (date) => {
-    console.log(date);
+   
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -102,8 +102,6 @@ const CalendarWithSlots = ({ slots, setIsOpen, trainerFee, trainerId }) => {
   };
 
   const handleBookNowClick = async () => {
-    console.log("clicked booknow");
-    console.log("total amount :", totalAmount);
     if (!selectedSlots.length) {
       toast.error("no slots selected");
     } else {

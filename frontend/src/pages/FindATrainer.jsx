@@ -21,9 +21,7 @@ const FindATrainer = () => {
     const getTrainers = async () => {
       try {
         const response = await apiServices.fetchAllTrainers()
-        console.log("response find trainer ==", response);
         const allTrainers = response.data.data;
-        console.log('All Trainers:', allTrainers);
         const verified = (Array.isArray(allTrainers) ? allTrainers : [])
         .filter(trainer => trainer && trainer.isVerified);
         setVerifiedTrainers(verified);
@@ -50,9 +48,7 @@ const FindATrainer = () => {
     }
   }, [location.search, verifiedTrainers]);
 
-  useEffect(() => {
-    console.log('Filtered Trainers:', filteredTrainers);
-  }, [filteredTrainers]);
+  
 
   const getDepartments = () => {
     const departments = verifiedTrainers.map(trainer => trainer.department);

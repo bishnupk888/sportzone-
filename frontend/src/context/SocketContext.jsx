@@ -15,12 +15,10 @@ export const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     socket.on('newMessage', async(data) => {
-        console.log('newMessage listening   = ',data)
       setMessages((prevMessages) => [...prevMessages, data]);
     });
 
     socket.on('typing', (data) => {
-            console.log('typing status = ', data);
             setTypingStatus(true)
           });
     return () => {

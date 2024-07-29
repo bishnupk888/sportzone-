@@ -4,7 +4,7 @@ import { setUserData } from '../redux/features/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import logo from '../assets/images/logo/logo.png';
-import bgImage from '../assets/images/background/20215.jpg'; // Adjust the path accordingly
+import bgImage from '../assets/images/background/20215.jpg'; 
 import { useGoogleLogin } from '@react-oauth/google';
 import RoleSelectModal from '../components/popupComponents/RoleSelectModal';
 import apiServices from '../apiServices/apiServices';
@@ -62,11 +62,12 @@ const Signup = () => {
       apiServices.googleSignUp(name,email,password,role)
       .then((response) => {
         toast.success("OTP sent to your email");
-        navigate('/verify-otp');
+        navigate('/verify-otp', { state: { userId } });
         setLoaderActive(false);
       })
         .catch(error => {
           toast.error(error.response.data.message)
+          setLoaderActive(false);
           console.error('Error while signing in with Google:', error.response.data );
         });
     })
@@ -127,6 +128,7 @@ const Signup = () => {
         }) 
         .catch((err) => {
           toast.error(err.response.data.message);
+          setLoaderActive(false);
           console.error("Error during signup request", err);
         });
     }

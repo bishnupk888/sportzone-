@@ -67,7 +67,6 @@ const Contact = () => {
     } else {
       apiServices.sendContactUsEmail(contactFormData)
       .then((response)=>{
-          console.log("response : " ,response)
           setLoaderActive(false)
           toast.success(response.data.message);
           setContactFormData({

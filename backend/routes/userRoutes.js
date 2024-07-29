@@ -30,11 +30,5 @@ userRouter.post('/contact-us/send-email',authUser,checkBlocked,userController.se
 
 
 
-// userRouter.get('/services-list',(req,res,next)=>{console.log("gets call"); next()},authUser,checkBlocked,userController.helloworld)
-
-
-
-
-
 
 module.exports = userRouter  

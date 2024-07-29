@@ -7,7 +7,8 @@ const Wallet = () => {
   const user = useSelector((state) => state.user);
   const [userData, setUserData] = useState({});
   const [transactions, setTransactions] = useState([]);
-  const [userCache, setUserCache] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -15,10 +16,11 @@ const Wallet = () => {
       apiServices.getUser(user.userId)
         .then((response) => {
           setUserData(response.data.data);
-          return apiServices.getUserTransactions(user.userId)
+          return apiServices.getUserTransactions(user.userId);
         })
         .then((response) => {
-          setTransactions(response.data.data);
+          const sortedTransactions = response.data.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+          setTransactions(sortedTransactions);
         })
         .catch((error) => {
           console.error('Error fetching data:', error);
@@ -27,6 +29,18 @@ const Wallet = () => {
     }
   }, [user]);
 
+  const totalPages = Math.ceil(transactions.length / itemsPerPage);
+
+  const handlePageChange = (newPage) => {
+    if (newPage > 0 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
+
+  const paginatedTransactions = transactions.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   return (
     <div className='m-10 text-textColor border border-white rounded-lg p-10'>
@@ -48,12 +62,7 @@ const Wallet = () => {
         </div>
 
         <div className="bg-cardBgColor p-4 rounded-lg xs:mb-4 max-w-full shadow-md lg:w-[65%]">
-          <div className="flex flex-wrap justify-between h-full">
-            <button className=" flex-1 rounded-lg flex flex-col bg-green-700 items-center justify-center p-2 border border-green-800 m-2 cursor-pointer hover:bg-green-600 hover:scale-105 ">
-              <p className="text-white text-xl ">RECHARGE WALLET</p>
-            </button>
-            
-          </div>
+          <p className="text-white text-2xl text-center pt-8">TRANSACTIONS</p>
         </div>
       </div>
 
@@ -79,7 +88,7 @@ const Wallet = () => {
             </tr>
           </thead>
           <tbody>
-            {transactions.map((transaction, index) => (
+            {paginatedTransactions.map((transaction, index) => (
               <tr key={index} className="border-b">
                 <td className="px-4 py-2 text-left align-top">
                   <div>
@@ -104,8 +113,29 @@ const Wallet = () => {
           </tbody>
         </table>
       </div>
+
+      <div className="flex justify-between items-center p-4">
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="bg-black border border-red-600 text-white px-4 py-2 rounded disabled:bg-black disabled:text-gray-700 disabled:border-black"
+        >
+          Previous
+        </button>
+        <span className="text-white">
+          Page {currentPage} of {totalPages}
+        </span>
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="bg-black border border-green-600 text-white px-4 py-2 rounded disabled:bg-black disabled:text-gray-700 disabled:border-black"
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 };
 
 export default Wallet;
+

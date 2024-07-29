@@ -23,13 +23,9 @@ const ChatToTrainer = () => {
         const fetchChat = async () => {
             try {
                 const response = await apiServices.getChatByUserIdAndTrainerId(trainer._id,userId) 
-                console.log("response when direct message", response);
-
                 if (response.data.chatId) {
                     setChatId(response.data.chatId);
-                } else {
-                    console.log("No chat found...");
-                }
+                } 
             } catch (error) {
                 console.error('Error fetching chats:', error);
             }

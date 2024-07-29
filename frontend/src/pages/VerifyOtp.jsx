@@ -36,7 +36,7 @@ const VerifyOtp = () => {
       .then((response) => {
         const role = response?.data?.data?.role;
 
-        console.log(`joined as ${role} id : `,userId)
+       if(userId){
         socket.emit("notification", {
           content: `Congrats! your registration successful. Welcome to Sportzone family.`,
           receiverId: userId,
@@ -50,6 +50,7 @@ const VerifyOtp = () => {
             sender: 'Admin regarding Verification'
           });
         }
+       }
         
         toast.success("Successfully verified OTP");
         

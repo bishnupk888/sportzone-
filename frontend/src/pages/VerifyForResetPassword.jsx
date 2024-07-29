@@ -39,7 +39,6 @@ const VerifyForResetPassword = () => {
     const requestData = { otp, email, role, password };
     apiServices.VerifyOtpForResetPassword(requestData)
       .then((response) => {
-        console.log('response:', response);
         toast.success("Successfully verified OTP");
         navigate(`/${role}/login`);
       })

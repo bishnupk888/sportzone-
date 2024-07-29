@@ -14,7 +14,6 @@ const TrainerWallet = () => {
     if (user.userId) {
       apiServices.getTrainerTransactions(user.userId) 
         .then((response) => {
-          console.log("transactions:", response.data);
           setTransactions(response.data.data);
         })
         .catch((error) => {

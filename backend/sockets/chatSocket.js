@@ -6,8 +6,6 @@ const connectedUsers = new Map()
 
 const chatSocket = (io) => {
     io.on('connection', async(socket) => {
-        console.log('A client connected.');
-        // Example event listener for 'connect' event from frontend
         socket.on('register', async (id) => {
             connectedUsers.set(id,socket.id)
         });
@@ -106,7 +104,6 @@ const chatSocket = (io) => {
       })
     
         socket.on('disconnect', () => {
-          console.log('A client disconnected.');
           connectedUsers.forEach((value, key) => {
             if (value === socket.id) {
               connectedUsers.delete(key);

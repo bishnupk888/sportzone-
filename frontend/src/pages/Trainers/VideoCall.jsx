@@ -13,7 +13,6 @@ const VideoCall = () => {
     
     const {userName} = useSelector((state)=> state.user )
 
-    console.log(roomId,userName,appId,serverSecret)
 
     const newMeeting = async( element)=>{
         

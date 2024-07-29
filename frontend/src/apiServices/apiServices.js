@@ -38,7 +38,6 @@ const getUser = async(userId)=>{
     return await axiosInstance.get(`/api/users/${userId}`)
 }
 const fetchAllTrainers = async () => {
-    console.log("call to get trainers in find trainers")
     return await axiosInstance.get('/api/users/get-trainers');
 };
 const getUserBookingDetails = async(bookingId) => {

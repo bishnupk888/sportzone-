@@ -1,7 +1,7 @@
 
 const Notification  =  require('../model/notificationModel')
-const User = require('../model/userModel'); // Adjust the path according to your project structure
-const Trainer = require('../model/trainerModel'); // Adjust the path according to your project structure
+const User = require('../model/userModel'); 
+const Trainer = require('../model/trainerModel'); 
 
 const createNotification = async(req,res)=>{
 
@@ -17,16 +17,9 @@ const createNotification = async(req,res)=>{
         return savedNotification;
       } catch (error) {
         console.error('Error creating notification:', error);
-        throw error; // Handle or propagate the error as needed
+        throw error; 
       }
 }
-
-// const getNotifications = async(req,res)=>{
-//   const {id,userRole} = req.query
-//   const senderType = userRole==='user'?'trainer':'user'
-//   if(userRole==='user')
-//  let  Notification.find({recipientId:id}).populate('trainer', 'username profileImage')
-// }
 
 
 
