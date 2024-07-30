@@ -14,7 +14,7 @@ const BookingDetails = ({cancelBooking , bookingId}) => {
   const formatDate = (dateStr) => {
     const dateObj = new Date(dateStr);
     const day = String(dateObj.getDate()).padStart(2, '0');
-    const month = String(dateObj.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0'); 
     const year = dateObj.getFullYear();
     return `${day}-${month}-${year}`;
   };
@@ -91,18 +91,3 @@ const BookingDetails = ({cancelBooking , bookingId}) => {
 
 export default BookingDetails;
 
-
-// {booking.bookingStatus === 'success' && isCancellable(booking.bookingDate) ? (
-//     <button
-//       onClick={() => handleCancelBooking(booking._id)}
-//       className="bg-red-600 border border-red-600 text-white px-2 py-2 rounded hover:scale-105"
-//     >
-//       Cancel
-//     </button>
-//   ):
-//   <button
-//       onClick={() => {booking.bookingStatus === 'cancelled' ? toast.error('already cancelled booking'):toast.error('cannot cancell booking after 30 minutes')}}
-//       className="bg-red-900 border border-red-900 text-textColor px-2 py-2 rounded-lg hover:scale-105"
-//     >
-//       Cancel
-//     </button>}

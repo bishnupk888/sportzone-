@@ -34,7 +34,7 @@ const getCheckoutSession = async (req, res) => {
             success_url: `${process.env.CLIENT_SITE_URL}/user/checkout-success`,
             cancel_url: `${req.protocol}://${req.get('host')}/trainers/${trainer._id}`,
             customer_email: user.email,
-            client_reference_id: trainerId, // passed from checkout
+            client_reference_id: trainerId, 
             line_items: [{
                 price_data: {
                     currency: 'inr',

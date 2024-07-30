@@ -218,13 +218,13 @@ const Signup = () => {
       {loaderActive ? <BouncingBallLoader/> : 
       <div className={"bgImage fixed top-0 bottom-0 bg-black h-screen w-screen flex justify-center items-center"} style={{ zIndex: 1000 }}>
         <div className='flex items-center justify-left w-full bg-black bg-opacity-50 h-full'>
-          <div className="flex-col w-full form-container rounded-md shadow sm:p-8 dark:text-white bg-black hover:bg-opacity-100 border-r hover:border-r-4 border-redBorder lg:ml-40 md:ml-40 lg:hover:ml-44 ">
-            <div className="flex flex-col items-center mb-4">
-              <img src={logo} alt="logo" className="h-20 mb-2" />
-              <h2 className="mb-2 lg:text-3xl text-2xl font-semibold text-center">Create your account</h2>
+          <div className="flex-col w-full  form-container rounded-md shadow sm:p-8 dark:text-white bg-black hover:bg-opacity-100 border-r hover:border-r-4 border-redBorder lg:ml-40 md:ml-40 lg:hover:ml-44 ">
+            <div className="flex flex-col items-center ">
+              <img src={logo} alt="logo" className="h-20 " />
+              <h2 className=" lg:text-3xl text-2xl font-semibold text-center mb-4">Create your account</h2>
             </div>
-            <form noValidate="" action="" className="space-y-4" onSubmit={handleSignUp}>
-              <div className="space-y-2">
+            <form noValidate="" action="" className="space-y-2" onSubmit={handleSignUp}>
+              <div className="space-y-1">
                 <div className="space-y-1">
                   <label htmlFor="name" className="block text-sm">Full Name</label>
                   <input type="text" name="name" id="name" placeholder="Enter Your Full Name" value={formData.name} onChange={handleInputChange} className="w-full px-3 py-2 border rounded-md bg-black text-white hover:scale-95 focus:scale-100" />
@@ -264,7 +264,7 @@ const Signup = () => {
               <p className="px-3 dark:text-gray-400">OR</p>
               <hr className="w-full dark:text-gray-600" />
             </div>
-            <div className="my-6 space-y-4">
+            <div className="my-2 space-y-2">
               <button onClick={() =>{ 
                  if (!formData.role) {
                   toast.error("Please select a role (register as) and try again");
