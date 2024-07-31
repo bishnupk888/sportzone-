@@ -60,16 +60,16 @@ const Home = () => {
           <div className='flex flex-col lg:flex-row gap-[30px] lg:gap-[90px] items-center justify-between'>
             <div className='w-full lg:w-auto'>
               <div className='w-full lg:w-[900px] p-[30px] lg:px-[50px] lg:py-[10px]'>
-                <h1 className='text-[40px] leading-[56px] text-textColor font-[800] md:text-[50px] md:leading-[60px] lg:text-[80px] lg:leading-[110px]'>
+                <h1 className='text-[40px] leading-[56px] text-textColor font-[800] md:text-[50px] md:leading-[60px] lg:text-[80px] lg:leading-[105px]'>
                   “Elevate Your Game, <span className=' heartbeat-effect bg-gradient-to-b from-red-600 via-red-800 to-black inline-block text-transparent bg-clip-text'> Dominate </span> the Field!”
                 </h1>
                 <div className='lg:mt-28'>
-                <p className='text-neutral-500 lg:w-[800px] lg:leading-[50px] mt-[55px] text-[26px]'>
+                <p className='text-neutral-500 lg:w-[800px] lg:leading-[50px] mt-[50px] text-[26px]'>
                   Calling all sports enthusiasts and professionals! Register with us to connect, learn, and grow.
                 </p>
                 {userRole === '' && (
                   <Link to='/register'>
-                    <button className='btn scale-95 text-white mt-[30px] lg:ml-[550px] lg:mt-[0px] border-redBorder hover:border rounded-[10px] bg-gradient-to-r from-red-950 via-red-800 via-red-600 via-red-500 to-red-950 hover:shadow-[0_0_20px_rgba(255,0,0,0.6)]  button-hover-effect   '>
+                    <button className='btn text-white mt-[30px] lg:ml-[550px] lg:mt-[0px] border-redBorder hover:border rounded-[10px] bg-gradient-to-r from-red-950 via-red-800 via-red-600 via-red-500 to-red-950 hover:shadow-[0_0_20px_rgba(255,0,0,0.6)]  button-hover-effect   '>
                       <span>JOIN NOW</span>
                     </button>
                   </Link>

@@ -16,6 +16,8 @@ const chatSocket = require('./sockets/chatSocket');
 const chatRoute = require('./routes/chatRoute');
 const notificationRoute = require('./routes/notificationRoute')
 
+const corsOrigins = process.env.CORS_ORIGIN.split(',');
+
 const currentWorkingDir = path.resolve();
 const parentDir = path.dirname(currentWorkingDir);
 
@@ -25,7 +27,7 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(cors({
-    origin: process.env.CORS_ORIGIN, 
+    origin: corsOrigins, 
     credentials: true,               
 }));
 
@@ -54,7 +56,7 @@ connectDb();
 const server = http.createServer(app);
 const io = socketIo(server, {
     cors: {
-        origin: process.env.CORS_ORIGIN, // Ensure this matches the client's address
+        origin: corsOrigins, // Ensure this matches the client's address
         methods: ["GET", "POST"],
         credentials: true
     }
