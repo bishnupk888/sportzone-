@@ -140,6 +140,7 @@ export default function EditTrainerProfile() {
             setTrainerData(response.data.data);
             dispatch(setUserData(trainerData));
             toast.success("Trainer data updated successfully");
+            setErrors({});
         } catch (error) {
             console.error('Error updating trainer data:', error);
             toast.error("Failed to update trainer data");
