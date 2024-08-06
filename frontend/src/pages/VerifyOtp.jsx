@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import axiosInstance from '../axiosInstance/axiosInstance';
 import { toast } from 'react-toastify';
 import logo from '../assets/images/logo/logo.png';
-import bgImage from '../assets/images/background/20215.jpg'; // Adjust the path accordingly
+import bgImage from '../assets/images/background/20215.jpg'; 
 import socket from '../utils/socket';
 
 const VerifyOtp = () => {
@@ -67,8 +67,8 @@ const VerifyOtp = () => {
     axiosInstance.post('/api/auth/re-send-otp').then(() => {
       toast.success("OTP resent successfully");
     });
-    setTimer(60); // Reset the timer
-    setShowResend(false); // Hide the resend button
+    setTimer(60); 
+    setShowResend(false); 
   };
 
   return (

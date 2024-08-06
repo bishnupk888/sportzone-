@@ -48,8 +48,12 @@ export default function Profile() {
         if (!localUserData.username) newErrors.username = "Full name is required";
         if (!localUserData.email) newErrors.email = "Email address is required";
         if (!localUserData.age) newErrors.age = "Age is required";
+        if (localUserData.age < 0 || localUserData.age > 100 ) newErrors.age = "Age is invalid";
+
+
         if (!localUserData.gender) newErrors.gender = "Gender is required";
         if (!localUserData.phone) newErrors.phone = "Phone number is required";
+        
         if (!localUserData.interests) newErrors.interests = "Interests are required";
         return newErrors;
     };
