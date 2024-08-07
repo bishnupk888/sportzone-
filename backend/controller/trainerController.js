@@ -2,12 +2,12 @@ const Trainer = require('../model/trainerModel')
 
 
     const updateTrainer = async (req, res) => {
-        const { id } = req.params; // Extract trainer ID from request parameters   
+        const { id } = req.params;   
         try {
             const updatedTrainer = await Trainer.findByIdAndUpdate(
                 id,
-                { $set: req.body }, // Update with the contents of req.body
-                { new: true } // Return the updated document
+                { $set: req.body }, 
+                { new: true } 
             );
     
             if (!updatedTrainer) {

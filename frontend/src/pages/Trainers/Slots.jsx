@@ -16,23 +16,23 @@ const Slots = () => {
   const [slots, setSlots] = useState([]);
   const [count, setCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [slotsPerPage] = useState(10); 
-  const [sortByDateAsc, setSortByDateAsc] = useState(true); 
+  const [slotsPerPage] = useState(10);
+  const [sortByDateAsc, setSortByDateAsc] = useState(true);
   const [viewEditSlot, setViewEditSlot] = useState(false);
   const [slotToEdit, setSlotToEdit] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setIsLoading(true)
+    setIsLoading(true);
     const fetchData = async () => {
       try {
         if (!trainerId) return;
         const response = await apiServices.getAllSlots(trainerId);
         setSlots(response.data.data);
-        setIsLoading(false)
+        setIsLoading(false);
       } catch (error) {
         console.error("Error fetching slots:", error);
-        setIsLoading(false)
+        setIsLoading(false);
       }
     };
 
@@ -186,10 +186,12 @@ const Slots = () => {
         );
         setSlots(updatedSlots);
         toast.success("Slot edited successfully!");
+        handleCloseEditSlot()
       })
       .catch((error) => {
         toast.error("Error editing slot. Please try again.");
         console.error("Failed to edit slot", error);
+        handleCloseEditSlot()
       });
 
     // Clear the form fields after editing the slot
@@ -324,23 +326,23 @@ const Slots = () => {
                       <td className="px-6 py-4">
                         <span
                           className={`inline-flex items-center gap-1 rounded-full bg-black px-2 py-1 text-xs font-semibold 
-            ${
-              isSlotExpired(slot) && !slot.isBooked
-                ? "text-red-600 border border-red-600"
-                : slot.isBooked
-                ? "text-yellow-600 border border-yellow-600"
-                : "text-green-600 border border-green-600"
-            }`}
-                        >
-                          <span
-                            className={`h-1.5 w-1.5 rounded-full 
-            ${
-              isSlotExpired(slot) && !slot.isBooked
-                ? "bg-red-500"
-                : slot.isBooked
-                ? "bg-yellow-500"
-                : "bg-green-400"
-            }`}
+                      ${
+                        isSlotExpired(slot) && !slot.isBooked
+                          ? "text-red-600 border border-red-600"
+                          : slot.isBooked
+                          ? "text-yellow-600 border border-yellow-600"
+                          : "text-green-600 border border-green-600"
+                      }`}
+                                  >
+                                    <span
+                                      className={`h-1.5 w-1.5 rounded-full 
+                      ${
+                        isSlotExpired(slot) && !slot.isBooked
+                          ? "bg-red-500"
+                          : slot.isBooked
+                          ? "bg-yellow-500"
+                          : "bg-green-400"
+                      }`}
                           ></span>
                           {isSlotExpired(slot) && !slot.isBooked
                             ? "Expired"

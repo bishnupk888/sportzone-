@@ -285,17 +285,16 @@ const Bookings = () => {
             </h3>
             <style>
               {`
-@keyframes fade {
-0% { opacity: 0; }
-50% { opacity: 1; }
-100% { opacity: 0; }
-}
-`}
+              @keyframes fade {
+              0% { opacity: 0; }
+              50% { opacity: 1; }
+              100% { opacity: 0; }
+              }
+            `}
             </style>
           </>
         ) : (
-          <h3 className="text-redBorder ">
-            {" "}
+          <h3 className="text-textColor text-center py-10 ">
             No bookings made or No booking data to display!!
           </h3>
         )}

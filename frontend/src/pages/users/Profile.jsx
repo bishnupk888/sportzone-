@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import UploadWidget from '../../components/popupComponents/UploadWidget';
 import { setUserData } from '../../redux/features/userSlice';
 import apiServices from '../../apiServices/apiServices';
+import ClipLoader from 'react-spinners/ClipLoader';
 
 
 
@@ -17,6 +18,7 @@ export default function Profile() {
     const navigate = useNavigate();
     const dispatch = useDispatch()
     const [initialtrainerData, setInintialTrainerData] = useState([])
+    const [loading, setLoading] = useState(false)
 
 
 
@@ -59,6 +61,7 @@ export default function Profile() {
     };
     const handleImageUpload = async (url) => {
         try {
+            
             apiServices.uploadUserImage(user.userId,url)
                 .then((response) => {
                     const updatedUserData = {
@@ -68,12 +71,16 @@ export default function Profile() {
 
                     setLocalUserData(updatedUserData);
                     dispatch(setUserData(updatedUserData));
+                    setLoading(false)
                 })
                 .catch((error) => {
                     console.error('Error updating profile image:', error);
+                    setLoading(false)
+
                 });
         } catch (error) {
             console.error('Error updating profile image:', error);
+            setLoading(false)
         }
     };
 
@@ -131,7 +138,7 @@ export default function Profile() {
                                             className='lg:absolute top-5 w-28 h-28 rounded-full border-2 border-redBorder'
                                         />
                                     </div>
-                                    <UploadWidget onUpload={handleImageUpload} />
+                                    <UploadWidget onUpload={handleImageUpload} loading={loading} setLoading={setLoading} /> {loading && <><ClipLoader color="#750000" size={24} /></>}
                                 </div>
                             </div>
 

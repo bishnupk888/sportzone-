@@ -15,6 +15,7 @@ const EditSlot = ({ isOpen, onRequestClose, slot, onSave }) => {
       endTime,
     };
     onSave(slot._id, updatedSlotData);
+    
   };
 
   return (

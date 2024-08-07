@@ -69,7 +69,7 @@ const Home = () => {
                 </p>
                 {userRole === '' && (
                   <Link to='/register'>
-                    <button className='btn text-white mt-[30px] lg:ml-[550px] lg:mt-[0px] border-redBorder hover:border rounded-[10px] bg-gradient-to-r from-red-950 via-red-800 via-red-600 via-red-500 to-red-950 hover:shadow-[0_0_20px_rgba(255,0,0,0.6)]  button-hover-effect   '>
+                    <button className='btn text-white mt-[30px] lg:ml-[550px] lg:mt-[0px] border-red-600 hover:border rounded-[10px] bg-gradient-to-r from-red-950 via-red-800 via-red-600 via-red-500 to-red-950 hover:shadow-[0_0_20px_rgba(255,0,0,0.6)]  button-hover-effect   '>
                       <span>JOIN NOW</span>
                     </button>
                   </Link>
