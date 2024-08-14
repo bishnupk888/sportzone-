@@ -24,7 +24,7 @@ const register = async (req, res) => {
     } else if (role === 'trainer') {
       user = await Trainer.findOne({ email });
     }
-    if (user) {
+    if (user && user.isOtpVerified) {
       return res.status(400).json({ message: "User already exists" });
     }
 
