@@ -79,7 +79,7 @@ const googleSignUp = async (req, res) => {
     } else if (role === 'trainer') {
       user = await Trainer.findOne({ email });
     }
-    if(user) {
+    if(user && isOtpVerified) {
       return res.status(400).json({ message: "email  already registered" });
     }
     const salt = await bcrypt.genSalt(10);
