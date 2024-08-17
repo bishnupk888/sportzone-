@@ -32,6 +32,10 @@ const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
     const otp = await otpHelper.generateOtp(email)
     await otpHelper.sendOtp(email, otp); //sends email with otp
+    if(user && !user.isOtpVerified){
+      user.username = name
+      user.password =  hashedPassword
+ }else{
     if (role === 'user') {
       user = new User({
         username: name,
@@ -49,6 +53,7 @@ const register = async (req, res) => {
         role
       });
     }
+  }
     user.save()
   .then((savedUser) => { 
     res.cookie('email', email, { httpOnly: true });
@@ -79,7 +84,7 @@ const googleSignUp = async (req, res) => {
     } else if (role === 'trainer') {
       user = await Trainer.findOne({ email });
     }
-    if(user && isOtpVerified) {
+    if(user && user.isOtpVerified) {
       return res.status(400).json({ message: "email  already registered" });
     }
     const salt = await bcrypt.genSalt(10);
@@ -87,20 +92,25 @@ const googleSignUp = async (req, res) => {
     const otp = await otpHelper.generateOtp(email)
 
     await otpHelper.sendOtp(email, otp); //sends email with otp
-    if (role === 'user') {
-      user = new User({
-        username: name,
-        email,   
-        password: hashedPassword,
-        role
-      });
-    } else if (role === 'trainer') {
-      user = new Trainer({
-        username: name,
-        email,
-        password: hashedPassword,
-        role
-      });
+    if(user && !user.isOtpVerified){
+         user.username = name
+         user.password =  hashedPassword
+    }else{
+      if (role === 'user') {
+        user = new User({
+          username: name,
+          email,   
+          password: hashedPassword,
+          role
+        });
+      } else if (role === 'trainer') {
+        user = new Trainer({
+          username: name,
+          email,
+          password: hashedPassword,
+          role
+        });
+      }
     }
 
     user.save()
