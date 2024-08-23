@@ -15,7 +15,7 @@ const checkBlocked = async (req, res, next) => {
         throw new Error('trainer not found.');
       }
       if (user.isBlocked) {
-        throw new Error('blocked trainer.');
+        return res.status(403).json({message:"blocked trainer"})  
       }
       req.authUser = user; 
     } else if (decodedToken.role === 'user') {
