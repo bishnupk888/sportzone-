@@ -30,7 +30,7 @@ const VideoCall = () => {
                 mode:ZegoUIKitPrebuilt.OneONoneCall,
             },
             showScreenSharingButton:false,
-        })
+        }) 
 
     }
   return (
