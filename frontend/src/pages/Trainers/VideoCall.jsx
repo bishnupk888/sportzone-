@@ -36,7 +36,7 @@ const VideoCall = () => {
   return (
     <div className='videocall px-40 '>
         <div ref={newMeeting}/>
-    </div>
+    </div> 
   )
 }
 
