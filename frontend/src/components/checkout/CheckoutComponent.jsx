@@ -38,6 +38,7 @@ const CheckoutPage = () => {
 
   const handlePayment = async () => {
     try {
+
       if (paymentMethod === 'wallet' && (!userData.wallet || userData.wallet < totalAmount)) {
         toast.warning('insufficient wallet balance')
       } else {
@@ -52,6 +53,7 @@ const CheckoutPage = () => {
             })
         }
         if (paymentMethod === 'online') {
+
           apiServices.onlinePayment(checkoutData)
             .then((response) => {
               const {session,bookingDetails} = response.data.data
@@ -61,9 +63,9 @@ const CheckoutPage = () => {
               if (session.url) {
                window.location.href = session.url
               }
-              // else{
-
-              // }
+              else{
+                navigate('/online-payment-not-available')
+              }
             })
             .catch((error => {
               console.error(" error creating checkout session : ", error);

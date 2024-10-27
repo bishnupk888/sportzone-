@@ -188,6 +188,15 @@ const onlinePayment = async(checkoutData)=>{
     return await axiosInstance.post('/api/bookings/checkout-session', { checkoutData })
 }
 
+const verifyPayment = async(paymentIntentId)=>{
+    return await axiosInstance.post('/verify-payment', { paymentIntentId })
+}
+
+const bookingSuccess = async(bookingDetails)=>{
+    console.log("booking data in api call",bookingDetails)
+    return await axiosInstance.post('/api/bookings/booking-success',{bookingDetails})
+}
+
 
 
 
@@ -255,4 +264,6 @@ const onlinePayment = async(checkoutData)=>{
 
     walletPayment,
     onlinePayment,
+    verifyPayment,
+    bookingSuccess,
  }

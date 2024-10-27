@@ -6,15 +6,23 @@ const Slot = require('../model/slotModel');
 
 const updateSlots = async (slotIds) => {
   try {
-    const updatePromises = slotIds.map(id => 
-      Slot.findByIdAndUpdate(id, { isBooked: true }, { new: true })
-    );
-    const updatedSlots = await Promise.all(updatePromises);
+    let updatedSlots; // Declare updatedSlots here to access it later
+
+    if (Array.isArray(slotIds)) {
+      const updatePromises = slotIds.map(id => 
+        Slot.findByIdAndUpdate(id, { isBooked: true }, { new: true })
+      );
+      updatedSlots = await Promise.all(updatePromises);
+    } else {
+      updatedSlots = await Slot.findByIdAndUpdate(slotIds, { isBooked: true }, { new: true });
+    }
+    return updatedSlots;
+    
   } catch (error) {
     console.error('Error updating slots when booking:', error);
+    throw error; // Re-throw the error if needed for further handling
   }
 };
-
 const updateCancelledSlots = async (slotIds) => {
   try {
     const updatePromises = slotIds.map(id => 

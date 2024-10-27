@@ -1,8 +1,10 @@
 import React, { useEffect } from 'react';
 import socket from '../../utils/socket';
+import apiServices from '../../apiServices/apiServices'
 
 const bookingDetailsString = localStorage.getItem('bookingNotificationData');
 const bookingDetails = JSON.parse(bookingDetailsString);
+
 
 const CheckoutSuccess = () => {
 
@@ -16,9 +18,17 @@ const CheckoutSuccess = () => {
 
   useEffect(() => {
     if (bookingDetails) {
-      const { user, trainer, slot } = bookingDetails;
+      console.log(bookingDetails)
+      apiServices.bookingSuccess(bookingDetails).then((response)=>{
+        console.log(response.data)
+        console.log("call to booking success")
+      })
+      console.log("booking success", bookingDetails)
+      const { user, trainer, slot} = bookingDetails;
+
       const contentUser = `Your booking for slot on ${formatDate(slot?.date)} - from ${slot?.startTime} to ${slot?.endTime} is successful.`;
       const contentTrainer = `Slot added on ${formatDate(slot?.date)} - from ${slot?.startTime} to ${slot?.endTime} is booked by ${user?.username}.`;
+
 
       socket.emit("notification", {
         content: contentUser,
@@ -31,7 +41,6 @@ const CheckoutSuccess = () => {
         receiverId: trainer?._id,
         sender: 'Admin regarding Booking'
       });
-
       localStorage.removeItem('bookingNotificationData');
     }
   }, []);
