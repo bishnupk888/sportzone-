@@ -43,7 +43,7 @@ const CheckoutSuccess = () => {
       });
       localStorage.removeItem('bookingNotificationData');
     }
-  }, []);
+  }, [bookingDetails]);
 
   return (
     <div className="bg-black h-screen flex items-center justify-center">

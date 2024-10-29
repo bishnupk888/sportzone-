@@ -130,7 +130,7 @@ const getCheckoutSession = async (req, res) => {
             payment_method_types: ['card'],
             mode: 'payment',
             success_url: `${process.env.CLIENT_SITE_URL}/user/checkout-success`,
-            cancel_url: `${req.protocol}://${req.get('host')}/trainers/${trainer._id}`,
+            cancel_url: `${process.env.CLIENT_SITE_URL}/user/checkout-failure`,
             customer_email: user.email,
             client_reference_id: trainerId,
             line_items: [{
@@ -175,7 +175,6 @@ const getCheckoutSession = async (req, res) => {
         }
         
         const bookingDetails = {user, trainer, slot, bookingId, transactionId }
-        console.log("booking with ,transaction ids : ",bookingDetails)
 
         return res.status(200).json({ success: true, message: "Checkout session created", data: {session,bookingDetails} });
 
@@ -190,15 +189,14 @@ const bookingSuccess = async (req, res) => {
     try {
       const bookingUpdate = await Booking.findByIdAndUpdate(
         bookingId,
-        { $set: { status: 'success' } },
+        { $set: { bookingStatus: 'success' } },
         { new: true }
       );
-  
+      console.log( "booking  update : ",bookingUpdate)
       if (!bookingUpdate) {
         return res.status(404).json({ error: "Booking not found" });
       }
       
-
       const transactionUpdate = await Transaction.findByIdAndUpdate(
         transactionId,
         { $set: { status: 'success' } },
@@ -209,13 +207,9 @@ const bookingSuccess = async (req, res) => {
         return res.status(404).json({ error: "Transaction not found" });
       }
       const slotUpdate = await slotController.updateSlots(slot?._id, { isBooked: true });
-  
       if (!slotUpdate) {
         return res.status(500).json({ error: "Failed to update slot availability" });
       }
-    console.log("slot Update Result:", slotUpdate);
-    console.log("+++ in booking success")
-    console.log(bookingUpdate, transactionUpdate)
     res.status(200).json({
         message: "Booking successfully updated",
         booking: bookingUpdate,

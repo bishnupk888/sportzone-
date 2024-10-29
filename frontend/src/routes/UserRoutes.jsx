@@ -44,8 +44,6 @@ const UserRoutes = () => {
                 <Route path='videocall' element={<VideoCall />} />
                 <Route path='notifications' element={< AllNotifications/>} />
 
-
-
                 
                 <Route path='*' element={<PageNotFound />} />
             </Route>
