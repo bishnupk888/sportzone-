@@ -147,7 +147,7 @@ const getCheckoutSession = async (req, res) => {
             }]
         })
         let bookingId = null
-        let transactionId = null
+        let transactionId = null 
         if(session){
                     const booking = new Booking({
                         userId: user._id,
