@@ -35,7 +35,7 @@ const FindATrainer = () => {
     getTrainers();
 
   }, []);
-
+ 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const department = queryParams.get('department');
