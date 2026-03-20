@@ -1,4 +1,5 @@
 // server.js
+require('dotenv').config();
 const express = require('express');
 const  path = require('path')
 const app = express();
@@ -16,7 +17,7 @@ const chatSocket = require('./sockets/chatSocket');
 const chatRoute = require('./routes/chatRoute');
 const notificationRoute = require('./routes/notificationRoute')
 
-const corsOrigins = process.env.CORS_ORIGIN.split(',');
+const corsOrigins = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : [];
 
 const currentWorkingDir = path.resolve();
 const parentDir = path.dirname(currentWorkingDir);
@@ -39,11 +40,10 @@ app.use('/api/bookings', bookingRoute);
 app.use('/api/chat',chatRoute)
 app.use('/api/notifications',notificationRoute)
 
-if (process.env.NODE_ENV != "production") {
-    require('dotenv').config();
+if (process.env.NODE_ENV === "production") {
     const __dirname = path.resolve();
     app.use(express.static(path.join(parentDir, "/frontend/dist")));
-    app.get("*", (req, res) =>res.sendFile(path.resolve(parentDir, "frontend", "dist", "index.html")))
+    app.get("*", (req, res) => res.sendFile(path.resolve(parentDir, "frontend", "dist", "index.html")));
 }
 
 

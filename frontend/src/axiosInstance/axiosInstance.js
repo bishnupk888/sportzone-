@@ -6,9 +6,9 @@ const backendBaseUrl = import.meta.env.VITE_BACKEND_BASE_URL;
 const axiosInstance = axios.create({
     baseURL: backendBaseUrl,
     withCredentials: true,
+    timeout: 5000,
     headers: {
         'Content-Type': 'application/json',
-        'timeout': 5000,
     },
 });
 

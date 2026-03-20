@@ -10,7 +10,7 @@ const otpHelper = require('../helpers/otpHelper')
 
 const generateToken = (user) => {
   return jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET_USER, {
-    expiresIn: Date.now() + (1000 * 60 * 60 * 24 * 30)
+    expiresIn: '30d'
   })
 }
 
@@ -54,19 +54,13 @@ const register = async (req, res) => {
       });
     }
   }
-    user.save()
-  .then((savedUser) => { 
+    const savedUser = await user.save();
     res.cookie('email', email, { httpOnly: true });
     res.cookie('role', role, { httpOnly: true });
-
     res.status(200).json({
       message: "Successfully registered user",
-      userId: savedUser._id 
+      userId: savedUser._id
     });
-  })
-  .catch((err) => {
-    res.status(500).json({ message: "Server error, user creation failed", error: err });
-  });
   } catch (error) {
     console.error("Error in registration:", error);
     res.status(500).json({ message: "Server error, registration failed" });
@@ -113,17 +107,12 @@ const googleSignUp = async (req, res) => {
       }
     }
 
-    user.save()
-    .then((savedUser) => {
-      res.cookie('email', email, { httpOnly: true });
-      res.cookie('role', role, { httpOnly: true });
-
-     res.status(200).json({
+    const savedUser = await user.save();
+    res.cookie('email', email, { httpOnly: true });
+    res.cookie('role', role, { httpOnly: true });
+    res.status(200).json({
       message: "Successfully registered user",
-      userId: savedUser._id 
-    });
-    }).catch((err) => {
-      res.status(500).json({ message: "Server error, user creation failed", error: err });
+      userId: savedUser._id
     });
   } catch (error) {
     console.error("Error in registration:", error);

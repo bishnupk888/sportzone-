@@ -17,8 +17,9 @@ const generateOtp = async (email) => {
   });
 
   try {
-    // Save the OTP document to the database
-    const savedOtp = await otpDocument.save();
+    // Delete any existing OTPs for this email before saving a new one
+    await OTP.deleteMany({ email });
+    await otpDocument.save();
   } catch (err) {
     console.error("Error saving OTP:", err);
     throw new Error('Failed to save OTP');
@@ -52,7 +53,7 @@ const sendOtp = async (email, otp) => {
     return { message: 'OTP sent to your email' };
   } catch (error) {
     console.error("Error sending email:", error);
-    return new Error({ message: 'Failed to send OTP' })
+    throw new Error('Failed to send OTP');
   }
 };
 
@@ -63,10 +64,12 @@ const verifyOtp = async (req, res) => {
 
   let user = null;
   if (role === 'user') {
-    user = await User.findOne({ email })
-
+    user = await User.findOne({ email });
   } else if (role === 'trainer') {
-    user = await Trainer.findOne({ email })
+    user = await Trainer.findOne({ email });
+  }
+  if (!user) {
+    return res.status(404).json({ message: "User not found. Please register again." });
   }
   const otpDocument = await OTP.findOne({ email })
   if (!otpDocument) {
