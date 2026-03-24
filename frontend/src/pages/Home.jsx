@@ -59,17 +59,17 @@ const Home = () => {
         <div className='container mx-auto px-4'>
           <div className='flex flex-col lg:flex-row gap-[30px] lg:gap-[90px] items-center justify-between'>
             <div className='w-full lg:w-auto'>
-              <div className='w-full lg:w-[900px] p-[30px] lg:px-[50px] lg:py-[10px]'>
-                <h1 className='text-[40px] leading-[56px] text-textColor font-[800] md:text-[50px] md:leading-[60px] lg:text-[80px] lg:leading-[105px]'>
+              <div className='w-full lg:w-[900px] p-[30px] lg:px-[50px] lg:py-[10px] text-center lg:text-left'>
+                <h1 className='text-[34px] leading-[42px] sm:text-[40px] sm:leading-[56px] text-textColor font-[800] md:text-[50px] md:leading-[60px] lg:text-[80px] lg:leading-[105px]'>
                   “Elevate Your Game, <span className=' heartbeat-effect bg-gradient-to-b from-red-600 via-red-800 to-black inline-block text-transparent bg-clip-text'> Dominate </span> the Field!”
                 </h1>
                 <div className='lg:mt-28'>
-                <p className='text-neutral-500 lg:w-[800px] lg:leading-[50px] mt-[50px] text-[26px]'>
+                <p className='text-neutral-500 lg:w-[800px] lg:leading-[50px] mt-[30px] lg:mt-[50px] text-[18px] sm:text-[20px] lg:text-[26px]'>
                   Calling all sports enthusiasts and professionals! Register with us to connect, learn, and grow.
                 </p>
                 {userRole === '' && (
-                  <Link to='/register'>
-                    <button className='btn text-white mt-[30px] lg:ml-[550px] lg:mt-[0px] border-red-600 hover:border rounded-[10px] bg-gradient-to-r from-red-950 via-red-800 via-red-600 via-red-500 to-red-950 hover:shadow-[0_0_20px_rgba(255,0,0,0.6)]  button-hover-effect   '>
+                  <Link to='/register' className='flex justify-center lg:justify-end mt-[20px]'>
+                    <button className='btn w-full sm:w-auto text-white mt-[10px] lg:mt-[0px] border-red-600 hover:border rounded-[10px] bg-gradient-to-r from-red-950 via-red-800 via-red-600 via-red-500 to-red-950 hover:shadow-[0_0_20px_rgba(255,0,0,0.6)] button-hover-effect'>
                       <span>JOIN NOW</span>
                     </button>
                   </Link>
@@ -106,8 +106,8 @@ const Home = () => {
           </div>
         </section>
       )}
-      <section ref={ref} className="p-10 dark:bg-black dark:text-gray-300  rounded-2xl">
-        <div className="container mx-auto grid justify-center grid-cols-2 text-center lg:grid-cols-3 mt-20">
+      <section ref={ref} className="p-10 dark:bg-black dark:text-gray-300 rounded-2xl">
+        <div className="container mx-auto grid justify-center grid-cols-1 sm:grid-cols-2 text-center lg:grid-cols-3 mt-10 lg:mt-20 gap-8 lg:gap-0">
           <div className="flex flex-col justify-start p-10 border-b-2 border-redBorder lg:mx-6 rounded-lg">
             <p className="text-4xl font-bold leading-none lg:text-6xl">
               {inView && <><CountUp end={500} duration={2.5} /><span className='text-redBorder'>+</span></>}
@@ -136,9 +136,9 @@ const Home = () => {
               <img src={hero2Img} alt="" className='w-full h-full object-cover lg:w-auto lg:h-full blend-overlay' />
             </div>
 
-            <div className='w-full lg:w-auto'>
-              <div className='w-full lg:w-[800px] p-[30px] lg:px-[50px] lg:py-[100px]'>
-                <h1 className='mt-[50px] text-[40px] leading-[46px] text-textColor font-[800] md:text-[50px] md:leading-[60px] lg:text-[70px] lg:leading-[110px]'>
+            <div className='w-full lg:w-auto text-center lg:text-left'>
+              <div className='w-full lg:w-[800px] p-[20px] sm:p-[30px] lg:px-[50px] lg:py-[100px]'>
+                <h1 className='mt-[20px] sm:mt-[50px] text-[32px] sm:text-[40px] leading-[38px] sm:leading-[46px] text-textColor font-[800] md:text-[50px] md:leading-[60px] lg:text-[70px] lg:leading-[110px]'>
                   “Be The <span className='text-redBorder'>Greatest</span> Of Your Game”
                 </h1>
               </div>

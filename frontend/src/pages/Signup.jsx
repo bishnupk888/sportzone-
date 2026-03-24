@@ -217,8 +217,8 @@ const Signup = () => {
       </style>
       {loaderActive ? <BouncingBallLoader/> : 
       <div className={"bgImage fixed top-0 bottom-0 bg-black h-screen w-screen flex justify-center items-center"} style={{ zIndex: 1000 }}>
-        <div className='flex items-center justify-left w-full bg-black bg-opacity-50 h-full'>
-          <div className="flex-col w-full  form-container rounded-md shadow sm:p-8 dark:text-white bg-black hover:bg-opacity-100 border-r hover:border-r-4 border-redBorder lg:ml-40 md:ml-40 lg:hover:ml-44 ">
+        <div className='flex items-center justify-center md:justify-start w-full bg-black bg-opacity-50 h-full px-4 md:px-0'>
+          <div className="flex-col w-full form-container rounded-md shadow p-6 sm:p-8 dark:text-white bg-black hover:bg-opacity-100 border hover:border-r-4 hover:border-b-4 border-redBorder md:ml-10 lg:ml-40 lg:hover:ml-44 transition-all duration-300 button-hover-effect">
             <div className="flex flex-col items-center ">
               <img src={logo} alt="logo" className="h-20 " />
               <h2 className=" lg:text-3xl text-2xl font-semibold text-center mb-4">Create your account</h2>

@@ -52,7 +52,14 @@ const AdminSidebar = ({ setIsSidebarOpen, isSidebarOpen }) => {
     };
 
     return (
-        <aside className={`fixed top-0 left-0 h-screen ${isSidebarOpen ? 'w-64 glow' : 'w-20'} transition-all duration-300 ease-in-out overflow-y-auto bg-black border-r border-redBorder shadow-sm`} style={{ boxShadow: '0 0 30px rgba(255, 0, 0, 0.5)', transition: 'box-shadow 0.3s ease' }}>
+        <>
+            <button 
+                className={`md:hidden fixed top-2 left-2 z-[60] text-white text-2xl bg-black p-2 rounded-lg border border-redBorder transition-opacity duration-300 ${isSidebarOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`} 
+                onClick={toggleMenu}
+            >
+                <FaBars />
+            </button>
+            <aside className={`fixed top-0 left-0 h-screen z-50 ${isSidebarOpen ? 'w-64 glow translate-x-0' : 'w-0 -translate-x-full md:w-20 md:translate-x-0'} transition-all duration-300 ease-in-out overflow-y-auto bg-black border-r border-redBorder shadow-sm`} style={{ boxShadow: '0 0 30px rgba(255, 0, 0, 0.5)', transition: 'box-shadow 0.3s ease' }}>
             <nav className="h-full flex flex-col">
                 <div className="p-4 pb-2 flex justify-between items-center">
                     {isSidebarOpen ? (
@@ -127,6 +134,7 @@ const AdminSidebar = ({ setIsSidebarOpen, isSidebarOpen }) => {
                 </div>
             </nav>
         </aside>
+        </>
     );
 };
 

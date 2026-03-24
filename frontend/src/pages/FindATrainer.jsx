@@ -141,9 +141,9 @@ const FindATrainer = () => {
             </button>
           </div>
 
-          <div className='max-w-[600px] mx-auto flex items-center'>
+          <div className='max-w-[600px] mx-auto flex flex-col sm:flex-row items-center justify-center gap-4 mt-6'>
             <select
-              className='text-textColor py-2 px-4 border border-black bg-black focus:outline-none focus:border-redBorder cursor-pointer hover:border-redBorder hover:text-white hover:font-bold'
+              className='w-full sm:w-auto text-textColor py-2 px-4 border border-black bg-black focus:outline-none focus:border-redBorder cursor-pointer hover:border-redBorder hover:text-white hover:font-bold'
               value={filterDepartment ? filterDepartment : 'Filter By'}
               onChange={(e) => setFilterDepartment(e.target.value)}
             >
@@ -154,7 +154,7 @@ const FindATrainer = () => {
             </select>
 
             <select
-              className='text-textColor py-2 px-4 my-2 mx-8 border border-black bg-black focus:outline-none focus:border-redBorder cursor-pointer hover:border-redBorder hover:text-white hover:font-bold '
+              className='w-full sm:w-auto text-textColor py-2 px-4 border border-black bg-black focus:outline-none focus:border-redBorder cursor-pointer hover:border-redBorder hover:text-white hover:font-bold'
               value={sortOption}
               onChange={(e) => setSortOption(e.target.value)}
             >

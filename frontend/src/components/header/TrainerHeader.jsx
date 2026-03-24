@@ -46,9 +46,8 @@ const TrainerHeader = ({
     return () => window.removeEventListener("scroll", handleStickyHeader);
   }, []);
 
-  const toggleMenu = () => {
-    menuRef.current.classList.toggle("show_menu");
-  };
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   const handleNotificationClick = () => {
     setViewNotification(!viewNotification);
@@ -87,20 +86,18 @@ const TrainerHeader = ({
                 />
               </div>
             </Link>
-            <div
-              className="navigation md:block"
-              ref={menuRef}
-              onClick={toggleMenu}
-            >
-              <ul className="menu flex items-center gap-6 md:gap-[2.7rem]">
+            <div className={`fixed inset-0 bg-black/80 z-[100] ${isMenuOpen ? 'block' : 'hidden'} md:static md:bg-transparent md:block md:w-auto`} onClick={toggleMenu}>
+              <ul className="absolute top-0 right-0 w-64 h-full bg-black z-[200] flex flex-col justify-center items-center gap-8 md:static md:w-auto md:h-auto md:bg-transparent md:flex-row md:gap-[2.7rem]" onClick={e => e.stopPropagation()}>
+                <span className="absolute top-6 right-6 text-white text-3xl cursor-pointer md:hidden" onClick={toggleMenu}>&times;</span>
                 {navLinks.map((link, index) => (
                   <li key={index}>
                     <NavLink
                       to={link.path}
+                      onClick={toggleMenu}
                       className={({ isActive }) =>
                         isActive
-                          ? "text-white text-[14px] md:text-[16px] leading-7 font-[600] border-b-2 border-redBorder"
-                          : "text-textColor text-[14px] md:text-[16px] leading-7 font-[500] hover:text-white"
+                          ? "text-white text-[18px] md:text-[16px] leading-7 font-[600] border-b-2 border-redBorder"
+                          : "text-textColor text-[18px] md:text-[16px] leading-7 font-[500] hover:text-white"
                       }
                     >
                       {link.display}
@@ -109,7 +106,7 @@ const TrainerHeader = ({
                 ))}
               </ul>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 z-[300]">
               {userRole !== "" && (
                 <>
                   <div className="relative">

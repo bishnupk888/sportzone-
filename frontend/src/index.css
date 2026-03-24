@@ -59,6 +59,13 @@
   .text_para {
     @apply text-[16px] leading-[20px] mt-3;
   }
+  .btn {
+    @apply py-[10px] px-[20px] mt-[20px] text-[14px]
+  }
+  .header {
+    @apply h-[80px]
+  }
+  .show_menu {
+    @apply !translate-x-0 !visible !opacity-100;
+  }
 }
-
-

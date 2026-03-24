@@ -122,8 +122,8 @@ const Login = ({Role}) => {
       </style>
       {isLoaderActive? <BouncingBallLoader/> :
       <div className="bgImage fixed top-0 bottom-0 bg-black h-screen w-screen flex justify-center items-center" style={{ zIndex: 1000 }}>
-        <div className='flex items-center justify-center lg:justify-start md:justify-start w-full min-h-screen bg-black bg-opacity-50 lg:pl-[15%] md:pl-[15%] '>
-          <div className="flex-col w-full max-w-md p-4 rounded-md shadow sm:p-8 dark:text-white bg-black hover:bg-opacity-100 border hover:border-r-4 hover:border-b-4 border-redBorder button-hover-effect">
+        <div className='flex items-center justify-center md:justify-start w-full min-h-screen bg-black bg-opacity-50 md:pl-[10%] lg:pl-[15%] px-4 md:px-0'>
+          <div className="flex-col w-full max-w-md p-6 sm:p-8 rounded-md shadow dark:text-white bg-black hover:bg-opacity-100 border hover:border-r-4 hover:border-b-4 border-redBorder transition-all duration-300 button-hover-effect">
             <div className="flex flex-col items-center">
               <img src={logo} alt="logo" className="h-24 mb-4" />
               <h2 className="mb-3 lg:text-3xl md:text-2xl text-lg font-semibold text-center">Login to <span className='text-bold'>{Role ? (Role === 'trainer' ? 'trainer' : 'user'):'your' }</span> account</h2>

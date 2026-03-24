@@ -168,7 +168,7 @@ const MyBookings = () => {
             </button>
           </div>
         </div>
-        <div className="overflow-hidden rounded-lg border border-gray-200 shadow-md">
+        <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-md">
           <table className="w-full border-collapse bg-black text-left text-sm text-gray-500">
             <thead className="bg-black text-textColor">
               <tr>

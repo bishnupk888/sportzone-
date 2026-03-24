@@ -72,10 +72,10 @@ const Dashboard = () => {
 
       <section
         ref={ref}
-        className="p-6 pb-10 dark:bg-transparent dark:text-gray-300 mx-10 mb-10 rounded-2xl"
+        className="p-2 sm:p-6 pb-10 dark:bg-transparent dark:text-gray-300 mx-2 sm:mx-10 mb-10 rounded-2xl"
       >
-        <div className="container mx-auto grid justify-center grid-cols-2 text-center lg:grid-cols-3 gap-4">
-          <div className="flex flex-col justify-start m-2 lg:m-12 border-b-2 rounded-xl border-redBorder p-4">
+        <div className="container mx-auto grid justify-center grid-cols-1 sm:grid-cols-2 text-center lg:grid-cols-3 gap-4">
+          <div className="flex flex-col justify-start m-2 sm:m-4 lg:m-12 border-b-2 rounded-xl border-redBorder p-4">
             <p className="text-4xl font-bold leading-none lg:text-6xl">
               {inView && (
                 <CountUp
@@ -86,7 +86,7 @@ const Dashboard = () => {
             </p>
             <p className="text-lg">ATHLETES REGISTERED</p>
           </div>
-          <div className="flex flex-col justify-start m-4 lg:m-12 border-b-2 rounded-xl border-redBorder p-4">
+          <div className="flex flex-col justify-start m-2 sm:m-4 lg:m-12 border-b-2 rounded-xl border-redBorder p-4">
             <p className="text-4xl font-bold leading-none lg:text-6xl">
               {inView && (
                 <CountUp
@@ -97,7 +97,7 @@ const Dashboard = () => {
             </p>
             <p className="text-lg">TRAINERS REGISTERED</p>
           </div>
-          <div className="flex flex-col justify-start m-4 lg:m-12 border-b-2 rounded-xl border-redBorder p-4">
+          <div className="flex flex-col justify-start m-2 sm:m-4 lg:m-12 border-b-2 rounded-xl border-redBorder p-4">
             <p className="text-4xl font-bold leading-none lg:text-6xl">
               {inView && (
                 <CountUp
@@ -108,7 +108,7 @@ const Dashboard = () => {
             </p>
             <p className="text-lg">SUCCESSFUL BOOKINGS</p>
           </div>
-          <div className="flex flex-col justify-start m-4 lg:m-12 border-b-2 rounded-xl border-redBorder p-4">
+          <div className="flex flex-col justify-start m-2 sm:m-4 lg:m-12 border-b-2 rounded-xl border-redBorder p-4">
             <p className="text-4xl font-bold leading-none lg:text-6xl">
               {inView && (
                 <>
@@ -123,7 +123,7 @@ const Dashboard = () => {
             </p>
             <p className="text-lg">TOTAL TRANSACTIONS</p>
           </div>
-          <div className="flex flex-col justify-start m-4 lg:m-12 border-b-2 rounded-xl border-redBorder p-4">
+          <div className="flex flex-col justify-start m-2 sm:m-4 lg:m-12 border-b-2 rounded-xl border-redBorder p-4">
             <p className="text-4xl font-bold leading-none lg:text-6xl">
               {inView && (
                 <CountUp end={dashboardData.slotsCount} duration={2.5} />
@@ -131,7 +131,7 @@ const Dashboard = () => {
             </p>
             <p className="text-lg">SLOTS CREATED</p>
           </div>
-          <div className="flex flex-col justify-start m-4 lg:m-12 border-b-2 rounded-xl border-redBorder p-4">
+          <div className="flex flex-col justify-start m-2 sm:m-4 lg:m-12 border-b-2 rounded-xl border-redBorder p-4">
             <p className="text-4xl font-bold leading-none lg:text-6xl">
               {inView && (
                 <CountUp end={dashboardData.totalBookings} duration={2.5} />

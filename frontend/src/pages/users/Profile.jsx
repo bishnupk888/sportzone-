@@ -121,7 +121,7 @@ export default function Profile() {
             <form onSubmit={handleSubmit}>
                 <div className="space-y-12">
                     <div className="pb-12">
-                        <h2 className="text-[3px] text-base font-bold lg:text-[40px] leading-7 text-textColor">User Profile</h2>
+                        <h2 className="text-2xl font-bold lg:text-[40px] leading-7 text-textColor">User Profile</h2>
                         <p className="mt-5 text-sm leading-6 text-textColor">
                             Complete full profile informations.
                         </p>
@@ -192,7 +192,7 @@ export default function Profile() {
                                         placeholder='Enter Age'
                                         value={localUserData.age || ''}
                                         onChange={handleInputChange}
-                                        className={`block w-[50%] rounded-md border ${errors.age ? 'border-red-500' : 'border-redBorder'} bg-white bg-opacity-5 py-1.5 text-textColor shadow-xl placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-redBorder focus:border-redBorder lg:text-[16px] sm:text-sm sm:leading-6 px-2`}
+                                        className={`block w-full sm:w-[50%] rounded-md border ${errors.age ? 'border-red-500' : 'border-redBorder'} bg-white bg-opacity-5 py-1.5 text-textColor shadow-xl placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-redBorder focus:border-redBorder lg:text-[16px] sm:text-sm sm:leading-6 px-2`}
                                     />
                                     {errors.age && <span className="text-red-500">{errors.age}</span>}
                                 </div>
